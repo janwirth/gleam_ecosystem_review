@@ -20,6 +20,7 @@ For each repo in list:
 ### README (rendered)
 - [ ] Read full or key sections
 - [ ] Note maturity: guide-style / clear / minimal
+- [ ] Check if batteries-included (full features documented = 🟩🟩, not just 🟩)
 - [ ] Scan for examples, docs, API clarity
 - [ ] Check for ecosystem/comparison tables
 
@@ -32,14 +33,17 @@ For each repo in list:
 ### Issues Tab
 - [ ] Count open issues on first load
 - [ ] Note if tab failed to load (= ⬜)
+- [ ] Call out zero issues in Notes section (positive signal)
 
 ### Scoring
 - [ ] Record open issue count
 - [ ] Record star count
+- [ ] Record license from repo sidebar
+- [ ] Record target platform (check gleam.toml `target` field; infer from deps if absent)
+- [ ] Record `gleam` version constraint from gleam.toml (🟩🟩 if compatible with latest stable)
 - [ ] Calculate maintenance emoji (🟩🟩 = today/recent, 🟩 = months, 🟥 = years)
-- [ ] Assign activity emoji based on newest commit
 - [ ] Assign README maturity emoji
-- [ ] Assign community emoji (based on star count relative to peers)
+- [ ] Assign community emoji (≥10★ = ⭐️, ≥100★ = ⭐️⭐️, below = —)
 - [ ] Assign work emoji based on pagination/history span
 
 ## Table Construction
@@ -62,21 +66,12 @@ For each repo in list:
 - [ ] Note if found (which repo, what it compares)
 - [ ] Distinguish: ecosystem context vs tool head-to-head
 
-## Ranking
-
-- [ ] Rank 1–N by fit for stated goal
-- [ ] For each, write README lead (1–2 sentences)
-- [ ] For each, list scores: emoji dimensions + metrics
-- [ ] Verify tie-break logic (maintenance date + evidence quality)
-
 ## Output Validation
 
 - [ ] Snapshot date present and correct
 - [ ] Legend clearly defined
 - [ ] Table complete (no blank cells unless ⬜)
 - [ ] All ⬜ explained in notes
-- [ ] Ranking is 1–N (no ties)
-- [ ] Each ranked repo has README lead + scores
 - [ ] Emoji usage matches legend throughout
 - [ ] No API calls or private data mentioned
 - [ ] No inference from prior knowledge or memory

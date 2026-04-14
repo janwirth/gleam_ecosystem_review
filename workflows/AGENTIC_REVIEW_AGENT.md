@@ -33,7 +33,8 @@ Visit in this order (web browser, logged out or public view):
 2. **README** (rendered view on default branch)
    - Read full or summarize from rendered view
    - Note: guide-style vs tagline-only vs minimal
-   - Check for examples, API docs, design intent
+   - Check for examples, API docs, design intent, feature completeness
+   - Batteries-included frameworks with comprehensive guides + feature lists = 🟩🟩 (not just 🟩)
    - Look for ecosystem comparison tables (call out separately)
 
 3. **/commits page** (default branch)
@@ -46,7 +47,8 @@ Visit in this order (web browser, logged out or public view):
 4. **Issues tab**
    - Count open issues visible on first load
    - Note if Issues UI failed (= ⬜)
-   - Note if zero or very high (both signal)
+   - Zero issues = positive signal (note explicitly in Notes section)
+   - High count = possible problems (balance against maintenance activity; active projects may have more open issues)
 
 5. **Repo header / other**
    - Commit count badge if present
@@ -69,6 +71,9 @@ Visit in this order (web browser, logged out or public view):
 For each repo with ⬜, error, or edge case:
 - Call out reason
 - Example: "**repo-name**: /commits is empty — project is stub" or "**repo-name**: Issues UI returned 404"
+
+Also call out positive signals:
+- Example: "**repo-name**: Zero open issues; robust, current framework with strong maintenance."
 
 ### 5. Comparison Check
 

@@ -18,12 +18,12 @@ Use **public web UI only** (no API, no clone). Visitor-level access. Check: READ
 
 | Dimension | Legend | Signal |
 | --- | --- | --- |
-| Activity (recency) | 🟩🟩 recent · 🟩 months old · 🟥 years old | Latest commit date; gap since last change |
-| Maintenance | 🟩🟩 actively · 🟩 steady · 🟥 dormant | Commit recency + frequency across history |
+| Maintenance | 🟩🟩 actively · 🟩 steady · 🟥 dormant | Latest commit date + frequency across history |
 | README quality | 🟩🟩 guide-style · 🟩 clear · 🟥 minimal/broken | Docs maturity; examples; intent clarity |
-| Community | 🟩🟩 strong · 🟩 moderate · 🟥 none | Star count; relative adoption signal |
+| Community | ≥10★ = ⭐️ · ≥100★ = ⭐️⭐️ | Star count; fixed thresholds |
 | Work (effort) | 🟩🟩 substantial · 🟩 solid · 🟥 minimal | Commit count, history depth, pagination |
 | Issues | counts + emoji | Open issue count; health signal |
+| Gleam compat | 🟩🟩 latest · 🟩 older · 🟥 incompatible | `gleam` constraint from gleam.toml vs latest stable |
 
 ## Review Structure
 
@@ -32,19 +32,19 @@ Use **public web UI only** (no API, no clone). Visitor-level access. Check: READ
 3. **Table** — one column per repo, rows = dimensions above
 4. **Notes section** — call out edge cases, ⬜ reasons, error notes
 5. **Comparison check** — any "head-to-head" docs? Yes/no + brief note
-6. **Ranking** — numbered 1–N, best fit first
-   - Bold repo name + link
-   - README lead: 1–2 sentences from README/tagline
-   - Scores: emoji dimensions + raw metrics (issues, maintenance date, work volume)
 
 ## Scoring Rules
 
 - Use only what public pages show (no inference from prior knowledge)
 - ⬜ = unknown, not shown, not applicable, or error occurred
 - 🟩🟩 = strong signal, 🟩 = OK, 🟥 = negative signal
-- Maintenance date: ISO style + emoji vs today (🟩🟩 same day, 🟩 months, 🟥 years)
+- Maintenance: ISO date + emoji vs snapshot (🟩🟩 same day/recent, 🟩 months, 🟥 years). Combines recency and frequency into one dimension.
 - Work volume: describe pagination or visible span + emoji (🟩🟩 large, 🟩 solid, 🟥 sparse)
-- Ranking: tie-break by maintenance + evidence strength, not just stars
+- **README maturity:** Full guide-style + examples + API docs = 🟩🟩 (including "batteries-included" frameworks with comprehensive feature docs). Tagline + basic usage = 🟩. Minimal or scaffolding = 🟥.
+- **Issues count:** Zero issues = positive signal (note explicitly). High count = possible problems. Balance against maintenance activity (active projects may have more open issues).
+- **License:** Record from repo homepage sidebar. Most Gleam ecosystem uses Apache-2.0 or MIT.
+- **Target platform:** Check gleam.toml for `target` field. If absent, infer from dependencies (gleam_erlang/gleam_otp = BEAM, JS adapters = JavaScript). Note whether explicit or inferred.
+- No ranking: present data, let reader decide
 
 ## Running a Review
 
@@ -61,4 +61,4 @@ Use **public web UI only** (no API, no clone). Visitor-level access. Check: READ
 - **Goal statement:** "Ranking goal: [e.g., 'library choice for X', 'example quality', 'ecosystem maturity']"
 - **Criteria:** Core dimensions above; add domain-specific rows if needed (e.g., "TypeScript support", "WebAssembly binding")
 - **Legend:** Reuse 🟩🟩 / 🟩 / ⬜ / 🟥 unless domain-specific scoring makes sense
-- **Ranking tie-break:** Maintenance date + evidence quality + stated goal
+- **No ranking:** Articles present data per category. Reader decides best fit for their use case.
