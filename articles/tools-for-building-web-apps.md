@@ -668,11 +668,26 @@ pub fn main() {
 
 
 ## Leaderboard
+Every contribution is invaluable and appreciated.
 
-This one is for fun, don't take it too seriously!
-Everyone's a winner! 🎉
-Better luck next time.
+This ranking
+- helps authors check if the metrics are sane at a glance
+- uncovers gems unique to the Gleam ecosystem
+- cherishes key contributors
 
+**🥇 Gold**
+Special thanks for their unwavering dedication to bringing joy to development goes to _drumroll_ 🥁
+- **lustre** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 703 commits, [yoshi-monster](https://github.com/yoshi-monster) 79) — A supercharged take on the Elm architecture — high-performance, standards-compliant, modular, scalable, and unique to Gleam. A true gem.
+- **mist** ([rawhat](https://github.com/rawhat) 363 commits) — Many frameworks here stand on the shoulder of this giant.
+
+**🥈 Silver**
+- **wisp** ([lpil](https://github.com/lpil) 278 commits, [renatillas](https://github.com/renatillas) 16) — Feature-rich and mature. A solid foundation for your application.
+
+**🥉 Bronze**
+- **http** ([lpil](https://github.com/lpil) 158 commits, [CrowdHailer](https://github.com/CrowdHailer) 29, [giacomocavalieri](https://github.com/giacomocavalieri) 28) — Shared request/response types that glue the entire ecosystem together.
+- **glisten** ([rawhat](https://github.com/rawhat) 217 commits) — Low-level TCP/TLS foundation for mist.
+- **lustre_dev_tools** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 215 commits, [giacomocavalieri](https://github.com/giacomocavalieri) 13, [yoshi-monster](https://github.com/yoshi-monster) 10) — Dev server, bundling, and Tailwind integration for the Lustre ecosystem.
+- **ewe** ([vshakitskiy](https://github.com/vshakitskiy) 185 commits) — A worthy challenger for the mist http server.
 
 | Position | Award | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -683,17 +698,3 @@ Better luck next time.
 | 5 | | · [glimr-org/glimr](https://github.com/glimr-org/glimr)<br>· [gleam-lang/cowboy](https://github.com/gleam-lang/cowboy) | 🟩<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟨 | 🟨<br>🟩🟩 | 🟩🟩<br>🟩 | 🟥<br>🟩 | **6** |
 | 6 | | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [RyanBrewer317/arctic](https://github.com/RyanBrewer317/arctic)<br>· [pairshaped/libero](https://github.com/pairshaped/libero) | 🟨<br>🟨<br>🟥 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟨<br>🟨<br>🟩🟩 | 🟩<br>🟩<br>🟥 | 🟩<br>🟩<br>🟩🟩 | 🟩<br>🟩<br>🟩 | **5** |
 | 7 | | [MystPi/glen](https://github.com/MystPi/glen) | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **4** |
-
-**🥇 Gold** — The two load-bearing pillars of the web ecosystem.
-- **lustre** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 703 commits, [yoshi-monster](https://github.com/yoshi-monster) 79) — Defines how Gleam UIs are built.
-- **mist** ([rawhat](https://github.com/rawhat) 363 commits) — The HTTP server under nearly every backend framework.
-
-**🥈 Silver** — The default choice for production backends.
-- **wisp** ([lpil](https://github.com/lpil) 278 commits, [renatillas](https://github.com/renatillas) 16) — Bridges the gap between mist's raw server and application-level concerns like routing and middleware.
-
-**🥉 Bronze** — Foundational infrastructure and tooling.
-- **http** ([lpil](https://github.com/lpil) 158 commits, [CrowdHailer](https://github.com/CrowdHailer) 29, [giacomocavalieri](https://github.com/giacomocavalieri) 28) — Shared request/response types that glue the entire ecosystem together.
-- **lustre_dev_tools** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 215 commits, [giacomocavalieri](https://github.com/giacomocavalieri) 13, [yoshi-monster](https://github.com/yoshi-monster) 10) — Enables the standard dev workflow.
-- **glisten** ([rawhat](https://github.com/rawhat) 217 commits) — TCP/TLS foundation that mist is built on.
-- **ewe** ([vshakitskiy](https://github.com/vshakitskiy) 185 commits) — Independent HTTP server alternative to mist, built on glisten.
-
