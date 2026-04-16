@@ -122,7 +122,7 @@ Each repo evaluated using public GitHub pages only (no API, no clone):
 > - **Maintenance:** Latest commit date relative to snapshot (2026-04-13), combined with commit frequency. Does **not** factor in issues. 🟩🟩 = recent + frequent (within ~2 months), 🟩 = within 5 months, 🟨 = >5 months old (watch), 🟥 = >1 year (dormant). *Example: last commit 2025-09-18 = ~7 months → 🟨.*
 > - **Age:** Time from first visible commit to snapshot date. Older projects have more time to stabilize. 🟩🟩 = ≥3 years, 🟩 = ≥1 year, 🟨 = ≥3 months, 🟥 = <3 months. *Example: history starts Mar 2026, snapshot Apr 2026 → ~1 month → 🟥.*
 > - **README maturity:** Quality of documentation in the repo README. 🟩🟩 = guide-style with examples, full feature docs, and getting-started instructions. 🟩 = clear description and basic usage. 🟥 = minimal, broken, or missing. *Example: batteries-included framework with full guide → 🟩🟩; tagline-only → 🟩.*
-> - **Idiomaticity:** Whether the project follows Gleam's principles: typed, sound, explicit, no magic. 🟩 = idiomatic (explicit APIs, no codegen, no annotation magic). 🟥 = relies on codegen, annotations, or implicit behavior that breaks Gleam's explicit style. *Example: `/// @get "/path"` annotation routing → 🟥; builder pattern → 🟩.* Note: Gleam gives more freedom than e.g. Elm, but non-idiomatic patterns are still discouraged by the community. Projects that use them are included and graded rather than excluded — significant bodies of work deserve coverage regardless of style.
+> - **Idiomaticity:** Whether the project follows Gleam's principles: typed, sound, explicit, no magic. 🟩 = idiomatic (explicit APIs, explicit codegen steps, builder patterns). 🟥 = magic directives, implicit behavior, or template languages that extract code from non-Gleam sources. Explicit codegen (e.g. a build step that generates typed Gleam modules) is fine — the key question is whether the developer can see and understand what code runs. *Example: `/// @get "/path"` annotation routing with implicit wiring → 🟥; explicit codegen step producing readable Gleam → 🟩.* Note: projects that use non-idiomatic patterns are included and graded rather than excluded — significant bodies of work deserve coverage regardless of style.
 >
 > **Why maintenance and issues are separate:** A repo can be actively committed to but have a growing issue backlog (feature requests, unfixed bugs), or have zero issues but be dormant. Conflating them hides useful signal. Check both rows.
 >
@@ -232,7 +232,7 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 | Maintenance | 2026-04-11 · 🟩🟩 |
 | Age | ~4.5 months (Nov 2025) · 🟨 |
 | README maturity | 🟩🟩 (batteries-included; full guide) |
-| Idiomaticity | 🟥 (annotation routing, codegen) |
+| Idiomaticity | 🟥 (loom templates, magic directives — [see reasoning](#glimr-idiomaticity)) |
 
 #### glimr
 [repo](https://github.com/glimr-org/glimr)
@@ -249,6 +249,9 @@ pub fn show() -> Response {
   welcome.render() |> response.string_tree(200)
 }
 ```
+
+<a id="glimr-idiomaticity"></a>
+**Why 🟥 Idiomaticity:** Glimr uses Loom, a custom template language with magic `l-*` directives that extract Gleam code from HTML templates. This was [discussed in the Gleam Discord](https://discord.com/channels/768594524158427167/768594524158427170/1488146844138733719) (2026-03-30) where community members raised concerns: extracting partial Gleam snippets from templates leads to bad error experiences when things go wrong (rebecca\~); the `l-*` directives implicitly wire server-driven interactivity as the default, which goes against Gleam's design philosophy of making the right thing easy and explicit (hayleigh, Lustre creator); and the template approach is "completely different" from idiomatic Gleam patterns, creating a rough editing experience (paaradiso). The core issue: Gleam values typed, sound, explicit code — Loom templates introduce a layer of magic where the developer can't easily see what Gleam code actually runs. Explicit codegen (like libero's) is fine; implicit template extraction is not.
 
 
 ### Server Frameworks
@@ -426,7 +429,7 @@ Typed remote procedure calls between server and client. Replaces REST boilerplat
 | Maintenance | 2026-04-13 · 🟩🟩 |
 | Age | 2 days (Apr 2026) · 🟥 |
 | README maturity | 🟩🟩 (full guide, annotated examples, error docs, CLI reference) |
-| Idiomaticity | 🟥 (`/// @rpc` annotations, codegen) |
+| Idiomaticity | 🟩 (explicit codegen step) |
 
 #### libero
 [repo](https://github.com/pairshaped/libero)
@@ -678,9 +681,8 @@ Better luck next time.
 | 3 | 🥉 | · [gleam-lang/http](https://github.com/gleam-lang/http)<br>· [lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools)<br>· [rawhat/glisten](https://github.com/rawhat/glisten)<br>· [vshakitskiy/ewe](https://github.com/vshakitskiy/ewe) | 🟩🟩<br>🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩<br>🟩 | 🟨<br>🟩🟩<br>🟩<br>🟩🟩 | 🟩🟩<br>🟩<br>🟩🟩<br>🟨 | 🟩<br>🟩<br>🟩<br>🟩🟩 | 🟩<br>🟩<br>🟩<br>🟩 | **8** |
 | 4 | | · [ghivert/redraw](https://github.com/ghivert/redraw)<br>· [TrustBound/dream](https://github.com/TrustBound/dream) | 🟨<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩<br>🟩🟩 | 🟩<br>🟨 | 🟩🟩<br>🟩🟩 | 🟩<br>🟩 | **7** |
 | 5 | | · [glimr-org/glimr](https://github.com/glimr-org/glimr)<br>· [gleam-lang/cowboy](https://github.com/gleam-lang/cowboy) | 🟩<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟨 | 🟨<br>🟩🟩 | 🟩🟩<br>🟩 | 🟥<br>🟩 | **6** |
-| 6 | | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [RyanBrewer317/arctic](https://github.com/RyanBrewer317/arctic) | 🟨<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟨<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩<br>🟩 | **5** |
+| 6 | | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [RyanBrewer317/arctic](https://github.com/RyanBrewer317/arctic)<br>· [pairshaped/libero](https://github.com/pairshaped/libero) | 🟨<br>🟨<br>🟥 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟨<br>🟨<br>🟩🟩 | 🟩<br>🟩<br>🟥 | 🟩<br>🟩<br>🟩🟩 | 🟩<br>🟩<br>🟩 | **5** |
 | 7 | | [MystPi/glen](https://github.com/MystPi/glen) | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **4** |
-| 8 | | [pairshaped/libero](https://github.com/pairshaped/libero) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟥 | **3** |
 
 **🥇 Gold** — The two load-bearing pillars of the web ecosystem.
 - **lustre** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 703 commits, [yoshi-monster](https://github.com/yoshi-monster) 79) — Defines how Gleam UIs are built.
