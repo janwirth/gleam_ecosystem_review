@@ -15,6 +15,7 @@
    - [Frontend Frameworks](#frontend-frameworks) — [lustre](#lustre) · [redraw](#redraw)
    - [Core HTTP Types](#core-http-types) — [http](#http)
    - [HTTP Servers & Adapters](#http-servers--adapters) — [mist](#mist) · [cowboy](#cowboy) · [glisten](#glisten)
+4. [Leaderboard](#leaderboard)
 
 ## Summary
 
@@ -508,9 +509,15 @@ Better luck next time.
 | 7 | | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [pairshaped/libero](https://github.com/pairshaped/libero) | 🟨<br>🟥 | 🟩<br>🟩 | 🟩<br>🟩 | 🟨<br>🟩🟩 | 🟩<br>🟩 | 🟩<br>🟥 | 🟩<br>🟩🟩 | **5** |
 | 8 | | [MystPi/glen](https://github.com/MystPi/glen) | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **4** |
 
-**🥇 Gold** — Lustre ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 703 commits, [yoshi-monster](https://github.com/yoshi-monster) 79) defines how Gleam UIs are built and mist ([rawhat](https://github.com/rawhat) 363 commits) is the HTTP server under nearly every backend framework, making them the two load-bearing pillars of the web ecosystem.
+**🥇 Gold** — The two load-bearing pillars of the web ecosystem.
+- **lustre** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 703 commits, [yoshi-monster](https://github.com/yoshi-monster) 79) — Defines how Gleam UIs are built.
+- **mist** ([rawhat](https://github.com/rawhat) 363 commits) — The HTTP server under nearly every backend framework.
 
-**🥈 Silver** — Wisp ([lpil](https://github.com/lpil) 278 commits, [renatillas](https://github.com/renatillas) 16) is the default choice for production backends, bridging the gap between mist's raw server and application-level concerns like routing and middleware.
+**🥈 Silver** — The default choice for production backends.
+- **wisp** ([lpil](https://github.com/lpil) 278 commits, [renatillas](https://github.com/renatillas) 16) — Bridges the gap between mist's raw server and application-level concerns like routing and middleware.
 
-**🥉 Bronze** — http ([lpil](https://github.com/lpil) 158 commits, [CrowdHailer](https://github.com/CrowdHailer) 29, [giacomocavalieri](https://github.com/giacomocavalieri) 28) provides the shared request/response types that glue the entire ecosystem together, lustre_dev_tools ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 215 commits, [giacomocavalieri](https://github.com/giacomocavalieri) 13, [yoshi-monster](https://github.com/yoshi-monster) 10) enables the standard dev workflow, and glimr ([miguejarias](https://github.com/miguejarias) 125 commits) is the first attempt at a Rails-style "just build" experience for Gleam.
+**🥉 Bronze** — Foundational infrastructure and tooling.
+- **http** ([lpil](https://github.com/lpil) 158 commits, [CrowdHailer](https://github.com/CrowdHailer) 29, [giacomocavalieri](https://github.com/giacomocavalieri) 28) — Shared request/response types that glue the entire ecosystem together.
+- **lustre_dev_tools** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 215 commits, [giacomocavalieri](https://github.com/giacomocavalieri) 13, [yoshi-monster](https://github.com/yoshi-monster) 10) — Enables the standard dev workflow.
+- **glimr** ([miguejarias](https://github.com/miguejarias) 125 commits) — First attempt at a Rails-style "just build" experience for Gleam.
 
