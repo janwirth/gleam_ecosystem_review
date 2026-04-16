@@ -19,7 +19,8 @@ Start here.
    - [RPC Layer](#rpc-layer) — [libero](#libero)
    - [Frontend Frameworks](#frontend-frameworks) — [lustre](#lustre) · [redraw](#redraw)
    - [Core HTTP Types](#core-http-types) — [http](#http)
-   - [HTTP Servers & Adapters](#http-servers--adapters) — [mist](#mist) · [ewe](#ewe) · [cowboy](#cowboy) · [glisten](#glisten)
+   - [HTTP Servers](#http-servers) — [mist](#mist) · [ewe](#ewe)
+   - [Network Infrastructure](#network-infrastructure) — [glisten](#glisten) · [cowboy](#cowboy)
 4. [Leaderboard](#leaderboard)
 
 ## Summary
@@ -42,7 +43,8 @@ The essentials to build something great are there.
 | **[Frontend Frameworks](#frontend-frameworks)** (React) | — | · [redraw](#redraw) ([repo](https://github.com/ghivert/redraw), 62★) — *full React 19 bindings, type-checked* |
 | **[RPC Layer](#rpc-layer)** | · [libero](#libero) ([repo](https://github.com/pairshaped/libero), 3★) — *young; typed RPC for Lustre+server, WebSocket, codegen* | · [libero](#libero) — *also generates JS client stubs* |
 | **[Dev Tools](#dev-tools)** | · [🥉](#leaderboard) [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *dev server, bundling, Tailwind*<br>· [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — *BEAM module reload* | — |
-| **[HTTP Servers & Adapters](#http-servers--adapters)** | · [🥇](#leaderboard) [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, streaming*<br>· [🥉](#leaderboard) [ewe](#ewe) ([repo](https://github.com/vshakitskiy/ewe), 106★) — *HTTP server, TLS, WebSocket, compression*<br>· [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *adapter for existing Erlang/Elixir Cowboy setups*<br>· [🥉](#leaderboard) [glisten](#glisten) ([repo](https://github.com/rawhat/glisten), 197★) — *TCP/TLS infra, powers mist* | — |
+| **[HTTP Servers](#http-servers)** | · [🥇](#leaderboard) [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, streaming*<br>· [🥉](#leaderboard) [ewe](#ewe) ([repo](https://github.com/vshakitskiy/ewe), 106★) — *HTTP server, TLS, WebSocket, compression* | — |
+| **[Network Infrastructure](#network-infrastructure)** | · [🥉](#leaderboard) [glisten](#glisten) ([repo](https://github.com/rawhat/glisten), 197★) — *TCP/TLS layer, powers mist*<br>· [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *adapter for existing Erlang/Elixir Cowboy setups* | — |
 | **[Core HTTP Types](#core-http-types)** | · [🥉](#leaderboard) [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *request/response types, used by nearly everything* | · [🥉](#leaderboard) [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *also targets JS* |
 
 > [!IMPORTANT]  
@@ -75,11 +77,13 @@ The essentials to build something great are there.
 > - [lustre_dev_tools](#lustre_dev_tools) — pairs with [lustre](#lustre)
 > - [gleam-radiate](#gleam-radiate) — framework-agnostic
 >
-> **[HTTP Servers & Adapters](#http-servers--adapters):**
+> **[HTTP Servers](#http-servers):**
 > - [mist](#mist) → [glisten](#glisten) (TCP/TLS) → [http](#http) (core types)
 > - [ewe](#ewe) → [glisten](#glisten) (TCP/TLS) → [http](#http) (core types)
-> - [cowboy](#cowboy) → [http](#http) (core types)
-> - [glisten](#glisten) → [http](#http) (core types) — *TCP/TLS layer, no upstream deps beyond http*
+>
+> **[Network Infrastructure](#network-infrastructure):**
+> - [glisten](#glisten) → [http](#http) (core types) — *TCP/TLS layer, powers mist and ewe*
+> - [cowboy](#cowboy) → [http](#http) (core types) — *adapter for Erlang's Cowboy*
 >
 > **[Core HTTP Types](#core-http-types):**
 > - [http](#http) — no upstream deps; depended on by nearly everything above
@@ -264,15 +268,15 @@ Routing, handlers, middleware. All are independent (not full-stack).
 | Idiomaticity | 🟩 | 🟩 | 🟩 |
 | | | | |
 | **Features** | | | |
-| Routing DSL | ✗ (`case` on path segments) | ✅ (route/method/path) | ✗ (`case` on path segments) |
+| Routing DSL | — (`case` on path segments) | ✅ (route/method/path) | — (`case` on path segments) |
 | Middleware | ✅ | ✅ | ✅ |
-| JSON | ✅ | ✅ | ✗ |
-| Static files | ✅ | ✗ | ✅ |
-| Logging | ✅ | ✗ | ✗ |
-| WebSocket | ✗ | ✅ | ✅ |
-| Sessions / cookies | ✅ | ✗ | ✗ |
-| Form parsing | ✅ | ✗ | ✗ |
-| Testing helpers | ✅ (`wisp/simulate`) | ✗ | ✗ |
+| JSON | ✅ | ✅ | — |
+| Static files | ✅ | — | ✅ |
+| Logging | ✅ | — | — |
+| WebSocket | — | ✅ | ✅ |
+| Sessions / cookies | ✅ | — | — |
+| Form parsing | ✅ | — | — |
+| Testing helpers | ✅ (`wisp/simulate`) | — | — |
 
 #### wisp
 [repo](https://github.com/gleam-wisp/wisp) · [🥈](#leaderboard)
@@ -536,31 +540,31 @@ pub type Scheme           // Http, Https
 ```
 
 
-### HTTP Servers & Adapters
+### HTTP Servers
 
-Low-level server implementations and adapter layers. Use with frameworks or custom routing.
+Full HTTP server implementations. Use with frameworks or custom routing.
 
-| Criterion | [mist](https://github.com/rawhat/mist) [🥇](#leaderboard) | [ewe](https://github.com/vshakitskiy/ewe) [🥉](#leaderboard) | [cowboy](https://github.com/gleam-lang/cowboy) | [glisten](https://github.com/rawhat/glisten) [🥉](#leaderboard) |
-| --- | --- | --- | --- | --- |
-| Stars | 489★ · 🟩🟩 | 106★ · 🟩 | 75★ · 🟨 | 197★ · 🟩 |
-| License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
-| Target | ☎️ BEAM | ☎️ BEAM | ☎️ BEAM | ☎️ BEAM |
-| Deps | 9 | 9 | 5 | 5 |
-| Gleam compat | `>= 0.50 and < 1.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 | `>= 0.45 and < 2.0` · 🟩 | `>= 0.59 and < 1.0` · 🟩 |
-| Maintenance | 2026-04-01 · 🟩🟩 | 2026-04-01 · 🟩🟩 | 2025-11-01 · 🟨 | 2026-01-11 · 🟩 |
-| Age | ~4 years (Apr 2022) · 🟩🟩 | ~8 months (Aug 2025) · 🟨 | ~5.7 years (Aug 2020) · 🟩🟩 | ~4 years (Apr 2022) · 🟩🟩 |
-| README maturity | 🟩🟩 (builder, WebSocket, streaming) | 🟩🟩 (guide, TLS, routing examples) | 🟩 (adapter pattern) | 🟩 (TCP/TLS server) |
-| Idiomaticity | 🟩 | 🟩 | 🟩 | 🟩 |
-| | | | | |
-| **Features** | | | | |
-| HTTP/1.1 | ✅ | ✅ | ✅ (via Cowboy) | ✗ (TCP only) |
-| WebSocket | ✅ | ✅ | ✗ | ✗ |
-| TLS / HTTPS | ✅ (via glisten) | ✅ | ✗ | ✅ |
-| Streaming responses | ✅ (chunked) | ✅ (chunked) | ✗ | ✗ |
-| Server-Sent Events | ✗ | ✅ | ✗ | ✗ |
-| File serving | ✅ (`send_file`) | ✗ | ✗ | ✗ |
-| Compression | ✗ | ✗ | ✗ | ✗ |
-| HTTP/2 | ✗ | ✗ | ✗ | ✗ |
+| Criterion | [mist](https://github.com/rawhat/mist) [🥇](#leaderboard) | [ewe](https://github.com/vshakitskiy/ewe) [🥉](#leaderboard) |
+| --- | --- | --- |
+| Stars | 489★ · 🟩🟩 | 106★ · 🟩 |
+| License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
+| Target | ☎️ BEAM | ☎️ BEAM |
+| Deps | 9 | 9 |
+| Gleam compat | `>= 0.50 and < 1.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 |
+| Maintenance | 2026-04-01 · 🟩🟩 | 2026-04-01 · 🟩🟩 |
+| Age | ~4 years (Apr 2022) · 🟩🟩 | ~8 months (Aug 2025) · 🟨 |
+| README maturity | 🟩🟩 (builder, WebSocket, streaming) | 🟩🟩 (guide, TLS, routing examples) |
+| Idiomaticity | 🟩 | 🟩 |
+| | | |
+| **Features** | | |
+| HTTP/1.1 | ✅ | ✅ |
+| WebSocket | ✅ | ✅ |
+| TLS / HTTPS | ✅ (via glisten) | ✅ |
+| Streaming responses | ✅ (chunked) | ✅ (chunked) |
+| Server-Sent Events | — | ✅ |
+| File serving | ✅ (`send_file`) | — |
+| Compression | — | — |
+| HTTP/2 | — | — |
 
 #### mist
 [repo](https://github.com/rawhat/mist) · [🥇](#leaderboard)
@@ -603,6 +607,39 @@ pub fn main() {
 }
 ```
 
+### Network Infrastructure
+
+TCP/TLS layer and legacy adapter. Not HTTP servers themselves — foundational pieces the servers above are built on.
+
+| Criterion | [glisten](https://github.com/rawhat/glisten) [🥉](#leaderboard) | [cowboy](https://github.com/gleam-lang/cowboy) |
+| --- | --- | --- |
+| Stars | 197★ · 🟩 | 75★ · 🟨 |
+| License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
+| Target | ☎️ BEAM | ☎️ BEAM |
+| Deps | 5 | 5 |
+| Gleam compat | `>= 0.59 and < 1.0` · 🟩 | `>= 0.45 and < 2.0` · 🟩 |
+| Maintenance | 2026-01-11 · 🟩 | 2025-11-01 · 🟨 |
+| Age | ~4 years (Apr 2022) · 🟩🟩 | ~5.7 years (Aug 2020) · 🟩🟩 |
+| README maturity | 🟩 (TCP/TLS server) | 🟩 (adapter pattern) |
+| Idiomaticity | 🟩 | 🟩 |
+
+#### glisten
+[repo](https://github.com/rawhat/glisten) · [🥉](#leaderboard)
+
+Pure Gleam TCP/TLS server with supervised socket acceptors. Not a web framework — this is the networking infrastructure that mist is built on. Included here because it's a key dependency in the stack, not because you'd use it directly for web apps.
+
+```gleam
+import glisten/socket/options.{ActiveMode, Passive}
+import glisten/tcp
+
+pub fn main() {
+  let assert Ok(listener) = tcp.listen(8000, [ActiveMode(Passive)])
+  let assert Ok(socket) = tcp.accept(listener)
+  let assert Ok(msg) = tcp.receive(socket, 0)
+  echo #("got a msg", msg)
+}
+```
+
 #### cowboy
 [repo](https://github.com/gleam-lang/cowboy)
 
@@ -623,23 +660,6 @@ pub fn my_service(request) {
 pub fn main() {
   cowboy.start(my_service, on_port: 3000)
   process.sleep_forever()
-}
-```
-
-#### glisten
-[repo](https://github.com/rawhat/glisten) · [🥉](#leaderboard)
-
-Pure Gleam TCP/TLS server with supervised socket acceptors. Not a web framework — this is the networking infrastructure that mist is built on. Included here because it's a key dependency in the stack, not because you'd use it directly for web apps.
-
-```gleam
-import glisten/socket/options.{ActiveMode, Passive}
-import glisten/tcp
-
-pub fn main() {
-  let assert Ok(listener) = tcp.listen(8000, [ActiveMode(Passive)])
-  let assert Ok(socket) = tcp.accept(listener)
-  let assert Ok(msg) = tcp.receive(socket, 0)
-  echo #("got a msg", msg)
 }
 ```
 
