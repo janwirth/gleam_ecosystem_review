@@ -61,7 +61,6 @@ Gleam's ecosystem for building web applications already covers most of what you 
 >
 > </details>
 
----
 
 ## Research Method
 
@@ -148,7 +147,6 @@ Discovered via [Gleam packages registry](https://packages.gleam.run/) searches: 
 
 </details>
 
----
 
 ## Full-Stack Frameworks
 
@@ -185,7 +183,6 @@ pub fn show() -> Response {
 
 </details>
 
----
 
 ## Server Frameworks
 
@@ -243,7 +240,6 @@ fn handle_req(req: glen.Request) -> Promise(glen.Response) {
 
 </details>
 
----
 
 ## Dev Tools
 
@@ -299,7 +295,6 @@ pub fn handle_request(_req: Request) -> Response {
 
 </details>
 
----
 
 ## Frontend Frameworks
 
@@ -361,7 +356,6 @@ pub fn gleam_is_awesome() {
 
 </details>
 
----
 
 ## Core HTTP Types
 
@@ -396,7 +390,6 @@ pub type Scheme           // Http, Https
 
 </details>
 
----
 
 ## HTTP Servers & Adapters
 
