@@ -404,11 +404,11 @@ pub type Scheme           // Http, Https
 <details>
 <summary>mist · cowboy · glisten</summary>
 
-Low-level server implementations and adapter layers. Use with frameworks or custom routing. *(Cowboy and glisten issue tabs did not load reliably during review — counts marked ⬜.)*
+Low-level server implementations and adapter layers. Use with frameworks or custom routing.
 
 | Criterion | mist | cowboy | glisten |
 | --- | --- | --- | --- |
-| Stars / Issues | 489★ · 9 issues 🟨 | 75★ · ⬜ | 197★ · ⬜ |
+| Stars / Issues | 489★ · 9 issues 🟨 | 75★ · 1 issue 🟩 | 197★ · 0 issues 🟩🟩 |
 | License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
 | Target | BEAM | BEAM | BEAM |
 | Deps | 9 | 5 | 5 |
