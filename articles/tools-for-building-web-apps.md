@@ -11,6 +11,7 @@
    - [Full-Stack Frameworks](#full-stack-frameworks) — [glimr](#glimr)
    - [Server Frameworks](#server-frameworks) — [wisp](#wisp) · [glen](#glen)
    - [Dev Tools](#dev-tools) — [lustre_dev_tools](#lustre_dev_tools) · [gleam-radiate](#gleam-radiate)
+   - [RPC Layer](#rpc-layer) — [libero](#libero)
    - [Frontend Frameworks](#frontend-frameworks) — [lustre](#lustre) · [redraw](#redraw)
    - [Core HTTP Types](#core-http-types) — [http](#http)
    - [HTTP Servers & Adapters](#http-servers--adapters) — [mist](#mist) · [cowboy](#cowboy) · [glisten](#glisten)
@@ -27,13 +28,14 @@ Here's what's out there.
 
 | Category | ☎️ BEAM | 📜 JS |
 | --- | --- | --- |
-| **[Full-Stack Frameworks](#full-stack-frameworks)** | · [glimr](#glimr) ([repo](https://github.com/glimr-org/glimr), 165★) — *young; routing, templates, DB schema + migrations, auth, hot reload* | — |
-| **[Server Frameworks](#server-frameworks)** | · [wisp](#wisp) ([repo](https://github.com/gleam-wisp/wisp), 1.4k★) — *handler+middleware, production-ready* | · [glen](#glen) ([repo](https://github.com/MystPi/glen), 111★) — *lightweight, promise-based, Deno/Node/Workers* |
-| **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | · [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *declarative UI, SSR, universal* | · [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *also runs on JS target* |
+| **[Full-Stack Frameworks](#full-stack-frameworks)** | · 🥉 [glimr](#glimr) ([repo](https://github.com/glimr-org/glimr), 165★) — *young; routing, templates, DB schema + migrations, auth, hot reload* | — |
+| **[Server Frameworks](#server-frameworks)** | · 🥈 [wisp](#wisp) ([repo](https://github.com/gleam-wisp/wisp), 1.4k★) — *handler+middleware, production-ready* | · [glen](#glen) ([repo](https://github.com/MystPi/glen), 111★) — *lightweight, promise-based, Deno/Node/Workers* |
+| **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | · 🥇 [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *declarative UI, SSR, universal* | · 🥇 [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *also runs on JS target* |
 | **[Frontend Frameworks](#frontend-frameworks)** (React) | — | · [redraw](#redraw) ([repo](https://github.com/ghivert/redraw), 62★) — *full React 19 bindings, type-checked* |
-| **[Dev Tools](#dev-tools)** | · [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *dev server, bundling, Tailwind*<br>· [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — *BEAM module reload* | — |
-| **[HTTP Servers & Adapters](#http-servers--adapters)** | · [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, streaming*<br>· [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *adapter for existing Erlang/Elixir Cowboy setups*<br>· [glisten](#glisten) ([repo](https://github.com/lpil/glisten), 197★) — *TCP/TLS infra, powers mist* | — |
-| **[Core HTTP Types](#core-http-types)** | · [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *request/response types, used by nearly everything* | · [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *also targets JS* |
+| **[RPC Layer](#rpc-layer)** | · [libero](#libero) ([repo](https://github.com/pairshaped/libero), 3★) — *young; typed RPC for Lustre+server, WebSocket, codegen* | · [libero](#libero) — *also generates JS client stubs* |
+| **[Dev Tools](#dev-tools)** | · 🥉 [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *dev server, bundling, Tailwind*<br>· [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — *BEAM module reload* | — |
+| **[HTTP Servers & Adapters](#http-servers--adapters)** | · 🥇 [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, streaming*<br>· [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *adapter for existing Erlang/Elixir Cowboy setups*<br>· [glisten](#glisten) ([repo](https://github.com/rawhat/glisten), 197★) — *TCP/TLS infra, powers mist* | — |
+| **[Core HTTP Types](#core-http-types)** | · 🥉 [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *request/response types, used by nearly everything* | · 🥉 [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *also targets JS* |
 
 > <details>
 > <summary><strong>Dependency Graph</strong></summary>
@@ -46,6 +48,9 @@ Here's what's out there.
 > **Server Frameworks:**
 > - [wisp](#wisp) → [mist](#mist) (HTTP server)
 > - [glen](#glen) → [http](#http) (core types) — *JS target, independent stack*
+>
+> **RPC Layer:**
+> - [libero](#libero) → [lustre](#lustre) (client stubs) — works with any server
 >
 > **Frontend Frameworks:**
 > - [lustre](#lustre), [redraw](#redraw) — standalone, integrate with any backend
@@ -78,17 +83,18 @@ Here's what's out there.
 Each repo evaluated using public GitHub pages only (no API, no clone):
 
 1. **Fetch repo homepage** — Extract star count, description
-2. **Read README** — Assess maturity (guide-style / clear / minimal), examples, design intent
-3. **Commit history** — Latest commit date (ISO), pagination/depth, visible history span, commit density
-4. **Gleam.toml** — Check Gleam version requirement, dependencies
-5. **Issues tab** — Count open issues, assess health
+2. **Fork check** — Verify the repo is not a fork; if it is, use the upstream original instead
+3. **Read README** — Assess maturity (guide-style / clear / minimal), examples, design intent
+4. **Commit history** — Latest commit date (ISO), pagination/depth, visible history span, commit density
+5. **Gleam.toml** — Check Gleam version requirement, dependencies
+6. **Issues tab** — Count open issues, assess health
 
 **Note on code samples:** All code examples are taken from project READMEs or docs, not independently verified or tested.
 
 > <details>
 > <summary><strong>Scoring dimensions</strong></summary>
 >
-> - **Stars / Issues:** Star-to-issue ratio measures community trust vs. open problems. Stars as raw count (x.xk if ≥1000). 🟩🟩 = ≥1000x or 0 issues, 🟩 = ≥100x, 🟨 = ≥10x, 🟥 = <10x, ⬜ = unknown/couldn't load. *Example: 489★ with 9 issues = 54x → 🟨.*
+> - **Stars:** Community adoption signal based on star count. 🟩🟩 = ≥200★, 🟩 = ≥100★, 🟨 = ≥10★, 🟥 = <10★. *Example: 165★ → 🟩; 3★ → 🟥.*
 > - **License:** Whether the license allows unrestricted commercial use. 🟩 = permissive OSS (MIT, Apache-2.0, BSD). 🟥 = viral (GPL, AGPL) or no license. Only one tier — permissive or not.
 > - **Gleam compat:** Checks `gleam_stdlib` version constraint format in `gleam.toml` `[dependencies]`. 🟩 = range constraint (`>= X and < Y`), 🟥 = non-range constraint (`~>` style) which can cause resolver conflicts during install. *Example: `"~> 0.34 or ~> 1.0"` → 🟥; `">= 0.44.0 and < 2.0.0"` → 🟩.*
 > - **Maintenance:** Latest commit date relative to snapshot (2026-04-13), combined with commit frequency. Does **not** factor in issues. 🟩🟩 = recent + frequent (within ~2 months), 🟩 = within 5 months, 🟨 = >5 months old (watch), 🟥 = >1 year (dormant). *Example: last commit 2025-09-18 = ~7 months → 🟨.*
@@ -117,6 +123,9 @@ Discovered via [Gleam packages registry](https://packages.gleam.run/) searches: 
 - **[lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools)** — Lustre CLI + dev server. Zero-config dev server, bundling, TailwindCSS v4, live reload.
 - **[pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)** — Hot-reload dev tool. Watches source files and reloads BEAM modules.
 
+**RPC Layer:**
+- **[pairshaped/libero](https://github.com/pairshaped/libero)** — Typed RPC for Lustre+Gleam. `@rpc` annotations generate client stubs, routes, encoders/decoders. WebSocket transport, compile-time type safety.
+
 **Frontend Frameworks:**
 - **[lustre-labs/lustre](https://github.com/lustre-labs/lustre)** — Declarative HTML, Elm-style state, universal components, SSR, CLI tooling.
 - **[ghivert/redraw](https://github.com/ghivert/redraw)** — React bindings for Gleam. Full React 19 support, type-checked, JS target.
@@ -127,7 +136,7 @@ Discovered via [Gleam packages registry](https://packages.gleam.run/) searches: 
 **HTTP Servers & Adapters:**
 - **[rawhat/mist](https://github.com/rawhat/mist)** — HTTP server. Builder pattern, WebSocket, streaming, flexible routing. Powers glimr and wisp.
 - **[gleam-lang/cowboy](https://github.com/gleam-lang/cowboy)** — HTTP adapter. Integration layer for Cowboy web server.
-- **[lpil/glisten](https://github.com/lpil/glisten)** — TCP/TLS server. Pure Gleam, supervised socket acceptors, TLS support. Low-level building block.
+- **[rawhat/glisten](https://github.com/rawhat/glisten)** — TCP/TLS server. Pure Gleam, supervised socket acceptors, TLS support. Low-level building block.
 
 ### Disregarded Repos
 
@@ -163,7 +172,7 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 
 | Criterion | glimr |
 | --- | --- |
-| Stars / Issues | 165★ · 0 issues 🟩🟩 |
+| Stars | 165★ · 🟩 |
 | License | MIT · 🟩 |
 | Target | ☎️ BEAM (server) + 📜 JS (Vite frontend) |
 | Deps | 16 |
@@ -173,7 +182,7 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 | Age | ~4.5 months (Nov 2025) · 🟨 |
 | README maturity | 🟩🟩 (batteries-included; full guide) |
 
-#### glimr · [repo](https://github.com/glimr-org/glimr)
+#### 🥉 glimr · [repo](https://github.com/glimr-org/glimr)
 
 Young, batteries-included full-stack framework (~5 weeks of history). Routing with annotations, compiled Loom templates, middleware, DB schema + migrations, Vite integration, hot reload. Built on Mist HTTP server. Zero open issues — but also no community track record yet. Ambitious scope for its age; worth watching, not yet battle-tested.
 
@@ -195,7 +204,7 @@ Routing, handlers, middleware. All are independent (not full-stack).
 
 | Criterion | wisp | glen |
 | --- | --- | --- |
-| Stars / Issues | 1.4k★ · 16 issues 🟨 | 111★ · 2 issues 🟨 |
+| Stars | 1.4k★ · 🟩🟩 | 111★ · 🟩 |
 | License | Apache-2.0 · 🟩 | MIT · 🟩 |
 | Target | ☎️ BEAM | 📜 JavaScript |
 | Deps | 12 | 7 |
@@ -205,7 +214,7 @@ Routing, handlers, middleware. All are independent (not full-stack).
 | Age | ~2.7 years (Aug 2023) · 🟩 | ~2.2 years (Jan 2024) · 🟩 |
 | README maturity | 🟩🟩 (practical, handler+middleware) | 🟩 (tagline + repo) |
 
-#### wisp · [repo](https://github.com/gleam-wisp/wisp)
+#### 🥈 wisp · [repo](https://github.com/gleam-wisp/wisp)
 
 "A practical web framework for Gleam" (backend). Mature (1.4k stars), handler + context pattern. Built-in logging, static files. Production-ready.
 
@@ -248,7 +257,7 @@ Hot-reload, dev servers, bundling. Used during development, not shipped to produ
 
 | Criterion | lustre_dev_tools | gleam-radiate |
 | --- | --- | --- |
-| Stars / Issues | 112★ · 19 issues 🟥 | 66★ · 3 issues 🟨 |
+| Stars | 112★ · 🟩 | 66★ · 🟨 |
 | License | MIT · 🟩 | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM | ☎️ BEAM |
 | Deps | 20 | 5 |
@@ -258,7 +267,7 @@ Hot-reload, dev servers, bundling. Used during development, not shipped to produ
 | Age | ~2 years (Mar 2024) · 🟩 | ~2.5 years (Oct 2023) · 🟩 |
 | README maturity | 🟩 (features list, install guide, no code samples) | 🟩 (tagline) |
 
-#### lustre_dev_tools · [repo](https://github.com/lustre-labs/dev-tools)
+#### 🥉 lustre_dev_tools · [repo](https://github.com/lustre-labs/dev-tools)
 
 Lustre's CLI and development tooling. Zero-config dev server, bundling, TailwindCSS v4 auto-detection. Uses bun for bundling/file watching. CLI-driven (no Gleam API). Pairs with lustre frontend framework.
 
@@ -282,13 +291,50 @@ let _ =
 ```
 
 
+### RPC Layer
+
+Typed remote procedure calls between server and client. Replaces REST boilerplate with codegen.
+
+| Criterion | libero |
+| --- | --- |
+| Stars | 3★ · 🟥 |
+| License | MIT · 🟩 |
+| Target | ☎️📜 Both (BEAM server + JS client) |
+| Deps | 6 |
+| Gleam compat | `>= 0.69 and < 1.0` · 🟩 |
+| Maintenance | 2026-04-13 · 🟩🟩 |
+| Total work | 62 commits in 3 days; paginated · 🟩 |
+| Age | 2 days (Apr 2026) · 🟥 |
+| README maturity | 🟩🟩 (full guide, annotated examples, error docs, CLI reference) |
+
+#### libero · [repo](https://github.com/pairshaped/libero)
+
+Young (2 days old at snapshot), typed RPC layer for Lustre + any Gleam server. Annotate server functions with `/// @rpc`, run the code generator, and call them from the client as if local. WebSocket transport, compile-time type safety across the wire, panic recovery with trace IDs. Works with any server (wisp, mist, glimr). Impressive scope and docs for its age — zero community track record yet.
+
+```gleam
+// Server: annotate a function
+/// @rpc
+pub fn greet(name: String) -> String {
+  "Hello, " <> name <> "!"
+}
+
+// Client: generated stub, call it like a local function
+libero.call(rpc.greet("World"), fn(result) {
+  case result {
+    Ok(greeting) -> io.println(greeting)
+    Error(_) -> io.println("RPC failed")
+  }
+})
+```
+
+
 ### Frontend Frameworks
 
 Client-side / UI layer. Can be integrated with any backend (including glimr).
 
 | Criterion | lustre | redraw |
 | --- | --- | --- |
-| Stars / Issues | 2.2k★ · 9 issues 🟩 | 62★ · 1 issue 🟨 |
+| Stars | 2.2k★ · 🟩🟩 | 62★ · 🟨 |
 | License | MIT · 🟩 | MIT · 🟩 |
 | Target | ☎️📜 Both (BEAM + JS) | 📜 JavaScript |
 | Deps | 5 | 2 |
@@ -298,7 +344,7 @@ Client-side / UI layer. Can be integrated with any backend (including glimr).
 | Age | ~4.2 years (Feb 2022) · 🟩🟩 | ~1.7 years (Jul 2024) · 🟩 |
 | README maturity | 🟩🟩 (full guide) | 🟩🟩 (guide-style, examples, hooks, contexts) |
 
-#### lustre · [repo](https://github.com/lustre-labs/lustre)
+#### 🥇 lustre · [repo](https://github.com/lustre-labs/lustre)
 
 Declarative HTML, Elm-style state (`init`/`update`/`view`), universal components, SSR support, CLI tooling. Most popular Gleam frontend framework (2.2k stars).
 
@@ -345,7 +391,7 @@ Shared type definitions used by all server and client adapters in the ecosystem.
 
 | Criterion | http |
 | --- | --- |
-| Stars / Issues | 276★ · 1 issue 🟩 |
+| Stars | 276★ · 🟩🟩 |
 | License | Apache-2.0 · 🟩 |
 | Target | ☎️📜 Both (BEAM + JS) |
 | Deps | 1 |
@@ -355,7 +401,7 @@ Shared type definitions used by all server and client adapters in the ecosystem.
 | Age | ~6.8 years (Jun 2019) · 🟩🟩 |
 | README maturity | 🟩 (adapter tables + ecosystem) |
 
-#### http · [repo](https://github.com/gleam-lang/http)
+#### 🥉 http · [repo](https://github.com/gleam-lang/http)
 
 Types and functions for HTTP clients and servers. Links server adapters (Mist, Cowboy) and client adapters (Plug, fetch, etc.). Central to ecosystem — almost every web library depends on this.
 
@@ -375,7 +421,7 @@ Low-level server implementations and adapter layers. Use with frameworks or cust
 
 | Criterion | mist | cowboy | glisten |
 | --- | --- | --- | --- |
-| Stars / Issues | 489★ · 9 issues 🟨 | 75★ · 1 issue 🟨 | 197★ · 0 issues 🟩🟩 |
+| Stars | 489★ · 🟩🟩 | 75★ · 🟨 | 197★ · 🟩 |
 | License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM | ☎️ BEAM | ☎️ BEAM |
 | Deps | 9 | 5 | 5 |
@@ -385,7 +431,7 @@ Low-level server implementations and adapter layers. Use with frameworks or cust
 | Age | ~4 years (Apr 2022) · 🟩🟩 | ~5.7 years (Aug 2020) · 🟩🟩 | ~4 years (Apr 2022) · 🟩🟩 |
 | README maturity | 🟩🟩 (builder, WebSocket, streaming) | 🟩 (adapter pattern) | 🟩 (TCP/TLS server) |
 
-#### mist · [repo](https://github.com/rawhat/mist)
+#### 🥇 mist · [repo](https://github.com/rawhat/mist)
 
 "A glistening Gleam web server." Builder pattern, WebSocket support, streaming. Powers glimr and wisp. Active development (latest Apr 2026). Note: commit history on `master` branch, not `main`.
 
@@ -427,7 +473,7 @@ pub fn main() {
 }
 ```
 
-#### glisten · [repo](https://github.com/lpil/glisten)
+#### glisten · [repo](https://github.com/rawhat/glisten)
 
 Pure Gleam TCP/TLS server with supervised socket acceptors. Not a web framework — this is the networking infrastructure that mist is built on. Included here because it's a key dependency in the stack, not because you'd use it directly for web apps.
 
@@ -451,14 +497,20 @@ Everyone's a winner! 🎉
 Better luck next time.
 
 
-| # | Repo | S/I | Lic | Compat | Maint | Work | Age | README | Score |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | [lustre-labs/lustre](https://github.com/lustre-labs/lustre) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | **11** |
-| 2 | · [rawhat/mist](https://github.com/rawhat/mist)<br>· [glimr-org/glimr](https://github.com/glimr-org/glimr) | 🟨<br>🟩🟩 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟨 | 🟩🟩<br>🟩🟩 | **10** |
-| 4 | [lpil/glisten](https://github.com/lpil/glisten) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
-| 5 | · [gleam-wisp/wisp](https://github.com/gleam-wisp/wisp)<br>· [gleam-lang/http](https://github.com/gleam-lang/http) | 🟨<br>🟩 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟨 | 🟩<br>🟩🟩 | 🟩<br>🟩🟩 | 🟩🟩<br>🟩 | **8** |
-| 7 | · [lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools)<br>· [ghivert/redraw](https://github.com/ghivert/redraw) | 🟥<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩 | 🟩🟩<br>🟩 | 🟩<br>🟩 | 🟩<br>🟩🟩 | **7** |
-| 9 | [gleam-lang/cowboy](https://github.com/gleam-lang/cowboy) | 🟨 | 🟩 | 🟩 | 🟨 | 🟩 | 🟩🟩 | 🟩 | **6** |
-| 10 | [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate) | 🟨 | 🟩 | 🟩 | 🟨 | 🟩 | 🟩 | 🟩 | **5** |
-| 11 | [MystPi/glen](https://github.com/MystPi/glen) | 🟨 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **3** |
+| Position | Award | Repo | ★ | Lic | Compat | Maint | Work | Age | README | Score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 🥇 | · [lustre-labs/lustre](https://github.com/lustre-labs/lustre)<br>· [rawhat/mist](https://github.com/rawhat/mist) | 🟩🟩<br>🟩🟩 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟩🟩 | **12** |
+| 2 | 🥈 | [gleam-wisp/wisp](https://github.com/gleam-wisp/wisp) | 🟩🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩 | 🟩🟩 | **10** |
+| 3 | 🥉 | · [glimr-org/glimr](https://github.com/glimr-org/glimr)<br>· [gleam-lang/http](https://github.com/gleam-lang/http)<br>· [lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools) | 🟩<br>🟩🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟩🟩<br>🟨<br>🟩🟩 | 🟩🟩<br>🟩🟩<br>🟩🟩 | 🟨<br>🟩🟩<br>🟩 | 🟩🟩<br>🟩<br>🟩 | **9** |
+| 4 | | [rawhat/glisten](https://github.com/rawhat/glisten) | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **8** |
+| 5 | | [ghivert/redraw](https://github.com/ghivert/redraw) | 🟨 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | **7** |
+| 6 | | [gleam-lang/cowboy](https://github.com/gleam-lang/cowboy) | 🟨 | 🟩 | 🟩 | 🟨 | 🟩 | 🟩🟩 | 🟩 | **6** |
+| 7 | | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [pairshaped/libero](https://github.com/pairshaped/libero) | 🟨<br>🟥 | 🟩<br>🟩 | 🟩<br>🟩 | 🟨<br>🟩🟩 | 🟩<br>🟩 | 🟩<br>🟥 | 🟩<br>🟩🟩 | **5** |
+| 8 | | [MystPi/glen](https://github.com/MystPi/glen) | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **4** |
+
+**🥇 Gold** — Lustre ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 703 commits, [yoshi-monster](https://github.com/yoshi-monster) 79) defines how Gleam UIs are built and mist ([rawhat](https://github.com/rawhat) 363 commits) is the HTTP server under nearly every backend framework, making them the two load-bearing pillars of the web ecosystem.
+
+**🥈 Silver** — Wisp ([lpil](https://github.com/lpil) 278 commits, [renatillas](https://github.com/renatillas) 16) is the default choice for production backends, bridging the gap between mist's raw server and application-level concerns like routing and middleware.
+
+**🥉 Bronze** — http ([lpil](https://github.com/lpil) 158 commits, [CrowdHailer](https://github.com/CrowdHailer) 29, [giacomocavalieri](https://github.com/giacomocavalieri) 28) provides the shared request/response types that glue the entire ecosystem together, lustre_dev_tools ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev) 215 commits, [giacomocavalieri](https://github.com/giacomocavalieri) 13, [yoshi-monster](https://github.com/yoshi-monster) 10) enables the standard dev workflow, and glimr ([miguejarias](https://github.com/miguejarias) 125 commits) is the first attempt at a Rails-style "just build" experience for Gleam.
 
