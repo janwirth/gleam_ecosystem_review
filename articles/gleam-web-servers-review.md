@@ -17,22 +17,21 @@
 ## Summary
 
 
-With a quickly growing ecosystem, identifying and evaluating tools becomes increasingly important but difficult.
-I hope this guide saves you time in research and from regret when you realize you did redundant work.
 
-Gleam's ecosystem for building web applications already provides solutions for most high-level problems.
-Behold an overview of ecoystem staples.
+Gleam's ecosystem is growing fast, and keeping track of what's available isn't easy.
+I put this together so you don't have to spend hours on research, or worse, build something that already exists.
+Gleam's ecosystem for building web applications already covers most of what you need to build on the web. Here's what's out there.
 
 
 | Category | BEAM | JS |
 | --- | --- | --- |
-| **[Full-Stack Frameworks](#full-stack-frameworks)** | [glimr](#glimr) ([repo](https://github.com/glimr-org/glimr), 165★) — routing, templates, DB schema + migrations, auth, hot reload | — |
-| **[Server Frameworks](#server-frameworks)** | [wisp](#wisp) ([repo](https://github.com/gleam-wisp/wisp), 1.4k★) — handler+middleware, production-ready | [glen](#glen) ([repo](https://github.com/MystPi/glen), 111★) — lightweight, promise-based, Deno/Node/Workers |
-| **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — declarative UI, SSR, universal | [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — also runs on JS target |
-| **[Frontend Frameworks](#frontend-frameworks)** (React) | — | [redraw](#redraw) ([repo](https://github.com/ghivert/redraw), 62★) — full React 19 bindings, type-checked |
-| **[Dev Tools](#dev-tools)** | • [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — dev server, bundling, Tailwind • [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — BEAM module reload • [olive](#olive) ([repo](https://github.com/fravan/olive), 8★) — process restart | — |
-| **[HTTP Servers & Adapters](#http-servers--adapters)** | • [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — HTTP server, WebSocket, streaming • [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — Erlang adapter • [glisten](#glisten) ([repo](https://github.com/lpil/glisten), 197★) — TCP/TLS primitives | — |
-| **[Core HTTP Types](#core-http-types)** | [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — request/response types, used by nearly everything | [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — also targets JS |
+| **[Full-Stack Frameworks](#full-stack-frameworks)** | [glimr](#glimr) ([repo](https://github.com/glimr-org/glimr), 165★) — *routing, templates, DB schema + migrations, auth, hot reload* | — |
+| **[Server Frameworks](#server-frameworks)** | [wisp](#wisp) ([repo](https://github.com/gleam-wisp/wisp), 1.4k★) — *handler+middleware, production-ready* | [glen](#glen) ([repo](https://github.com/MystPi/glen), 111★) — *lightweight, promise-based, Deno/Node/Workers* |
+| **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *declarative UI, SSR, universal* | [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *also runs on JS target* |
+| **[Frontend Frameworks](#frontend-frameworks)** (React) | — | [redraw](#redraw) ([repo](https://github.com/ghivert/redraw), 62★) — *full React 19 bindings, type-checked* |
+| **[Dev Tools](#dev-tools)** | [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *dev server, bundling, Tailwind* / [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — *BEAM module reload* / [olive](#olive) ([repo](https://github.com/fravan/olive), 8★) — *process restart* | — |
+| **[HTTP Servers & Adapters](#http-servers--adapters)** | [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, streaming* / [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *Erlang adapter* / [glisten](#glisten) ([repo](https://github.com/lpil/glisten), 197★) — *TCP/TLS primitives* | — |
+| **[Core HTTP Types](#core-http-types)** | [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *request/response types, used by nearly everything* | [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *also targets JS* |
 
 > <details>
 > <summary><strong>Dependency Graph</strong></summary>
