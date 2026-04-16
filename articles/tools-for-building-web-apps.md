@@ -1,6 +1,6 @@
 # Tools for building web applications with Gleam
 
-You want to ~~become a pokemon trainer~~ build a web app in gleam?
+So you want to ~~become a pokemon trainer~~ build a web app in gleam?
 Don't know where to start?
 Start here.
 
