@@ -1,8 +1,8 @@
-# Gleam Web Servers and Frameworks Review
+# Tools for building web applications with Gleam
 
 ## Table of Contents
 
-1. [TL;DR](#tldr)
+1. [Summary](#summary)
 2. [Approach](#approach)
    - [Evaluation Criteria](#evaluation-criteria)
    - [Repos Reviewed](#repos-reviewed)
@@ -14,19 +14,25 @@
 7. [Core HTTP Types](#core-http-types) — [http](#http)
 8. [HTTP Servers & Adapters](#http-servers--adapters) — [mist](#mist) · [cowboy](#cowboy) · [glisten](#glisten)
 
-## TL;DR
+## Summary
 
-The ecosystem already covers full-stack, server, frontend, dev tools, and HTTP infrastructure. Every actively maintained library is reviewed below for maturity, activity, issues, and adoption. Pick the right layer — don't rewrite it.
 
-| Use case | BEAM | JS |
+With a quickly growing ecosystem, identifying and evaluating tools becomes increasingly important but difficult.
+I hope this guide saves you time in research and from regret when you realize you did redundant work.
+
+Gleam's ecosystem for building web applications already provides solutions for most high-level problems.
+Behold an overview of ecoystem staples.
+
+
+| Category | BEAM | JS |
 | --- | --- | --- |
-| **Full-stack** | [glimr](#glimr) (165★) — routing, templates, DB schema + migrations, auth, hot reload | — |
-| **Server framework** | [wisp](#wisp) (1.4k★) — handler+middleware, production-ready | [glen](#glen) (111★) — lightweight, promise-based, Deno/Node/Workers |
-| **Slim & low-level** | [mist](#mist) (489★) + [glisten](#glisten) (197★) — raw HTTP/TCP primitives | — |
-| **Frontend (Elm-style)** | [lustre](#lustre) (2.2k★) — declarative UI, SSR, universal | [lustre](#lustre) (2.2k★) — also runs on JS target |
-| **Frontend (React)** | — | [redraw](#redraw) (62★) — full React 19 bindings, type-checked |
-| **Dev tooling** | [lustre_dev_tools](#lustre_dev_tools) (112★) — dev server, bundling, Tailwind, live reload | — |
-| **Core HTTP types** | [http](#http) (276★) — request/response types, used by nearly everything | [http](#http) (276★) — also targets JS |
+| **[Full-Stack Frameworks](#full-stack-frameworks)** | [glimr](#glimr) (165★) — routing, templates, DB schema + migrations, auth, hot reload | — |
+| **[Server Frameworks](#server-frameworks)** | [wisp](#wisp) (1.4k★) — handler+middleware, production-ready | [glen](#glen) (111★) — lightweight, promise-based, Deno/Node/Workers |
+| **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | [lustre](#lustre) (2.2k★) — declarative UI, SSR, universal | [lustre](#lustre) (2.2k★) — also runs on JS target |
+| **[Frontend Frameworks](#frontend-frameworks)** (React) | — | [redraw](#redraw) (62★) — full React 19 bindings, type-checked |
+| **[Dev Tools](#dev-tools)** | [lustre_dev_tools](#lustre_dev_tools) (112★) — dev server, bundling, Tailwind, live reload | — |
+| **[HTTP Servers & Adapters](#http-servers--adapters)** | [mist](#mist) (489★) · [cowboy](#cowboy) (75★) · [glisten](#glisten) (197★) — raw HTTP/TCP primitives | — |
+| **[Core HTTP Types](#core-http-types)** | [http](#http) (276★) — request/response types, used by nearly everything | [http](#http) (276★) — also targets JS |
 
 ### Dependency Graph
 
