@@ -80,17 +80,17 @@ Each repo evaluated using public GitHub pages only (no API, no clone):
 4. **Gleam.toml** — Check Gleam version requirement, dependencies
 5. **Issues tab** — Count open issues, assess health
 
-<details>
-<summary><strong>Scoring dimensions</strong></summary>
-
-- **Maintenance:** Latest commit date + commit frequency. 🟩🟩 = actively developed (recent + frequent), 🟩 = steady, 🟥 = dormant
-- **README maturity:** 🟩🟩 = guide-style + examples + full docs, 🟩 = clear, 🟥 = minimal/broken
-- **Community (stars):** Raw star count shown in tables
-- **Work (effort):** Commit count, history depth, pagination. 🟩🟩 = substantial, 🟩 = solid, 🟥 = sparse
-- **Issues:** Count + context. Zero = positive, high = possible problems (balance against activity)
-- **Gleam compat:** Version constraint from `gleam.toml`. 🟩🟩 = compatible with latest (v1.15.4). "No constraint" = no minimum specified.
-
-</details>
+> <details>
+> <summary><strong>Scoring dimensions</strong></summary>
+>
+> - **Maintenance:** Latest commit date + commit frequency. 🟩🟩 = actively developed (recent + frequent), 🟩 = steady, 🟥 = dormant
+> - **README maturity:** 🟩🟩 = guide-style + examples + full docs, 🟩 = clear, 🟥 = minimal/broken
+> - **Community (stars):** Raw star count shown in tables
+> - **Work (effort):** Commit count, history depth, pagination. 🟩🟩 = substantial, 🟩 = solid, 🟥 = sparse
+> - **Issues:** Count + context. Zero = positive, high = possible problems (balance against activity)
+> - **Gleam compat:** Version constraint from `gleam.toml`. 🟩🟩 = compatible with latest (v1.15.4). "No constraint" = no minimum specified.
+>
+> </details>
 
 ### Repos Reviewed
 
