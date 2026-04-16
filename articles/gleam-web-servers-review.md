@@ -35,29 +35,18 @@ Gleam's web ecosystem already covers most use cases. This review evaluates every
 | **Frontend (React)** | — | [redraw](#redraw) (62★) — full React 19 bindings, type-checked |
 | **Dev tooling** | [lustre_dev_tools](#lustre_dev_tools) (112★) — dev server, bundling, Tailwind, live reload | — |
 
-### Ecosystem Overview
+### Dependency Graph
 
-- **Full-stack**
-  - [glimr](#glimr) — routing, templates, DB schema, auth, hot reload
-    - Uses [mist](#mist) for HTTP
-- **Server frameworks** (independent)
-  - [wisp](#wisp) — practical, production-ready; uses [mist](#mist)
-  - [glen](#glen) — lightweight, JS target
-- **Dev tools**
-  - [lustre_dev_tools](#lustre_dev_tools) — dev server, bundling, Tailwind
-  - [olive](#olive) — hot-reload, restarts server
-  - [gleam-radiate](#gleam-radiate) — hot-reload, reloads BEAM modules
-- **Frontend** (independent)
-  - [lustre](#lustre) — declarative, Elm-style, universal, SSR
-  - [redraw](#redraw) — React 19 bindings, JS target
-- **HTTP infrastructure**
-  - [mist](#mist) — active, WebSocket, streaming; uses [glisten](#glisten)
-    - Used by [glimr](#glimr) and [wisp](#wisp)
-  - [cowboy](#cowboy) — Erlang adapter
-- **Socket layer**
-  - [glisten](#glisten) — TCP/TLS, supervised acceptors (used by [mist](#mist))
-- **Core types**
-  - [http](#http) (gleam_http) — request/response types, adapters
+What depends on what. Arrows read "uses."
+
+- [glimr](#glimr) → [mist](#mist)
+- [wisp](#wisp) → [mist](#mist)
+- [mist](#mist) → [glisten](#glisten) → [http](#http)
+- [cowboy](#cowboy) → [http](#http)
+- [glen](#glen) → [http](#http) *(JS target, independent stack)*
+- [lustre](#lustre), [redraw](#redraw) — independent, integrate with any backend
+- [lustre_dev_tools](#lustre_dev_tools) — pairs with [lustre](#lustre)
+- [olive](#olive), [gleam-radiate](#gleam-radiate) — dev tools, no framework dependency
 
 ---
 
@@ -80,15 +69,19 @@ Each repo evaluated using public GitHub pages only (no API, no clone):
 4. **Gleam.toml** — Check Gleam version requirement, dependencies
 5. **Issues tab** — Count open issues, assess health
 
+**Note on code samples:** All code examples are taken from project READMEs or docs, not independently verified or tested.
+
 > <details>
 > <summary><strong>Scoring dimensions</strong></summary>
 >
-> - **Maintenance:** Latest commit date + commit frequency. 🟩🟩 = actively developed (recent + frequent), 🟩 = steady, 🟥 = dormant
+> - **Maintenance:** Latest commit date + commit frequency **only**. Does not factor in issues. 🟩🟩 = actively developed (recent + frequent), 🟩 = steady, 🟥 = dormant
+> - **Issue health:** Scored separately from maintenance. 🟩🟩 = 0 issues, 🟩 = 1–5 issues, ⬜ = unknown/couldn't load, 🟨 = 6–15 issues (watch), 🟥 = 16+ issues (but weigh against activity — a popular active repo with 16 issues may be healthier than a dormant repo with 0)
 > - **README maturity:** 🟩🟩 = guide-style + examples + full docs, 🟩 = clear, 🟥 = minimal/broken
 > - **Community (stars):** Raw star count shown in tables
 > - **Work (effort):** Commit count, history depth, pagination. 🟩🟩 = substantial, 🟩 = solid, 🟥 = sparse
-> - **Issues:** Count + context. Zero = positive, high = possible problems (balance against activity)
 > - **Gleam compat:** Version constraint from `gleam.toml`. 🟩🟩 = compatible with latest (v1.15.4). "No constraint" = no minimum specified.
+>
+> **Why maintenance and issues are separate:** A repo can be actively committed to but have a growing issue backlog (feature requests, unfixed bugs), or have zero issues but be dormant. Conflating them hides useful signal. Check both rows.
 >
 > </details>
 
@@ -153,7 +146,7 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 
 | Criterion | glimr |
 | --- | --- |
-| Open issues | 0 |
+| Open issues | 0 · 🟩🟩 |
 | Stars | 165 |
 | License | MIT |
 | Target | BEAM (server) + JS (Vite frontend) |
@@ -191,7 +184,7 @@ Routing, handlers, middleware. All are independent (not full-stack).
 
 | Criterion | wisp | glen |
 | --- | --- | --- |
-| Open issues | 16 | 2 |
+| Open issues | 16 · 🟥 | 2 · 🟩 |
 | Stars | 1400 | 111 |
 | License | Apache-2.0 | MIT |
 | Target | BEAM | JavaScript |
@@ -250,7 +243,7 @@ Hot-reload, dev servers, bundling. Used during development, not shipped to produ
 
 | Criterion | lustre_dev_tools | gleam-radiate | olive |
 | --- | --- | --- | --- |
-| Open issues | 19 | 3 | 1 |
+| Open issues | 19 · 🟥 | 3 · 🟩 | 1 · 🟩 |
 | Stars | 112 | 66 | 8 |
 | License | MIT | Apache-2.0 | Apache-2.0 |
 | Target | BEAM | BEAM | BEAM |
@@ -307,7 +300,7 @@ Client-side / UI layer. Can be integrated with any backend (including glimr).
 
 | Criterion | lustre | redraw |
 | --- | --- | --- |
-| Open issues | 9 | 1 |
+| Open issues | 9 · 🟨 | 1 · 🟩 |
 | Stars | 2213 | 62 |
 | License | MIT | MIT |
 | Target | Both (BEAM + JS) | JavaScript |
@@ -370,7 +363,7 @@ Shared type definitions used by all server and client adapters in the ecosystem.
 
 | Criterion | http |
 | --- | --- |
-| Open issues | 1 |
+| Open issues | 1 · 🟩 |
 | Stars | 276 |
 | License | Apache-2.0 |
 | Target | Both (BEAM + JS) |
@@ -406,7 +399,7 @@ Low-level server implementations and adapter layers. Use with frameworks or cust
 
 | Criterion | mist | cowboy | glisten |
 | --- | --- | --- | --- |
-| Open issues | 9 | ⬜ | ⬜ |
+| Open issues | 9 · 🟨 | ⬜ | ⬜ |
 | Stars | 489 | 75 | 197 |
 | License | Apache-2.0 | Apache-2.0 | Apache-2.0 |
 | Target | BEAM | BEAM | BEAM |
