@@ -666,3 +666,5 @@ Special thanks for their unwavering dedication to bringing joy to development go
 | 8 | | [MystPi/glen](https://github.com/MystPi/glen) | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **4** |
 
 **By target:** ☎️ BEAM **102** (13 repos) · 📜 JS **37** (5 repos). Dual-target repos (lustre, http, libero) count toward both.
+
+[How scores are calculated →](#scoring-dimensions)
