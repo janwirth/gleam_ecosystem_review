@@ -13,7 +13,6 @@
 6. [Frontend Frameworks](#frontend-frameworks) — [lustre](#lustre) · [redraw](#redraw)
 7. [Core HTTP Types](#core-http-types) — [http](#http)
 8. [HTTP Servers & Adapters](#http-servers--adapters) — [mist](#mist) · [cowboy](#cowboy) · [glisten](#glisten)
-9. [Notes](#notes)
 
 ## TL;DR
 
@@ -75,9 +74,9 @@ Each repo evaluated using public GitHub pages only (no API, no clone):
 > <summary><strong>Scoring dimensions</strong></summary>
 >
 > - **Maintenance:** Latest commit date + commit frequency **only**. Does not factor in issues. 🟩🟩 = actively developed (recent + frequent), 🟩 = steady, 🟥 = dormant
-> - **Issue health:** Scored separately from maintenance. 🟩🟩 = 0 issues, 🟩 = 1–5 issues, ⬜ = unknown/couldn't load, 🟨 = 6–15 issues (watch), 🟥 = 16+ issues (but weigh against activity — a popular active repo with 16 issues may be healthier than a dormant repo with 0)
+> - **Stars / Issues:** Combined row. Stars as raw count (x.xk if ≥1000). Issue health scored: 🟩🟩 = 0 issues, 🟩 = 1–5, 🟨 = 6–15 (watch), 🟥 = 16+ (weigh against activity), ⬜ = unknown/couldn't load
+> - **License:** 🟩 = permissive OSS (MIT, Apache-2.0, BSD). 🟥 = viral (GPL, AGPL) or no license
 > - **README maturity:** 🟩🟩 = guide-style + examples + full docs, 🟩 = clear, 🟥 = minimal/broken
-> - **Community (stars):** Raw star count shown in tables
 > - **Work (effort):** Commit count, history depth, pagination. 🟩🟩 = substantial, 🟩 = solid, 🟥 = sparse
 > - **Gleam compat:** Version constraint from `gleam.toml`. 🟩🟩 = compatible with latest (v1.15.4). "No constraint" = no minimum specified.
 >
@@ -146,9 +145,8 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 
 | Criterion | glimr |
 | --- | --- |
-| Open issues | 0 · 🟩🟩 |
-| Stars | 165 |
-| License | MIT |
+| Stars / Issues | 165★ · 0 issues 🟩🟩 |
+| License | MIT · 🟩 |
 | Target | BEAM (server) + JS (Vite frontend) |
 | Deps | 16 |
 | Gleam compat | No constraint specified · 🟩🟩 |
@@ -184,9 +182,8 @@ Routing, handlers, middleware. All are independent (not full-stack).
 
 | Criterion | wisp | glen |
 | --- | --- | --- |
-| Open issues | 16 · 🟥 | 2 · 🟩 |
-| Stars | 1400 | 111 |
-| License | Apache-2.0 | MIT |
+| Stars / Issues | 1.4k★ · 16 issues 🟥 | 111★ · 2 issues 🟩 |
+| License | Apache-2.0 · 🟩 | MIT · 🟩 |
 | Target | BEAM | JavaScript |
 | Deps | 12 | 7 |
 | Gleam compat | >= 1.11.0 · 🟩🟩 | No constraint · 🟩🟩 |
@@ -243,9 +240,8 @@ Hot-reload, dev servers, bundling. Used during development, not shipped to produ
 
 | Criterion | lustre_dev_tools | gleam-radiate | olive |
 | --- | --- | --- | --- |
-| Open issues | 19 · 🟥 | 3 · 🟩 | 1 · 🟩 |
-| Stars | 112 | 66 | 8 |
-| License | MIT | Apache-2.0 | Apache-2.0 |
+| Stars / Issues | 112★ · 19 issues 🟥 | 66★ · 3 issues 🟩 | 8★ · 1 issue 🟩 |
+| License | MIT · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
 | Target | BEAM | BEAM | BEAM |
 | Deps | 20 | 5 | 14 |
 | Gleam compat | No constraint · 🟩🟩 | No constraint · 🟩🟩 | No constraint · 🟩🟩 |
@@ -300,9 +296,8 @@ Client-side / UI layer. Can be integrated with any backend (including glimr).
 
 | Criterion | lustre | redraw |
 | --- | --- | --- |
-| Open issues | 9 · 🟨 | 1 · 🟩 |
-| Stars | 2213 | 62 |
-| License | MIT | MIT |
+| Stars / Issues | 2.2k★ · 9 issues 🟨 | 62★ · 1 issue 🟩 |
+| License | MIT · 🟩 | MIT · 🟩 |
 | Target | Both (BEAM + JS) | JavaScript |
 | Deps | 5 | 2 |
 | Gleam compat | >= 1.13.0 · 🟩🟩 | >= 1.13.0 · 🟩🟩 |
@@ -363,9 +358,8 @@ Shared type definitions used by all server and client adapters in the ecosystem.
 
 | Criterion | http |
 | --- | --- |
-| Open issues | 1 · 🟩 |
-| Stars | 276 |
-| License | Apache-2.0 |
+| Stars / Issues | 276★ · 1 issue 🟩 |
+| License | Apache-2.0 · 🟩 |
 | Target | Both (BEAM + JS) |
 | Deps | 1 |
 | Gleam compat | >= 1.11.0 · 🟩🟩 |
@@ -395,13 +389,12 @@ pub type Scheme           // Http, Https
 <details>
 <summary>mist · cowboy · glisten</summary>
 
-Low-level server implementations and adapter layers. Use with frameworks or custom routing.
+Low-level server implementations and adapter layers. Use with frameworks or custom routing. *(Cowboy and glisten issue tabs did not load reliably during review — counts marked ⬜.)*
 
 | Criterion | mist | cowboy | glisten |
 | --- | --- | --- | --- |
-| Open issues | 9 · 🟨 | ⬜ | ⬜ |
-| Stars | 489 | 75 | 197 |
-| License | Apache-2.0 | Apache-2.0 | Apache-2.0 |
+| Stars / Issues | 489★ · 9 issues 🟨 | 75★ · ⬜ | 197★ · ⬜ |
+| License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
 | Target | BEAM | BEAM | BEAM |
 | Deps | 9 | 5 | 5 |
 | Gleam compat | >= 1.11.0 · 🟩🟩 | >= 1.7.0 · 🟩🟩 | >= 1.11.0 · 🟩🟩 |
@@ -466,24 +459,6 @@ pub fn main() {
   echo #("got a msg", msg)
 }
 ```
-
-</details>
-
----
-
-## Notes
-
-<details>
-<summary>Expand</summary>
-
-**Disregarded repos** — See [Approach > Disregarded Repos](#disregarded-repos) for unmaintained or experimental projects. Includes `gleam-lang/plug` (2020, unmaintained), `react-gleam` (superseded by redraw), `gild_frontend` (abandoned), `novdom`/`cosmos` (stale), `gleam_webserver` (stub), and `example-echo-server` (learning example).
-
-**Known issues**: Cowboy and glisten GitHub issue tabs did not load reliably in session; issue counts marked ⬜.
-
-**Key signals:**
-- **glimr**: Zero issues. Strong maintenance signal. Built on Mist.
-- **wisp**: 16 issues but actively maintained. High adoption (1.4k stars).
-- **mist**: Active development (latest Apr 2026). Used by glimr and wisp.
 
 </details>
 
