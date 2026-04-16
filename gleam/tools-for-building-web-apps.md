@@ -8,7 +8,7 @@ Start here.
 
 1. [Summary](#summary)
 2. [Research Method](#research-method)
-   - [Evaluation Criteria](#evaluation-criteria)
+   - [Scoring Dimensions](#scoring-dimensions)
    - [Repos Reviewed](#repos-reviewed)
    - [Disregarded Repos](#disregarded-repos)
 3. [Categories](#categories)
@@ -92,9 +92,6 @@ The essentials to build something great are there.
 
 
 ## Research Method
-
-<details>
-<summary>Expand</summary>
 
 ### Scoring Dimensions
 
@@ -184,8 +181,6 @@ Discovered via [Gleam packages registry](https://packages.gleam.run/) searches. 
 > - **[renatillas/tiramisu](https://github.com/renatillas/tiramisu)** — 3D game engine. 101★, not web app tooling.
 >
 > </details>
-
-</details>
 
 
 ## Categories
