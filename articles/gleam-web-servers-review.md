@@ -30,22 +30,37 @@ Behold an overview of ecoystem staples.
 | **[Server Frameworks](#server-frameworks)** | [wisp](#wisp) (1.4k★) — handler+middleware, production-ready | [glen](#glen) (111★) — lightweight, promise-based, Deno/Node/Workers |
 | **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | [lustre](#lustre) (2.2k★) — declarative UI, SSR, universal | [lustre](#lustre) (2.2k★) — also runs on JS target |
 | **[Frontend Frameworks](#frontend-frameworks)** (React) | — | [redraw](#redraw) (62★) — full React 19 bindings, type-checked |
-| **[Dev Tools](#dev-tools)** | [lustre_dev_tools](#lustre_dev_tools) (112★) — dev server, bundling, Tailwind, live reload | — |
+| **[Dev Tools](#dev-tools)** | [lustre_dev_tools](#lustre_dev_tools) (112★) · [gleam-radiate](#gleam-radiate) (66★) · [olive](#olive) (8★) — hot-reload, dev server, bundling | — |
 | **[HTTP Servers & Adapters](#http-servers--adapters)** | [mist](#mist) (489★) · [cowboy](#cowboy) (75★) · [glisten](#glisten) (197★) — raw HTTP/TCP primitives | — |
 | **[Core HTTP Types](#core-http-types)** | [http](#http) (276★) — request/response types, used by nearly everything | [http](#http) (276★) — also targets JS |
 
-### Dependency Graph
-
-What depends on what. Arrows read "uses."
-
-- [glimr](#glimr) (full-stack) → [mist](#mist) (HTTP server)
-- [wisp](#wisp) (server framework) → [mist](#mist) (HTTP server)
-- [mist](#mist) (HTTP server) → [glisten](#glisten) (TCP/TLS) → [http](#http) (core types)
-- [cowboy](#cowboy) (Erlang adapter) → [http](#http) (core types)
-- [glen](#glen) (JS server) → [http](#http) (core types) — *independent stack*
-- [lustre](#lustre) (Elm-style UI), [redraw](#redraw) (React bindings) — standalone, any backend
-- [lustre_dev_tools](#lustre_dev_tools) (dev server) — pairs with [lustre](#lustre)
-- [olive](#olive) (hot-reload), [gleam-radiate](#gleam-radiate) (hot-reload) — framework-agnostic
+> <details>
+> <summary><strong>Dependency Graph</strong></summary>
+>
+> Arrows read "uses."
+>
+> **Full-Stack Frameworks:**
+> - [glimr](#glimr) → [mist](#mist) (HTTP server)
+>
+> **Server Frameworks:**
+> - [wisp](#wisp) → [mist](#mist) (HTTP server)
+> - [glen](#glen) → [http](#http) (core types) — *JS target, independent stack*
+>
+> **Frontend Frameworks:**
+> - [lustre](#lustre), [redraw](#redraw) — standalone, integrate with any backend
+>
+> **Dev Tools:**
+> - [lustre_dev_tools](#lustre_dev_tools) — pairs with [lustre](#lustre)
+> - [olive](#olive), [gleam-radiate](#gleam-radiate) — framework-agnostic
+>
+> **HTTP Servers & Adapters:**
+> - [mist](#mist) → [glisten](#glisten) (TCP/TLS) → [http](#http) (core types)
+> - [cowboy](#cowboy) → [http](#http) (core types)
+>
+> **Core HTTP Types:**
+> - [http](#http) — no upstream deps; depended on by nearly everything above
+>
+> </details>
 
 ---
 
