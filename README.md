@@ -1,34 +1,23 @@
 # Gleam Ecosystem Reviews
 
-Systematic evaluations of Gleam libraries. Cuts through noise: find which libraries actually work, which are maintained, which have good APIs.
+Systematic evaluations of the Gleam library ecosystem. Find what's maintained, what's idiomatic, and what actually works.
 
-## Problem
+## Articles
 
-Choosing Gleam libraries is hard. Repos scatter across GitHub. Some unmaintained. Some have bugs or rough APIs. Some do something different than name suggests. Weeks spent digging.
+### Gleam
 
-## Solution
+- [Tools for building web apps](gleam/tools-for-building-web-apps.md) — 34 repos evaluated, 15 reviewed in depth. Server frameworks, HTTP servers, frontend frameworks, dev tools, and more.
 
-This repo collects systematic reviews. Each review:
-- Tests actual behavior
-- Checks maintenance status
-- Evaluates API design
-- Notes gotchas and tradeoffs
-- Provides real judgment, not marketing
+### Upcoming
 
-## Structure
+- Parsers & generators
+- Linters
+- Talking to DBs
 
-```
-reviews/
-  library-name/
-    review.md          # Full evaluation
-    examples/          # Working code samples
-    workflow.md        # Agentic review process (generated)
-```
+## Method
 
-## Using Reviews
+Each review scores repos on 7 dimensions: stars, license, Gleam compatibility, maintenance, age, README maturity, and idiomaticity. Data sourced from public GitHub pages. See the [research method](gleam/tools-for-building-web-apps.md#research-method) in the first article for details.
 
-Read `/reviews/[library]/review.md` for complete evaluation. Skip the marketing. Find what actually matters for your use case.
+## License
 
-## Contributing
-
-Reviews use systematic workflow. See `workflow.md` files for how reviews are generated.
+[MIT](LICENSE)
