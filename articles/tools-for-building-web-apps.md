@@ -88,15 +88,17 @@ Each repo evaluated using public GitHub pages only (no API, no clone):
 > <details>
 > <summary><strong>Scoring dimensions</strong></summary>
 >
-> - **Maintenance:** Latest commit date + commit frequency **only**. Does not factor in issues. 🟩🟩 = actively developed (recent + frequent), 🟩 = steady, 🟨 = latest commit >5 months old (watch), 🟥 = dormant
-> - **Stars / Issues:** Combined row. Stars as raw count (x.xk if ≥1000). Scored by star-to-issue ratio: 🟩🟩 = ≥1000x or 0 issues, 🟩 = ≥100x, 🟨 = ≥10x, 🟥 = <10x, ⬜ = unknown/couldn't load
-> - **License:** 🟩 = permissive OSS (MIT, Apache-2.0, BSD). 🟥 = viral (GPL, AGPL) or no license
-> - **README maturity:** 🟩🟩 = guide-style + examples + full docs, 🟩 = clear, 🟥 = minimal/broken
-> - **Work (effort):** Commit count, history depth, pagination. 🟩🟩 = substantial, 🟩 = solid, 🟥 = sparse
-> - **Age:** Time since first commit. 🟩🟩 = ≥2 years, 🟩 = ≥1 year, 🟨 = ≥3 months, 🟥 = <3 months
-> - **Gleam compat:** Version constraint from `gleam.toml`. 🟩🟩 = compatible with latest (v1.15.4). "No constraint" = no minimum specified.
+> - **Stars / Issues:** Star-to-issue ratio measures community trust vs. open problems. Stars as raw count (x.xk if ≥1000). 🟩🟩 = ≥1000x or 0 issues, 🟩 = ≥100x, 🟨 = ≥10x, 🟥 = <10x, ⬜ = unknown/couldn't load. *Example: 489★ with 9 issues = 54x → 🟨.*
+> - **License:** Whether the license allows unrestricted commercial use. 🟩 = permissive OSS (MIT, Apache-2.0, BSD). 🟥 = viral (GPL, AGPL) or no license. Only one tier — permissive or not.
+> - **Gleam compat:** Checks `gleam_stdlib` version constraint format in `gleam.toml` `[dependencies]`. 🟩 = range constraint (`>= X and < Y`), 🟥 = non-range constraint (`~>` style) which can cause resolver conflicts during install. *Example: `"~> 0.34 or ~> 1.0"` → 🟥; `">= 0.44.0 and < 2.0.0"` → 🟩.*
+> - **Maintenance:** Latest commit date relative to snapshot (2026-04-13), combined with commit frequency. Does **not** factor in issues. 🟩🟩 = recent + frequent (within ~2 months), 🟩 = within 5 months, 🟨 = >5 months old (watch), 🟥 = >1 year (dormant). *Example: last commit 2025-09-18 = ~7 months → 🟨.*
+> - **Total work:** Volume of effort based on commit count, history depth, and whether `/commits` paginates. 🟩🟩 = paginated + dense history (substantial), 🟩 = solid history, 🟥 = sparse / few commits. *Example: "Paginated; active 2025–Apr 2026" → 🟩🟩.*
+> - **Age:** Time from first visible commit to snapshot date. Older projects have more time to stabilize. 🟩🟩 = ≥3 years, 🟩 = ≥1 year, 🟨 = ≥3 months, 🟥 = <3 months. *Example: history starts Mar 2026, snapshot Apr 2026 → ~1 month → 🟥.*
+> - **README maturity:** Quality of documentation in the repo README. 🟩🟩 = guide-style with examples, full feature docs, and getting-started instructions. 🟩 = clear description and basic usage. 🟥 = minimal, broken, or missing. *Example: batteries-included framework with full guide → 🟩🟩; tagline-only → 🟩.*
 >
 > **Why maintenance and issues are separate:** A repo can be actively committed to but have a growing issue backlog (feature requests, unfixed bugs), or have zero issues but be dormant. Conflating them hides useful signal. Check both rows.
+>
+> **Leaderboard scoring:** 🟥 = −1, 🟨 = 0, 🟩 = 1, 🟩🟩 = 2. Sum of all 7 dimensions. Max possible = 14.
 >
 > </details>
 
@@ -165,10 +167,10 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 | License | MIT · 🟩 |
 | Target | ☎️ BEAM (server) + 📜 JS (Vite frontend) |
 | Deps | 16 |
-| Gleam compat | No constraint specified · 🟩🟩 |
+| Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
 | Maintenance | 2026-04-11 · 🟩🟩 |
 | Total work | Paginated `/commits` (35+ per page); history Mar 5 to Apr 11 · 🟩🟩 |
-| Age | ~1 month (Mar 2026) · 🟥 |
+| Age | ~4.5 months (Nov 2025) · 🟨 |
 | README maturity | 🟩🟩 (batteries-included; full guide) |
 
 #### glimr · [repo](https://github.com/glimr-org/glimr)
@@ -197,10 +199,10 @@ Routing, handlers, middleware. All are independent (not full-stack).
 | License | Apache-2.0 · 🟩 | MIT · 🟩 |
 | Target | ☎️ BEAM | 📜 JavaScript |
 | Deps | 12 | 7 |
-| Gleam compat | >= 1.11.0 · 🟩🟩 | No constraint · 🟩🟩 |
+| Gleam compat | `>= 0.50 and < 2.0` · 🟩 | `~> 0.34 or ~> 1.0` · 🟥 |
 | Maintenance | 2026-03-28 · 🟩🟩 | 2025-06-30 · 🟨 |
 | Total work | Paginated (35+); Oct 2025–Mar 2026 · 🟩 | Paginated; Feb 2024 back · 🟩 |
-| Age | >2 years · 🟩🟩 | >2 years · 🟩🟩 |
+| Age | ~2.7 years (Aug 2023) · 🟩 | ~2.2 years (Jan 2024) · 🟩 |
 | README maturity | 🟩🟩 (practical, handler+middleware) | 🟩 (tagline + repo) |
 
 #### wisp · [repo](https://github.com/gleam-wisp/wisp)
@@ -250,10 +252,10 @@ Hot-reload, dev servers, bundling. Used during development, not shipped to produ
 | License | MIT · 🟩 | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM | ☎️ BEAM |
 | Deps | 20 | 5 |
-| Gleam compat | No constraint · 🟩🟩 | No constraint · 🟩🟩 |
+| Gleam compat | `>= 0.60 and < 2.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 |
 | Maintenance | 2026-04-02 · 🟩🟩 | 2025-09-18 · 🟨 |
 | Total work | Paginated; active 2025–Apr 2026 · 🟩🟩 | Oct 2023–2025 · 🟩 |
-| Age | >2 years · 🟩🟩 | >2 years (Oct 2023) · 🟩🟩 |
+| Age | ~2 years (Mar 2024) · 🟩 | ~2.5 years (Oct 2023) · 🟩 |
 | README maturity | 🟩 (features list, install guide, no code samples) | 🟩 (tagline) |
 
 #### lustre_dev_tools · [repo](https://github.com/lustre-labs/dev-tools)
@@ -290,10 +292,10 @@ Client-side / UI layer. Can be integrated with any backend (including glimr).
 | License | MIT · 🟩 | MIT · 🟩 |
 | Target | ☎️📜 Both (BEAM + JS) | 📜 JavaScript |
 | Deps | 5 | 2 |
-| Gleam compat | >= 1.13.0 · 🟩🟩 | >= 1.13.0 · 🟩🟩 |
+| Gleam compat | `>= 0.60 and < 2.0` · 🟩 | `>= 0.60 and < 2.0` · 🟩 |
 | Maintenance | 2026-03-22 · 🟩🟩 | 2026-01-20 · 🟩 |
 | Total work | Paginated `/commits` (34+ per page); history to Jan 2026 · 🟩🟩 | Paginated; 89 commits; Aug 2025–Jan 2026 visible · 🟩 |
-| Age | >2 years · 🟩🟩 | ~1 year · 🟩 |
+| Age | ~4.2 years (Feb 2022) · 🟩🟩 | ~1.7 years (Jul 2024) · 🟩 |
 | README maturity | 🟩🟩 (full guide) | 🟩🟩 (guide-style, examples, hooks, contexts) |
 
 #### lustre · [repo](https://github.com/lustre-labs/lustre)
@@ -347,10 +349,10 @@ Shared type definitions used by all server and client adapters in the ecosystem.
 | License | Apache-2.0 · 🟩 |
 | Target | ☎️📜 Both (BEAM + JS) |
 | Deps | 1 |
-| Gleam compat | >= 1.11.0 · 🟩🟩 |
+| Gleam compat | `>= 0.45 and < 2.0` · 🟩 |
 | Maintenance | 2025-10-02 · 🟨 |
 | Total work | Paginated; dense 2025 · 🟩🟩 |
-| Age | >2 years · 🟩🟩 |
+| Age | ~6.8 years (Jun 2019) · 🟩🟩 |
 | README maturity | 🟩 (adapter tables + ecosystem) |
 
 #### http · [repo](https://github.com/gleam-lang/http)
@@ -377,10 +379,10 @@ Low-level server implementations and adapter layers. Use with frameworks or cust
 | License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM | ☎️ BEAM | ☎️ BEAM |
 | Deps | 9 | 5 | 5 |
-| Gleam compat | >= 1.11.0 · 🟩🟩 | >= 1.7.0 · 🟩🟩 | >= 1.11.0 · 🟩🟩 |
+| Gleam compat | `>= 0.50 and < 1.0` · 🟩 | `>= 0.45 and < 2.0` · 🟩 | `>= 0.59 and < 1.0` · 🟩 |
 | Maintenance | 2026-04-01 · 🟩🟩 | 2025-11-01 · 🟨 | 2026-01-11 · 🟩 |
 | Total work | Paginated (master); active 2025–Apr 2026 · 🟩🟩 | Multi-year history · 🟩 | 231 commits; Jun 2025–Jan 2026 visible · 🟩 |
-| Age | >2 years · 🟩🟩 | >2 years · 🟩🟩 | >2 years · 🟩🟩 |
+| Age | ~4 years (Apr 2022) · 🟩🟩 | ~5.7 years (Aug 2020) · 🟩🟩 | ~4 years (Apr 2022) · 🟩🟩 |
 | README maturity | 🟩🟩 (builder, WebSocket, streaming) | 🟩 (adapter pattern) | 🟩 (TCP/TLS server) |
 
 #### mist · [repo](https://github.com/rawhat/mist)
@@ -440,4 +442,23 @@ pub fn main() {
   echo #("got a msg", msg)
 }
 ```
+
+
+## Leaderboard
+
+This one is for fun, don't take it too seriously!
+Everyone's a winner! 🎉
+Better luck next time.
+
+
+| # | Repo | S/I | Lic | Compat | Maint | Work | Age | README | Score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | [lustre-labs/lustre](https://github.com/lustre-labs/lustre) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | **11** |
+| 2 | · [rawhat/mist](https://github.com/rawhat/mist)<br>· [glimr-org/glimr](https://github.com/glimr-org/glimr) | 🟨<br>🟩🟩 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟩🟩 | 🟩🟩<br>🟨 | 🟩🟩<br>🟩🟩 | **10** |
+| 4 | [lpil/glisten](https://github.com/lpil/glisten) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
+| 5 | · [gleam-wisp/wisp](https://github.com/gleam-wisp/wisp)<br>· [gleam-lang/http](https://github.com/gleam-lang/http) | 🟨<br>🟩 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟨 | 🟩<br>🟩🟩 | 🟩<br>🟩🟩 | 🟩🟩<br>🟩 | **8** |
+| 7 | · [lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools)<br>· [ghivert/redraw](https://github.com/ghivert/redraw) | 🟥<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩 | 🟩🟩<br>🟩 | 🟩<br>🟩 | 🟩<br>🟩🟩 | **7** |
+| 9 | [gleam-lang/cowboy](https://github.com/gleam-lang/cowboy) | 🟨 | 🟩 | 🟩 | 🟨 | 🟩 | 🟩🟩 | 🟩 | **6** |
+| 10 | [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate) | 🟨 | 🟩 | 🟩 | 🟨 | 🟩 | 🟩 | 🟩 | **5** |
+| 11 | [MystPi/glen](https://github.com/MystPi/glen) | 🟨 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **3** |
 
