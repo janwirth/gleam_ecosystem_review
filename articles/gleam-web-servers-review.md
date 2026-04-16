@@ -23,23 +23,23 @@ The ecosystem already covers full-stack, server, frontend, dev tools, and HTTP i
 | **Full-stack** | [glimr](#glimr) (165★) — routing, templates, DB schema + migrations, auth, hot reload | — |
 | **Server framework** | [wisp](#wisp) (1.4k★) — handler+middleware, production-ready | [glen](#glen) (111★) — lightweight, promise-based, Deno/Node/Workers |
 | **Slim & low-level** | [mist](#mist) (489★) + [glisten](#glisten) (197★) — raw HTTP/TCP primitives | — |
-| **Core HTTP types** | [http](#http) (276★) — request/response types, used by nearly everything | [http](#http) (276★) — also targets JS |
 | **Frontend (Elm-style)** | [lustre](#lustre) (2.2k★) — declarative UI, SSR, universal | [lustre](#lustre) (2.2k★) — also runs on JS target |
 | **Frontend (React)** | — | [redraw](#redraw) (62★) — full React 19 bindings, type-checked |
 | **Dev tooling** | [lustre_dev_tools](#lustre_dev_tools) (112★) — dev server, bundling, Tailwind, live reload | — |
+| **Core HTTP types** | [http](#http) (276★) — request/response types, used by nearly everything | [http](#http) (276★) — also targets JS |
 
 ### Dependency Graph
 
 What depends on what. Arrows read "uses."
 
-- [glimr](#glimr) → [mist](#mist)
-- [wisp](#wisp) → [mist](#mist)
-- [mist](#mist) → [glisten](#glisten) → [http](#http)
-- [cowboy](#cowboy) → [http](#http)
-- [glen](#glen) → [http](#http) *(JS target, independent stack)*
-- [lustre](#lustre), [redraw](#redraw) — independent, integrate with any backend
-- [lustre_dev_tools](#lustre_dev_tools) — pairs with [lustre](#lustre)
-- [olive](#olive), [gleam-radiate](#gleam-radiate) — dev tools, no framework dependency
+- [glimr](#glimr) (full-stack) → [mist](#mist) (HTTP server)
+- [wisp](#wisp) (server framework) → [mist](#mist) (HTTP server)
+- [mist](#mist) (HTTP server) → [glisten](#glisten) (TCP/TLS) → [http](#http) (core types)
+- [cowboy](#cowboy) (Erlang adapter) → [http](#http) (core types)
+- [glen](#glen) (JS server) → [http](#http) (core types) — *independent stack*
+- [lustre](#lustre) (Elm-style UI), [redraw](#redraw) (React bindings) — standalone, any backend
+- [lustre_dev_tools](#lustre_dev_tools) (dev server) — pairs with [lustre](#lustre)
+- [olive](#olive) (hot-reload), [gleam-radiate](#gleam-radiate) (hot-reload) — framework-agnostic
 
 ---
 
