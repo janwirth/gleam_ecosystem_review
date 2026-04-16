@@ -43,12 +43,12 @@ The essentials to build something great are there.
 | **[Frontend Frameworks](#frontend-frameworks)** (React) | — | · [redraw](#redraw) ([repo](https://github.com/ghivert/redraw), 62★) — *full React 19 bindings, type-checked* |
 | **[RPC Layer](#rpc-layer)** | · [libero](#libero) ([repo](https://github.com/pairshaped/libero), 3★) — *young; typed RPC for Lustre+server, WebSocket, codegen* | · [libero](#libero) — *also generates JS client stubs* |
 | **[Dev Tools](#dev-tools)** | · [🥉](#leaderboard) [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *dev server, bundling, Tailwind*<br>· [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — *BEAM module reload* | — |
-| **[HTTP Servers](#http-servers)** | · [🥇](#leaderboard) [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, streaming*<br>· [🥉](#leaderboard) [ewe](#ewe) ([repo](https://github.com/vshakitskiy/ewe), 106★) — *HTTP server, TLS, WebSocket, compression* | — |
+| **[HTTP Servers](#http-servers)** | · [🥇](#leaderboard) [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, SSE, streaming*<br>· [🥉](#leaderboard) [ewe](#ewe) ([repo](https://github.com/vshakitskiy/ewe), 106★) — *HTTP server, TLS, WebSocket, SSE, file serving* | — |
 | **[Network Infrastructure](#network-infrastructure)** | · [🥉](#leaderboard) [glisten](#glisten) ([repo](https://github.com/rawhat/glisten), 197★) — *TCP/TLS layer, powers mist*<br>· [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *adapter for existing Erlang/Elixir Cowboy setups* | — |
 | **[Core HTTP Types](#core-http-types)** | · [🥉](#leaderboard) [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *request/response types, used by nearly everything* | · [🥉](#leaderboard) [http](#http) ([repo](https://github.com/gleam-lang/http), 276★) — *also targets JS* |
 
 > [!IMPORTANT]  
-> Crucial information necessary for users to succeed.
+> The side of the ecosystem targeting BEAM is more mature.
 
 
 > <details>
@@ -273,12 +273,12 @@ Routing, handlers, middleware. All are independent (not full-stack).
 | **Features** | | | |
 | Routing DSL | — (`case` on path segments) | ✅ (route/method/path) | — (`case` on path segments) |
 | Middleware | ✅ | ✅ | ✅ |
-| JSON | ✅ | ✅ | — |
-| Static files | ✅ | — | ✅ |
+| JSON | ✅ | ✅ | ✅ |
+| Static files | ✅ | ✅ | ✅ |
 | Logging | ✅ | — | — |
 | WebSocket | — | ✅ | ✅ |
-| Sessions / cookies | ✅ | — | — |
-| Form parsing | ✅ | — | — |
+| Sessions / cookies | ✅ | ✅ (cookies) | — |
+| Form parsing | ✅ | ✅ | ✅ |
 | Testing helpers | ✅ (`wisp/simulate`) | — | — |
 
 #### wisp
@@ -564,8 +564,8 @@ Full HTTP server implementations. Use with frameworks or custom routing.
 | WebSocket | ✅ | ✅ |
 | TLS / HTTPS | ✅ (via glisten) | ✅ |
 | Streaming responses | ✅ (chunked) | ✅ (chunked) |
-| Server-Sent Events | — | ✅ |
-| File serving | ✅ (`send_file`) | — |
+| Server-Sent Events | ✅ | ✅ |
+| File serving | ✅ (`send_file`) | ✅ (`ewe.file`) |
 | Compression | — | — |
 | HTTP/2 | — | — |
 
