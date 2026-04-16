@@ -16,17 +16,11 @@
 
 ## TL;DR
 
-Gleam's web ecosystem already covers most use cases. This review evaluates every actively maintained web library so you can **pick the right tool instead of rebuilding what exists.**
-
-- **Grouped by purpose:** full-stack, server, frontend, dev tools, HTTP infrastructure
-- **Assessed for maturity:** activity, issues, README quality, community adoption
-- **Production-ready picks identified** vs. learning material and abandoned experiments
-
-**Don't rebuild what exists.** Find your use case below, click through to the detailed evaluation.
+The ecosystem already covers full-stack, server, frontend, dev tools, and HTTP infrastructure. Every actively maintained library is reviewed below for maturity, activity, issues, and adoption. Pick the right layer — don't rewrite it.
 
 | Use case | BEAM | JS |
 | --- | --- | --- |
-| **Full-stack, batteries-included** | [glimr](#glimr) (165★) — routing, templates, DB schema + migrations, auth, hot reload | — |
+| **Full-stack** | [glimr](#glimr) (165★) — routing, templates, DB schema + migrations, auth, hot reload | — |
 | **Server framework** | [wisp](#wisp) (1.4k★) — handler+middleware, production-ready | [glen](#glen) (111★) — lightweight, promise-based, Deno/Node/Workers |
 | **Slim & low-level** | [mist](#mist) (489★) + [glisten](#glisten) (197★) — raw HTTP/TCP primitives | — |
 | **Core HTTP types** | [http](#http) (276★) — request/response types, used by nearly everything | [http](#http) (276★) — also targets JS |
@@ -462,23 +456,3 @@ pub fn main() {
 
 </details>
 
----
-
-<details>
-<summary><strong>Comparison Section</strong></summary>
-
-None of these READMEs include head-to-head framework comparison. **gleam-lang/http** includes **adapter comparison tables** (Mist, Cowboy, Plug, fetch, etc.) — ecosystem context, not tool comparison.
-
-</details>
-
----
-
-<details>
-<summary><strong>Open Questions</strong></summary>
-
-> Added during review pass (2026-04-14). Items below need investigation or decision before this article can be considered reliable.
-
-### Blind Spots
-1. **Hex docs / external documentation.** README quality is assessed but published hex.pm docs (common in Gleam ecosystem) aren't checked.
-
-</details>
