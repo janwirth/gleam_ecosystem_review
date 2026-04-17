@@ -10,7 +10,6 @@ Start here.
 2. [Research Method](#research-method)
    - [Scoring Dimensions](#scoring-dimensions)
    - [Discovery](#discovery)
-   - [Disregarded Repos](#disregarded-repos)
 3. [Categories](#categories)
    - [Full-Stack Frameworks](#full-stack-frameworks) — [glimr](#glimr)
    - [Server Frameworks](#server-frameworks) — [wisp](#wisp) · [dream](#dream) · [glen](#glen)
@@ -115,10 +114,8 @@ The essentials to build something great are there.
 - [react](https://packages.gleam.run/?search=react)
 - [web](https://packages.gleam.run/?search=web)
 
-### Disregarded Repos
-
 > <details>
-> <summary>Excluded from detailed review (19 repos) — maintenance, scope, or traction issues</summary>
+> <summary>19 disregarded — maintenance, scope, or traction issues</summary>
 >
 > **Unmaintained:**
 > - **[gleam-lang/plug](https://github.com/gleam-lang/plug)** — HTTP adapter for Elixir Plug compatibility. Last commit 2020-08-27 (6+ years dormant). Activity 🟥.
