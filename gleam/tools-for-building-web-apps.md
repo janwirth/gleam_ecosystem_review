@@ -9,7 +9,7 @@ Start here.
 1. [Summary](#summary)
 2. [Research Method](#research-method)
    - [Scoring Dimensions](#scoring-dimensions)
-   - [Repos Reviewed](#repos-reviewed)
+   - [Discovery](#discovery)
    - [Disregarded Repos](#disregarded-repos)
 3. [Categories](#categories)
    - [Full-Stack Frameworks](#full-stack-frameworks) — [glimr](#glimr)
@@ -29,7 +29,7 @@ Start here.
 
 Gleam's ecosystem is growing fast, and keeping track of what's available isn't easy.
 
-I put this together so you don't have to spend hours on research, or worse, build something that already exists. 34 repos evaluated — **15 included**, 19 disregarded.
+I put this together so you don't have to spend hours on research, or worse, build something that already exists.
 
 The essentials to build something great are there.
 
@@ -105,46 +105,15 @@ The essentials to build something great are there.
 
 **Leaderboard scoring:** 🟥 = −1, 🟨 = 0, 🟩 = 1, 🟩🟩 = 2. Sum of all 7 dimensions. Max possible = 13.
 
-### Repos Reviewed
+### Discovery
 
-Discovered via [Gleam packages registry](https://packages.gleam.run/) searches. Relevant results picked from each; duplicates and non-web packages ignored. Listed by category.
+34 repos found via [Gleam packages registry](https://packages.gleam.run/) searches — **15 included** (see [Categories](#categories)), **19 disregarded** (below).
 
 - [server](https://packages.gleam.run/?search=server)
 - [backend](https://packages.gleam.run/?search=backend)
 - [frontend](https://packages.gleam.run/?search=frontend)
 - [react](https://packages.gleam.run/?search=react)
 - [web](https://packages.gleam.run/?search=web)
-
-**Full-Stack Frameworks:**
-- **[glimr-org/glimr](https://github.com/glimr-org/glimr)** — Batteries-included: routing, templates, middleware, DB schema + migrations, caching, auth, hot reload. Built on Mist.
-
-**Server Frameworks:**
-- **[gleam-wisp/wisp](https://github.com/gleam-wisp/wisp)** — Practical web framework. Handler + middleware pattern, pragmatic, production-ready.
-- **[TrustBound/dream](https://github.com/TrustBound/dream)** — Composable web framework. "Clean, composable web development for Gleam. No magic." Router, middleware, JSON support.
-- **[MystPi/glen](https://github.com/MystPi/glen)** — Lightweight web framework. "A peaceful web framework for Gleam that targets JS."
-
-**Static Site Generators:**
-- **[RyanBrewer317/arctic](https://github.com/RyanBrewer317/arctic)** — Content-driven SSG. Collections, custom parsers, builds via lustre_ssg. Serverless-friendly.
-
-**Dev Tools:**
-- **[lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools)** — Lustre CLI + dev server. Zero-config dev server, bundling, TailwindCSS v4, live reload.
-- **[pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)** — Hot-reload dev tool. Watches source files and reloads BEAM modules.
-
-**RPC Layer:**
-- **[pairshaped/libero](https://github.com/pairshaped/libero)** — Typed RPC for Lustre+Gleam. `@rpc` annotations generate client stubs, routes, encoders/decoders. WebSocket transport, compile-time type safety.
-
-**Frontend Frameworks:**
-- **[lustre-labs/lustre](https://github.com/lustre-labs/lustre)** — Declarative HTML, Elm-style state, universal components, SSR, CLI tooling.
-- **[ghivert/redraw](https://github.com/ghivert/redraw)** — React bindings for Gleam. Full React 19 support, type-checked, JS target.
-
-**Core HTTP Types:**
-- **[gleam-lang/http](https://github.com/gleam-lang/http)** — HTTP types and functions. Core layer linking server/client adapters (Mist, Cowboy, Plug, fetch).
-
-**HTTP Servers & Adapters:**
-- **[rawhat/mist](https://github.com/rawhat/mist)** — HTTP server. Builder pattern, WebSocket, streaming, flexible routing. Powers glimr and wisp.
-- **[vshakitskiy/ewe](https://github.com/vshakitskiy/ewe)** — HTTP server. TLS, WebSocket, compression. Independent alternative to mist.
-- **[gleam-lang/cowboy](https://github.com/gleam-lang/cowboy)** — HTTP adapter. Integration layer for Cowboy web server.
-- **[rawhat/glisten](https://github.com/rawhat/glisten)** — TCP/TLS server. Pure Gleam, supervised socket acceptors, TLS support. Low-level building block.
 
 ### Disregarded Repos
 
@@ -196,7 +165,7 @@ All-in-one solutions: routing, templates, middleware, auth, database, developmen
 | Target | ☎️ BEAM (server) + 📜 JS (Vite frontend) |
 | Deps | 16 |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (max: recency 2d 🟩🟩, responsive 🟩🟩) |
+| Maintenance | 🟩🟩 |
 | Age | ~4.5 months (Nov 2025) · 🟨 |
 | README maturity | 🟩🟩 (batteries-included; full guide) |
 | Idiomaticity | 🟥 (loom templates, magic directives — [see reasoning](#glimr-idiomaticity)) |
@@ -232,7 +201,7 @@ Routing, handlers, middleware. All are independent (not full-stack).
 | Target | ☎️ BEAM | ☎️ BEAM | 📜 JavaScript |
 | Deps | 12 | 10 | 7 |
 | Gleam compat | `>= 0.50 and < 2.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 | `~> 0.34 or ~> 1.0` · 🟥 |
-| Maintenance | 🟩🟩 (max: recency 16d 🟩🟩, responsive 🟥) | 🟩🟩 (max: recency 27d 🟩🟩, responsive 🟨) | 🟨 (max: recency 10mo 🟨, responsive 🟥) |
+| Maintenance | 🟩🟩 | 🟩🟩 | 🟨 |
 | Age | ~2.7 years (Aug 2023) · 🟩 | ~5 months (Nov 2025) · 🟨 | ~2.2 years (Jan 2024) · 🟩 |
 | README maturity | 🟩🟩 (practical, handler+middleware) | 🟩🟩 (guide-style, quickstart, examples) | 🟩 (tagline + repo) |
 | Idiomaticity | 🟩 | 🟩 | 🟩 |
@@ -316,7 +285,7 @@ Build-time content pipelines that output static HTML. No runtime server needed.
 | Target | ☎️ BEAM (build-time) |
 | Deps | 10 |
 | Gleam compat | `>= 0.40 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (max: recency 9mo 🟨, responsive 🟩🟩) |
+| Maintenance | 🟩🟩 |
 | Age | ~1.7 years (Aug 2024) · 🟩 |
 | README maturity | 🟩 (conceptual guide, external quickstart link) |
 | Idiomaticity | 🟩 |
@@ -351,7 +320,7 @@ Hot-reload, dev servers, bundling. Used during development, not shipped to produ
 | Target | ☎️ BEAM | ☎️ BEAM |
 | Deps | 20 | 5 |
 | Gleam compat | `>= 0.60 and < 2.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (max: recency 11d 🟩🟩, responsive 🟥) | 🟨 (max: recency 7mo 🟨, responsive 🟥) |
+| Maintenance | 🟩🟩 | 🟨 |
 | Age | ~2 years (Mar 2024) · 🟩 | ~2.5 years (Oct 2023) · 🟩 |
 | README maturity | 🟩 (features list, install guide, no code samples) | 🟩 (tagline) |
 | Idiomaticity | 🟩 | 🟩 |
@@ -393,7 +362,7 @@ Typed remote procedure calls between server and client. Replaces REST boilerplat
 | Target | ☎️📜 Both (BEAM server + JS client) |
 | Deps | 6 |
 | Gleam compat | `>= 0.69 and < 1.0` · 🟩 |
-| Maintenance | 🟩🟩 (max: recency 0d 🟩🟩, responsive 🟩🟩) |
+| Maintenance | 🟩🟩 |
 | Age | 2 days (Apr 2026) · 🟥 |
 | README maturity | 🟩🟩 (full guide, annotated examples, error docs, CLI reference) |
 | Idiomaticity | 🟩 (explicit codegen step) |
@@ -431,7 +400,7 @@ Client-side / UI layer. Can be integrated with any backend (including glimr).
 | Target | ☎️📜 Both (BEAM + JS) | 📜 JavaScript |
 | Deps | 5 | 2 |
 | Gleam compat | `>= 0.60 and < 2.0` · 🟩 | `>= 0.60 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (max: recency 22d 🟩🟩, responsive 🟥) | 🟩🟩 (max: recency 3mo 🟩, responsive 🟩🟩) |
+| Maintenance | 🟩🟩 | 🟩🟩 |
 | Age | ~4.2 years (Feb 2022) · 🟩🟩 | ~1.7 years (Jul 2024) · 🟩 |
 | README maturity | 🟩🟩 (full guide) | 🟩🟩 (guide-style, examples, hooks, contexts) |
 | Idiomaticity | 🟩 | 🟩 |
@@ -490,7 +459,7 @@ Shared type definitions used by all server and client adapters in the ecosystem.
 | Target | ☎️📜 Both (BEAM + JS) |
 | Deps | 1 |
 | Gleam compat | `>= 0.45 and < 2.0` · 🟩 |
-| Maintenance | 🟩 (max: recency 6mo 🟨, responsive 🟩 — [PR #79](https://github.com/gleam-lang/http/pull/79) reviewed in 6 days) |
+| Maintenance | 🟩 |
 | Age | ~6.8 years (Jun 2019) · 🟩🟩 |
 | README maturity | 🟩 (adapter tables + ecosystem) |
 | Idiomaticity | 🟩 |
@@ -521,7 +490,7 @@ Full HTTP server implementations and adapters. Use with frameworks or custom rou
 | Target | ☎️ BEAM | ☎️ BEAM | ☎️ BEAM |
 | Deps | 9 | 9 | 5 |
 | Gleam compat | `>= 0.50 and < 1.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 | `>= 0.45 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (max: recency 12d 🟩🟩, responsive 🟩) | 🟩🟩 (max: recency 12d 🟩🟩, responsive 🟨) | 🟩 (max: recency 5mo 🟩, responsive 🟥 — PR #13 open 4yr) |
+| Maintenance | 🟩🟩 | 🟩🟩 | 🟩 |
 | Age | ~4 years (Apr 2022) · 🟩🟩 | ~8 months (Aug 2025) · 🟨 | ~5.7 years (Aug 2020) · 🟩🟩 |
 | README maturity | 🟩🟩 (builder, WebSocket, streaming) | 🟩🟩 (guide, TLS, routing examples) | 🟩 (adapter pattern) |
 | Idiomaticity | 🟩 | 🟩 | 🟩 |
@@ -612,7 +581,7 @@ TCP/TLS layer. Not an HTTP server — the foundational networking that mist and 
 | Target | ☎️ BEAM |
 | Deps | 5 |
 | Gleam compat | `>= 0.59 and < 1.0` · 🟩 |
-| Maintenance | 🟩 (max: recency 3mo 🟩, responsive 🟨 — 11d reply) |
+| Maintenance | 🟩 |
 | Age | ~4 years (Apr 2022) · 🟩🟩 |
 | README maturity | 🟩 (TCP/TLS server) |
 | Idiomaticity | 🟩 |
