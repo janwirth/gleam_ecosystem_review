@@ -83,6 +83,8 @@ All four locally-installable converters were run on the same 853 KB Notion colle
 
 | Metric | [joolfe](#joolfepostman-to-openapi-best-overall) | [kevinswiber](#kevinswiberpostman2openapi-best-for-codegen-input) | [openman](#codeasashuopenman-best-for-component-extraction) | [levoai](#levoaipostman-to-openapi-skip) |
 | --- | --- | --- | --- | --- |
+| **Runtime required** | Node.js (≥14) | precompiled binary, or Rust/Cargo to build | Python 3 + pip | Python 3 + pip **and** Node.js (calls joolfe) |
+| **Ease of use** | 🟩🟩 single `npm i -g`, one positional arg | 🟩 download binary or `cargo install` (longer first install) | 🟨 pip install works, but ships broken on Flask ≥2.3 — must pin `'flask<2.3'` | 🟥 not on PyPI; clone repo, copy bundled `options.json` into cwd, run script |
 | OpenAPI version emitted | 3.0.0 | 3.0.3 | 3.0.0 | 3.0.0 |
 | Output size | 446 KB | 609 KB | 708 KB | 439 KB |
 | `info.title` correct | ✅ "Notion API" | ✅ "Notion API" | ✅ "Notion API" | ❌ "Options title" (leak) |
@@ -96,7 +98,7 @@ All four locally-installable converters were run on the same 853 KB Notion colle
 | Redocly lint errors | **2** (cosmetic) | 71 | 22 | 21 |
 | Redocly lint warnings | 86 | 139 | 456 | 86 |
 
-**Reading the table:** no single tool wins every column. joolfe is the most spec-correct; kevinswiber is the only one that infers per-operation request properties (instead of dumping the example as `type: object`); openman is the only one that extracts reusable components and links them with `$ref`. levoai contributes nothing the others don't.
+**Reading the table:** no single tool wins every column. joolfe is the easiest to install *and* the most spec-correct; kevinswiber is the only one that infers per-operation request properties (instead of dumping the example as `type: object`); openman is the only one that extracts reusable components and links them with `$ref` — but its install is fragile (Flask version pin) and it has no license. levoai contributes nothing the others don't and is the hardest to run. **Pick by which runtime you already have on hand**, then by output need.
 
 ## Tool-by-tool Review
 
