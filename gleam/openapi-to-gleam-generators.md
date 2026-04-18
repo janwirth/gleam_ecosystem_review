@@ -42,8 +42,9 @@ Snapshot date: 2026-04-18.
 - **Age:** First commit to snapshot. 🟩🟩 ≥3 years, 🟩 ≥1 year, 🟨 ≥3 months, 🟥 <3 months.
 - **README maturity:** 🟩🟩 = guide-style with examples, full feature docs, getting-started, capability boundaries. 🟩 = clear description, basic usage, flag/option reference. 🟥 = minimal or missing.
 - **Idiomaticity:** Typed, sound, explicit, no magic. 🟩 = explicit codegen step producing readable Gleam (developer can see and understand the generated code). 🟥 = magic directives or implicit template extraction. Both tools here are explicit codegen — the generated `.gleam` files are checked into your repo.
+- **Feature completeness:** Coverage of the OpenAPI 3.x surface and codegen feature matrix in the [category table](#openapi-generators) (14 rows: client, server, spec formats, `$ref`, composition keywords, param styles, form bodies, security, validation, `validate`/`--check`, library API, snapshot tests). 🟩🟩 ≥90% full support, 🟩 ≥60%, 🟨 ≥30%, 🟥 <30%. Partial support counts as half.
 
-**Leaderboard scoring:** 🟥 = −1, 🟨 = 0, 🟩 = 1, 🟩🟩 = 2. Sum of all 7 dimensions. Max = 13.
+**Leaderboard scoring:** 🟥 = −1, 🟨 = 0, 🟩 = 1, 🟩🟩 = 2. Sum of all 8 dimensions. Max = 15.
 
 ### Discovery
 
@@ -68,6 +69,7 @@ Build-time tools that read an OpenAPI 3.x spec and emit typed Gleam modules. Run
 | Age | ~11 days (Apr 7, 2026) · 🟥 | ~6 days (Apr 12, 2026) · 🟥 |
 | README maturity | 🟩🟩 (full guide, CLI ref, library API, capability boundaries) | 🟩 (description, usage, flag table, examples link) |
 | Idiomaticity | 🟩 (explicit codegen) | 🟩 (explicit codegen) |
+| Feature completeness | 🟩🟩 (13/14 full) | 🟨 (≈5/14 full, 3 partial) |
 | | | |
 | **Features** | | |
 | Generates client SDK | ✅ | ✅ |
@@ -169,11 +171,11 @@ Both projects appeared within ~2 weeks of the snapshot. Stars, age, and traction
 - **oaspec** ([nao1215](https://github.com/nao1215)) — Wide OpenAPI coverage out of the gate, capability boundaries documented, server *and* client. Test suite already substantial.
 - **gilly** ([cyclimse](https://github.com/cyclimse)) — Tight scope, builder-pattern API, snapshot-tested, real-world Scaleway example proving it works on a non-trivial spec.
 
-| Position | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | [nao1215/oaspec](https://github.com/nao1215/oaspec) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
-| 2 | [cyclimse/gilly](https://github.com/cyclimse/gilly) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩 | 🟩 | **4** |
+| Position | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Features | Score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | [nao1215/oaspec](https://github.com/nao1215/oaspec) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | 🟩🟩 | **7** |
+| 2 | [cyclimse/gilly](https://github.com/cyclimse/gilly) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩 | 🟩 | 🟨 | **4** |
 
-**By target:** ☎️ BEAM **9** (2 repos).
+**By target:** ☎️ BEAM **11** (2 repos).
 
 [How scores are calculated →](#scoring-dimensions)
