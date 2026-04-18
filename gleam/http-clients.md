@@ -36,7 +36,14 @@ Snapshot: **2026-04-18**.
 > All clients here share `gleam/http` request/response types. Switching clients = swapping one call. See [http](./tools-for-building-web-apps.md#http) for the core types.
 
 > [!NOTE]
-> **No single HTTP client runs on both targets.** `gleam_httpc`/`gleam_hackney` are BEAM-only; `gleam_fetch` is JS-only. To ship a library that makes HTTP requests on both targets, build against `gleam_http/request` types and let the **consumer inject the adapter** — `fetch.send` on JS, `httpc.send` on BEAM. Most code stays shared; only the send call swaps per target. `rsvp` does this internally for Lustre apps; do the same for your own library.
+> **No single HTTP client runs on both targets — this is the [function coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).** The two runtimes disagree on how I/O composes:
+>
+> - **BEAM** — `httpc.send(req) -> Result(Response, Error)`. Blocking signature. The scheduler parks the process during the syscall, so "blocking" is cheap and synchronous composition (`use <- result.try`) Just Works.
+> - **JavaScript** — `fetch.send(req) -> Promise(Result(Response, Error))`. Async signature. The runtime has no blocking primitive — every caller must also be `Promise`-returning, all the way up.
+>
+> Sync and async are different *colours*. A cross-target client would have to pick one signature and lie about the other: either force the JS target into a blocking API the runtime can't provide, or force BEAM callers into promise plumbing the BEAM doesn't need. Gleam's type system correctly refuses to paper over this — so the split is load-bearing, not a library gap.
+>
+> **The workaround:** build libraries against `gleam_http/request` types and let the **consumer inject the adapter** — `fetch.send` on JS, `httpc.send` on BEAM. Most code stays shared; only the final send call swaps per target, and each consumer uses the colour native to their target. `rsvp` does this internally for Lustre apps; do the same for your own library.
 >
 > ```gleam
 > // lib/api.gleam — target-agnostic
@@ -50,7 +57,7 @@ Snapshot: **2026-04-18**.
 >   send(req)
 > }
 > ```
-> Consumers pass `httpc.send` or a `fetch.send`-wrapping function in.
+> BEAM consumers pass `httpc.send` directly. JS consumers pass a wrapper that awaits the `Promise` inside a `promise.try_await` chain and returns the inner `Result`.
 
 > <details>
 > <summary><strong>Dependency Graph</strong></summary>
