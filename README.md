@@ -26,6 +26,10 @@ Coverage starts where the author's own projects demand answers, then widens outw
 
 - [Postman → OpenAPI converters](openapi/postman-to-openapi-converters.md) — converting Postman collections to OpenAPI specs.
 
+### Shell
+
+- [Browser-based SSH terminals](shell/browser-ssh-terminals.md) — embeddable web SSH clients for iframe / Notion use.
+
 ### Upcoming
 
 - Parsers & generators
