@@ -11,7 +11,9 @@ No live benchmarking was run — evaluation is based on repo metadata, documenta
 | **The single-purpose, actively-maintained default** — small Node.js server, Docker image, SFTP, all auth modes | **[WebSSH2](#webssh2-best-overall)** |
 | **A full server-management dashboard** with SSH + tunnels + RDP/VNC + file manager (overkill for a single iframe, but batteries included) | **[Termix](#termix-best-for-full-platform)** |
 | **A lighter iframe embed** that wraps the system `ssh` binary instead of a Node SSH library | **[WeTTY](#wetty-lighter-alternative)** |
-| **Skip these** | Shell In A Box, SSHy, GoTTY |
+| **Skip** [Shell In A Box](#shell-in-a-box-skip) | C daemon, commits dead since 2019, 202 open issues, PAM auth model doesn't fit web-form credentials |
+| **Skip** [SSHy](#sshy-skip) | Pure-JS SSHv2 client abandoned 2018 (~7.5 years) — assume CVE backlog and deprecated KEX algorithms |
+| **Skip** [GoTTY](#gotty-skip-not-ssh) | Not an SSH client — shares a local command; no per-user auth. Abandoned since 2017 |
 
 > [!IMPORTANT]
 > Every option requires you to run an **HTTPS-terminated, publicly reachable WebSocket proxy**. Notion's iframe embed (via Iframely) won't load `http://localhost` or self-signed certs — mixed-content and WSS rules apply. Plan for a VPS + reverse proxy (Caddy / nginx / Traefik) with a real TLS cert before you paste a URL into an `/embed` block.
@@ -103,6 +105,7 @@ A Node.js server that accepts WebSocket connections, parses SSH protocol via [ms
 **Trade-offs:**
 - Still your job to front it with a reverse proxy that terminates TLS. Notion won't load a `ws://` or self-signed `wss://` URL.
 - The web UI is WebSSH2-branded; restyling is a manual CSS override.
+- **Install gotcha (2026-04-19):** the published Docker image is not a turnkey run. Repo clone required, and the build expects a TypeScript toolchain in the environment — `npm install && npm run build` before the server starts. Plan a multi-stage Dockerfile if you want a clean deploy artifact.
 
 **Setup sketch:**
 ```sh
@@ -142,6 +145,7 @@ TypeScript Node server that execs the system `ssh` binary and pipes it over WebS
 - **Same-origin iframe by default.** You'll set CSP / `X-Frame-Options` headers on the reverse proxy to allow Notion's embed domain.
 - Docs mention iframe embedding explicitly, unlike most alternatives.
 - No SFTP; shell only.
+- **Install gotcha (2026-04-19):** fresh Docker install of the `:latest` tag renders a **black screen** in the browser — xterm.js loads but the terminal never initializes. Workaround is to pin an older image tag (downgrade from latest). Stale-release symptom: client/server version drift with a dependency that moved on.
 
 Pick it over WebSSH2 if you want to reuse the host's `~/.ssh/config` and agent instead of entering credentials in the browser every time.
 
