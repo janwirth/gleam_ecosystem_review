@@ -88,7 +88,7 @@ Search: GitHub + web for "browser SSH client", "web SSH terminal", "xterm.js SSH
 
 ## Tool-by-tool
 
-### WebSSH2 — best overall
+### WebSSH2: best overall
 
 [repo](https://github.com/billchurch/webssh2) · MIT · 2.7k★ · last commit 2026-04-07 (v4.2.1) · 6 open issues
 
@@ -114,7 +114,7 @@ docker run -p 2222:2222 ghcr.io/billchurch/webssh2:latest
 # Then iframe: <iframe src="https://ssh.example.com/ssh"></iframe>
 ```
 
-### Termix — best for full platform
+### Termix: best for full platform
 
 [repo](https://github.com/LukeGus/Termix) · Apache-2.0 · 12.3k★ · last release 2026-03-15 (v2.0.0) · 0 open issues
 
@@ -131,7 +131,7 @@ Not really a comparable to WebSSH2 — this is an **all-in-one server management
 
 **Setup sketch:** [docker-compose.yml](https://github.com/LukeGus/Termix#installation) from the repo; expects a DB and guacd sidecar.
 
-### WeTTY — lighter alternative
+### WeTTY: lighter alternative
 
 [repo](https://github.com/butlerx/wetty) · MIT · 5.2k★ · last release 2023-09-16 (v2.7.0) · 10 open issues
 
@@ -145,7 +145,7 @@ TypeScript Node server that execs the system `ssh` binary and pipes it over WebS
 
 Pick it over WebSSH2 if you want to reuse the host's `~/.ssh/config` and agent instead of entering credentials in the browser every time.
 
-### Shell In A Box — skip
+### Shell In A Box: skip
 
 [repo](https://github.com/shellinabox/shellinabox) · GPL-2 · 3.1k★ · last commit 2019-01-28 · 202 open issues
 
@@ -159,7 +159,7 @@ Classic C daemon that exposes arbitrary CLI tools (including `ssh`) at `https://
 
 If you're already running Shell In A Box, fine. Don't adopt it new.
 
-### SSHy — skip
+### SSHy: skip
 
 [repo](https://github.com/stuicey/SSHy) · MIT · 577★ · last commit 2018-10-29 · 22 open issues
 
@@ -167,7 +167,7 @@ Advertised as "pure client-side" — the SSH protocol is implemented in browser 
 
 Skip for any production use.
 
-### GoTTY — skip (not SSH)
+### GoTTY: skip (not SSH)
 
 [repo](https://github.com/yudai/gotty) · MIT · 19.5k★ · last release 2017-08 · 113 open issues
 
