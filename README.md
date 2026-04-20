@@ -21,6 +21,7 @@ Coverage starts where the author's own projects demand answers, then widens outw
 - [HTTP clients](gleam/http-clients.md) — making outbound HTTP requests.
 - [OpenAPI → Gleam generators](gleam/openapi-to-gleam-generators.md) — client/server codegen from OpenAPI specs.
 - [Tools for spawning subprocesses](gleam/tools-for-spawning-subprocesses.md) — shelling out, streaming stdio, process control.
+- [Hot reloading tools](gleam/hot-reloading-tools.md) — BEAM module swap, browser live reload, JS dev servers, file watcher primitives.
 
 ### OpenAPI
 
