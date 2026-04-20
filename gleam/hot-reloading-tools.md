@@ -26,16 +26,19 @@ Gleam has separate tools for each and no single cross-target answer — the mech
 
 | Category | ☎️ BEAM | 📜 JS |
 | --- | --- | --- |
-| **[BEAM Module Reloaders](#beam-module-reloaders)** | · [🥇](#leaderboard) [radiate](#radiate) ([repo](https://github.com/pta2002/gleam-radiate), 67★) — *watch sources, recompile, swap BEAM modules in the running VM* | — |
-| **[Server + Browser Live Reload (BEAM)](#server--browser-live-reload-beam)** | · [🥈](#leaderboard) [mist_reload](#mist_reload) ([repo](https://github.com/CrowdHailer/mist_reload), 5★) — *radiate + WebSocket script injected into HTML to refresh browsers*<br>· [olive](#olive) ([repo](https://github.com/fravan/olive), 10★) — *dev proxy, dormant (README: "no longer in active development")* | — |
-| **[JS Dev Servers & Bundler Plugins](#js-dev-servers--bundler-plugins)** | · [🥇](#leaderboard) [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *Lustre CLI, Bun bundler, browser live-reload* | · [lustre_dev_tools](#lustre_dev_tools) — *serves the JS bundle; frontend target*<br>· [vite-gleam](#vite-gleam) ([repo](https://github.com/Enderchief/gleam-tools), 81★) — *Vite plugin, inherits Vite HMR*<br>· [vite-plugin-gleam](#vite-plugin-gleam) ([repo](https://github.com/gleam-br/vite-plugin-gleam), 0★) — *alternative Vite plugin, early* |
-| **[File Watcher Primitives](#file-watcher-primitives)** | · [filespy](#filespy) ([repo](https://github.com/pta2002/gleam-filespy), 18★) — *`fs` NIF wrapper, inotify/FSEvents*<br>· [watchexec](#watchexec) ([repo](https://github.com/lpil/watchexec), 5★) — *`watchexec` CLI wrapped as Erlang port*<br>· [polly](#polly) ([repo](https://gitlab.com/arkandos/polly)) — *polling watcher, used by lustre_dev_tools* | — |
+| **[BEAM Module Reloaders](#beam-module-reloaders)** | · [🥉](#leaderboard) [radiate](#radiate) ([repo](https://github.com/pta2002/gleam-radiate), 67★) — *watch sources, recompile, swap BEAM modules in the running VM* | — |
+| **[Server + Browser Live Reload (BEAM)](#server--browser-live-reload-beam)** | · [🥉](#leaderboard) [mist_reload](#mist_reload) ([repo](https://github.com/CrowdHailer/mist_reload), 5★) — *radiate + WebSocket script injected into HTML to refresh browsers*<br>· [olive](#olive) ([repo](https://github.com/fravan/olive), 10★) — *dev proxy, dormant (README: "no longer in active development")* | — |
+| **[JS Dev Servers & Bundler Plugins](#js-dev-servers--bundler-plugins)** | · [🥇](#leaderboard) [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *Lustre CLI, Bun bundler, browser live-reload* | · [🥇](#leaderboard) [lustre_dev_tools](#lustre_dev_tools) — *serves the JS bundle; frontend target*<br>· [🥈](#leaderboard) [vite-gleam](#vite-gleam) ([repo](https://github.com/Enderchief/gleam-tools), 81★) — *Vite plugin, inherits Vite HMR*<br>· [vite-plugin-gleam](#vite-plugin-gleam) ([repo](https://github.com/gleam-br/vite-plugin-gleam), 0★) — *alternative Vite plugin, early* |
+| **[File Watcher Primitives](#file-watcher-primitives)** | · [🥉](#leaderboard) [filespy](#filespy) ([repo](https://github.com/pta2002/gleam-filespy), 18★) — *`fs` NIF wrapper, inotify/FSEvents*<br>· [watchexec](#watchexec) ([repo](https://github.com/lpil/watchexec), 5★) — *`watchexec` CLI wrapped as Erlang port*<br>· [polly](#polly) ([repo](https://gitlab.com/arkandos/polly)) — *polling watcher, used by lustre_dev_tools* | — |
 
 > [!IMPORTANT]
 > **No single tool covers both targets.** BEAM reloaders swap compiled `.beam` modules in the running VM; JS tools rebuild the bundle and push HMR patches to the browser. Pick per target; compose if your app has both.
 
 > [!NOTE]
 > Only `radiate` does actual BEAM hot code swap. `mist_reload` and `olive` add a browser refresh on top. `lustre_dev_tools` is the blessed path for Lustre SPAs. Vite plugins give you stock Vite HMR if you prefer that stack.
+
+> [!WARNING]
+> **Lustre server components are a blind spot.** Server components run on BEAM and stream DOM patches to a 10 kB browser runtime over WebSocket — a different reload path from either SPA HMR or server-HTML refresh. **No reviewed tool documents a server-component dev loop.** The BEAM reloaders (`radiate`, `mist_reload`) fit in principle: swap the component module, reconnect the WebSocket on browser refresh. JS bundler tools (`vite-gleam`, `vite-plugin-gleam`) don't fit — server component code never ships to JS. See the `Lustre server components` row in each table for per-tool inference.
 
 > <details>
 > <summary><strong>Dependency Graph</strong></summary>
@@ -74,6 +77,8 @@ Same rubric as [tools-for-building-web-apps.md](./tools-for-building-web-apps.md
 
 **Leaderboard:** 🟥 = −1, 🟨 = 0, 🟩 = 1, 🟩🟩 = 2. Sum of 7 dimensions, max 13.
 
+**Non-scored criterion — Lustre server components support:** Whether the tool fits the [Lustre server components](https://hexdocs.pm/lustre/lustre/server_component.html) dev loop — components run on BEAM and stream DOM patches to a ~10 kB browser runtime over WebSocket. **None of the reviewed tools document this explicitly**, so the value is inferred from the reload mechanism: 🟩 = mechanism fits (BEAM module reload picks up changed component code; a page refresh cleanly reconnects the server-component WebSocket), 🟥 = mechanism incompatible (tool bundles Gleam to JS; server components never ship to JS), ⬜ = no evidence either way. Confirm for your own project before relying on it.
+
 ### Discovery
 
 Searches run on [Gleam packages registry](https://packages.gleam.run/) plus npm for Vite plugins. Terms: `reload`, `hot`, `live`, `watch`, `watcher`, `dev`, `hmr`, `vite`. Cross-checked via web search for "gleam hot reload" / "gleam HMR" / "gleam live reload".
@@ -97,7 +102,7 @@ Searches run on [Gleam packages registry](https://packages.gleam.run/) plus npm 
 
 Watch sources, recompile changed modules, load the new bytecode into the running VM. Long-lived processes keep their state; code paths take effect immediately.
 
-| Criterion | [radiate](https://github.com/pta2002/gleam-radiate) [🥇](#leaderboard) |
+| Criterion | [radiate](https://github.com/pta2002/gleam-radiate) [🥉](#leaderboard) |
 | --- | --- |
 | Stars | 67★ · 🟨 |
 | License | Apache-2.0 · 🟩 |
@@ -108,9 +113,10 @@ Watch sources, recompile changed modules, load the new bytecode into the running
 | Age | ~2.5 years (Oct 2023) · 🟩 |
 | README maturity | 🟩 (tagline + working example) |
 | Idiomaticity | 🟩 |
+| Lustre server components | 🟩 *(inferred — reloads any BEAM module, including server component code)* |
 
 #### radiate
-[repo](https://github.com/pta2002/gleam-radiate) · [🥇](#leaderboard)
+[repo](https://github.com/pta2002/gleam-radiate) · [🥉](#leaderboard)
 
 "Hot reloading while in development for Gleam!" The only tool in the ecosystem that does real BEAM hot code swap: watches a directory via [filespy](#filespy), reruns `gleam build`, and reloads changed `.beam` modules into the running VM. Callback hook lets you run your own logic on reload (e.g. re-render UI). Gen-purpose — works for any BEAM-target app, not tied to a framework.
 
@@ -132,7 +138,7 @@ pub fn main() {
 
 BEAM module reload + a WebSocket telling the browser to refresh. For full-stack apps where you want both sides updated on save.
 
-| Criterion | [mist_reload](https://github.com/CrowdHailer/mist_reload) [🥈](#leaderboard) | [olive](https://github.com/fravan/olive) |
+| Criterion | [mist_reload](https://github.com/CrowdHailer/mist_reload) [🥉](#leaderboard) | [olive](https://github.com/fravan/olive) |
 | --- | --- | --- |
 | Stars | 5★ · 🟥 | 10★ · 🟨 |
 | License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 |
@@ -140,12 +146,13 @@ BEAM module reload + a WebSocket telling the browser to refresh. For full-stack 
 | Deps | 5 | 14 |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 | `>= 0.50 and < 2.0` · 🟩 |
 | Maintenance | 🟩🟩 (last 2026-03-28, ~3 wk; 1 issue) | 🟥 (last 2025-07-18, ~9 mo; README: "no longer in active development") |
-| Age | ~1+ year (v1.0.1 published; first commit not verified) · 🟩 | ~5 months (Feb–Jul 2025) · 🟨 |
+| Age | ~7 months (first commit 2025-09-16) · 🟨 | ~14 months (first commit 2025-02-21) · 🟩 |
 | README maturity | 🟩 (tagline + `gleam add --dev` usage) | 🟩 (features + usage + explicit deprecation note) |
 | Idiomaticity | 🟩 | 🟩 |
+| Lustre server components | 🟩 *(inferred — BEAM reload via radiate; page refresh reconnects server-component WebSocket)* | ⬜ *(mechanism fits but dormant; not recommended)* |
 
 #### mist_reload
-[repo](https://github.com/CrowdHailer/mist_reload) · [🥈](#leaderboard)
+[repo](https://github.com/CrowdHailer/mist_reload) · [🥉](#leaderboard)
 
 "Reload your mist web application in development, supports wisp etc." Wraps radiate and injects a tiny WebSocket client into served HTML so the browser refreshes the moment the BEAM module reloads. Install as dev dep. Low stars but actively maintained as of 2026-03 and fills a real gap (radiate reloads server code; this extends the loop to the browser).
 
@@ -173,16 +180,17 @@ pub fn main() {
 
 JS-target apps need browser HMR, not BEAM code swap. Two paths: Lustre's official tooling (opinionated, Bun-based, zero-config) or plug Gleam into your existing Vite pipeline.
 
-| Criterion | [lustre_dev_tools](https://github.com/lustre-labs/dev-tools) [🥇](#leaderboard) | [vite-gleam](https://github.com/Enderchief/gleam-tools) | [vite-plugin-gleam](https://github.com/gleam-br/vite-plugin-gleam) |
+| Criterion | [lustre_dev_tools](https://github.com/lustre-labs/dev-tools) [🥇](#leaderboard) | [vite-gleam](https://github.com/Enderchief/gleam-tools) [🥈](#leaderboard) | [vite-plugin-gleam](https://github.com/gleam-br/vite-plugin-gleam) |
 | --- | --- | --- | --- |
 | Stars | 112★ · 🟩 | 81★ · 🟨 *(monorepo, vite-gleam subpackage)* | 0★ · 🟥 |
 | License | MIT · 🟩 | MIT · 🟩 | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM tool → 📜 JS output | 📜 JS (npm) | 📜 JS (npm) |
 | Gleam compat | `>= 0.60 and < 2.0` · 🟩 | N/A · 🟩 (npm package) | N/A · 🟩 (npm package) |
 | Maintenance | 🟩🟩 (active, ~2 wk before snapshot) | 🟩 (last 2025-11-22, ~5 mo) | 🟩 (last 2025-12-18, ~4 mo) |
-| Age | ~2 years (Mar 2024) · 🟩 | ~2+ years · 🟩 | ~4 months · 🟨 |
+| Age | ~2 years (Mar 2024) · 🟩 | ~2.7 years (first commit 2023-08-19) · 🟩 | ~5 months (first commit 2025-11-16) · 🟨 |
 | README maturity | 🟩 (features list, install guide, no code samples) | 🟩 (plugin usage + examples) | 🟩 (usage + config) |
 | Idiomaticity | 🟩 | 🟩 | 🟩 |
+| Lustre server components | ⬜ *(docs only describe SPA dev loop; server-component reload path is undocumented — verify before relying on it)* | 🟥 *(bundles Gleam → JS; server components run on BEAM and never ship to JS)* | 🟥 *(same: JS-only)* |
 
 #### lustre_dev_tools
 [repo](https://github.com/lustre-labs/dev-tools) · [🥇](#leaderboard)
@@ -224,10 +232,11 @@ Not reload tools themselves — the OS-level file-event libraries that the reloa
 | License | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | ⬜ · 🟩 *(assumed permissive; verify before use)* |
 | Target | ☎️ BEAM | ☎️ BEAM | ☎️ BEAM |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 | `>= 0.44 and < 2.0` · 🟩 | ⬜ · 🟩 |
-| Maintenance | 🟨 (last 2025-08-13) | 🟩🟩 (last 2026-02-02, v1.0.0, clean tracker) | 🟩 (used by lustre_dev_tools, kept current) |
-| Age | ~3+ years · 🟩🟩 | v1.0.0 Feb 2026 · 🟥 | ~2+ years · 🟩 |
+| Maintenance | 🟨 (last 2025-08-13, ~8 mo) | 🟩🟩 (last 2026-02-02, v1.0.0, clean tracker) | 🟩 (used by lustre_dev_tools, kept current) |
+| Age | ~2.5 years (first commit 2023-10-21) · 🟩 | ~2.7 months (first commit 2026-01-29) · 🟥 | ~2+ years · 🟩 |
 | README maturity | 🟩 | 🟩 | 🟨 *(tagline, minimal)* |
 | Idiomaticity | 🟩 | 🟩 | 🟩 |
+| Lustre server components | 🟩 *(primitive; compose with radiate or your own reloader)* | 🟩 *(primitive; same)* | 🟩 *(primitive; same)* |
 
 Mechanics:
 - **filespy** — Erlang `fs` NIF (inotify/FSEvents/ReadDirectoryChangesW). Native events, zero polling cost. Powers radiate.
@@ -259,22 +268,26 @@ Polling-based watcher used by [lustre_dev_tools](#lustre_dev_tools). Lives on Gi
 ## Leaderboard
 Every contribution is invaluable and appreciated.
 
+Medals assigned strictly by score (ties share a medal). polly is listed but excluded from scoring (no reliable GitLab metrics).
+
 **🥇 Gold**
-- **radiate** ([pta2002](https://github.com/pta2002)) — The only real BEAM hot code swap in the Gleam ecosystem. Everything else that reloads server code stands on this.
-- **lustre_dev_tools** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev)) — The blessed dev-loop for Lustre apps; covers bundling, serving, and browser reload in one CLI.
+- **lustre_dev_tools** ([hayleigh-dot-dev](https://github.com/hayleigh-dot-dev), [yoshi-monster](https://github.com/yoshi-monster)) — The blessed dev loop for Lustre SPAs: bundling, serving, and browser reload in one CLI.
 
 **🥈 Silver**
-- **mist_reload** ([CrowdHailer](https://github.com/CrowdHailer)) — Small surface, real gap. Extends radiate's server reload to the browser for mist/wisp apps. Low stars but recently maintained.
+- **vite-gleam** ([Enderchief](https://github.com/Enderchief)) — The bridge for teams already on Vite. Lets you drop `.gleam` files into a JS/TS Vite project and get stock Vite HMR.
+
+**🥉 Bronze** (three-way tie)
+- **radiate** ([pta2002](https://github.com/pta2002)) — The only real BEAM hot code swap in the Gleam ecosystem. Everything else that reloads server code stands on this.
+- **filespy** ([pta2002](https://github.com/pta2002)) — The native file-event primitive radiate (and anything else on BEAM) builds on.
+- **mist_reload** ([CrowdHailer](https://github.com/CrowdHailer)) — Small surface, real gap: extends radiate's server reload to the browser for mist/wisp apps. Low stars but actively maintained.
 
 | Position | Award | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 🥇 | [lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩 | 🟩 | **8** |
-| 2 | 🥈 | [CrowdHailer/mist_reload](https://github.com/CrowdHailer/mist_reload) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩 | 🟩 | **6** |
 | 2 | 🥈 | [Enderchief/gleam-tools](https://github.com/Enderchief/gleam-tools) (vite-gleam) | 🟨 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | **6** |
-| 3 | 🥉 | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [pta2002/gleam-filespy](https://github.com/pta2002/gleam-filespy) | 🟨<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟨<br>🟨 | 🟩<br>🟩🟩 | 🟩<br>🟩 | 🟩<br>🟩 | **5** |
-| 4 | | · [lpil/watchexec](https://github.com/lpil/watchexec)<br>· [gleam-br/vite-plugin-gleam](https://github.com/gleam-br/vite-plugin-gleam) | 🟥<br>🟥 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩 | 🟥<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | **4** |
-| 5 | | [fravan/olive](https://github.com/fravan/olive) | 🟨 | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | **3** |
+| 3 | 🥉 | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [pta2002/gleam-filespy](https://github.com/pta2002/gleam-filespy)<br>· [CrowdHailer/mist_reload](https://github.com/CrowdHailer/mist_reload) | 🟨<br>🟨<br>🟥 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟨<br>🟨<br>🟩🟩 | 🟩<br>🟩<br>🟨 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | **5** |
+| 4 | | · [lpil/watchexec](https://github.com/lpil/watchexec)<br>· [gleam-br/vite-plugin-gleam](https://github.com/gleam-br/vite-plugin-gleam)<br>· [fravan/olive](https://github.com/fravan/olive) | 🟥<br>🟥<br>🟨 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟩🟩<br>🟩<br>🟥 | 🟥<br>🟨<br>🟩 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | **4** |
 
-**By target:** ☎️ BEAM **31** (7 repos) · 📜 JS **18** (3 repos). `lustre_dev_tools` counts toward both (BEAM-target tool that produces a JS dev server).
+**By target:** ☎️ BEAM **31** (6 scored repos) · 📜 JS **18** (3 scored repos). `lustre_dev_tools` counts toward both (BEAM-target tool that produces a JS dev server).
 
 [How scores are calculated →](#scoring-dimensions)
