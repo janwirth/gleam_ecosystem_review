@@ -31,6 +31,9 @@ Snapshot date: 2026-04-18.
 > [!NOTE]
 > Generated code is plain Gleam built on `gleam/http` types, so it composes with the rest of the ecosystem (e.g. [server frameworks](tools-for-building-web-apps.md#server-frameworks), [HTTP clients](http-clients.md)). The generators themselves run on BEAM.
 
+> [!NOTE]
+> **Reverse direction — code-first spec generation** (mist/wisp routes → OpenAPI) is **not** covered by these tools. See [Gleam → OpenAPI generators](gleam-to-openapi-generators.md) for the gap analysis.
+
 ## Research Method
 
 ### Scoring Dimensions
