@@ -23,6 +23,7 @@ Coverage starts where the author's own projects demand answers, then widens outw
 - [Gleam → OpenAPI generators](gleam/gleam-to-openapi-generators.md) — code-first spec generation from mist/wisp routes (gap: no tool exists yet).
 - [Tools for spawning subprocesses](gleam/tools-for-spawning-subprocesses.md) — shelling out, streaming stdio, process control.
 - [Hot reloading tools](gleam/hot-reloading-tools.md) — BEAM module swap, browser live reload, JS dev servers, file watcher primitives.
+- [Syntax highlighting](gleam/syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
 
 ### OpenAPI
 
