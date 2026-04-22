@@ -12,7 +12,7 @@ This article maps out what's available.
 3. [Categories](#categories)
    - [PostgreSQL Drivers](#postgresql-drivers) — [pog](#pog)
    - [SQLite Bindings](#sqlite-bindings) — [sqlight](#sqlight)
-   - [Query Builders](#query-builders) — [squirrel](#squirrel)
+   - [SQL Code Generators](#sql-code-generators) — [squirrel](#squirrel)
    - [Migration Tools](#migration-tools)
    - [ORMs & Higher-Level Abstractions](#orms--higher-level-abstractions)
    - [Related Work](#related-work)
@@ -20,7 +20,7 @@ This article maps out what's available.
 
 ## Summary
 
-The Gleam database story is thin but growing. PostgreSQL has **pog** (driver), **sqlight** (SQLite bindings), and **squirrel** (query builder). Migration tooling and ORMs are gaps.
+Gleam database tools span drivers, bindings, and developer experience. **pog** (PostgreSQL driver), **sqlight** (SQLite bindings), and **squirrel** (SQL→Gleam codegen) cover query execution. Migration tooling and ORMs are gaps.
 
 Snapshot: **2026-04-22**.
 
@@ -28,7 +28,7 @@ Snapshot: **2026-04-22**.
 | --- | --- | --- |
 | **[PostgreSQL Drivers](#postgresql-drivers)** | [pog](#pog) (driver with pooling) | 🟩🟩 active |
 | **[SQLite Bindings](#sqlite-bindings)** | [sqlight](#sqlight) (low-level bindings) | 🟩 maintained |
-| **[Query Builders](#query-builders)** | [squirrel](#squirrel) (composable builders) | 🟩 maintained |
+| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel) (SQL→Gleam codegen) | 🟩🟩 active |
 | **[Migrations](#migration-tools)** | ⬜ No standard tool found | Gap |
 | **[ORMs](#orms--higher-level-abstractions)** | ⬜ No ORM found | Gap |
 
@@ -65,19 +65,19 @@ Repos identified via [packages.gleam.run](https://packages.gleam.run/) searches:
 ### PostgreSQL Drivers
 
 #### pog
-[repo](https://github.com/gleam-lang/pog) · [🥇](#leaderboard)
+[repo](https://github.com/lpil/pog) · [🥇](#leaderboard)
 
-Official PostgreSQL driver for Gleam. Provides connection pooling, parameterized queries, and type-safe result decoding. No ORM — you write SQL directly and decode results with custom decoders.
+PostgreSQL driver for Gleam. Provides connection pooling, parameterized queries, and type-safe result decoding. No ORM — write SQL directly and decode results with custom decoders.
 
-| Criterion | [pog](https://github.com/gleam-lang/pog) |
+| Criterion | [pog](https://github.com/lpil/pog) |
 | --- | --- |
-| Stars | 81★ · 🟩 |
+| Stars | 248★ · 🟩🟩 |
 | License | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM |
 | Deps | 5 |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (last commit 2026-04-18, active issue triaging) |
-| Age | ~2 years (Apr 2024) · 🟩 |
+| Maintenance | 🟩 (last commit 2026-03-09, ~6 weeks) |
+| Age | ~6 years (Nov 2019) · 🟩🟩 |
 | README maturity | 🟩🟩 (comprehensive guide with pooling example, SQL API, error handling) |
 | Idiomaticity | 🟩 (typed queries, explicit decoders) |
 
@@ -90,54 +90,40 @@ Official PostgreSQL driver for Gleam. Provides connection pooling, parameterized
 
 ```gleam
 import pog
-import gleam/list
-import gleam/option.{Some}
+import gleam/dynamic/decode
 
-pub fn get_user(db: pog.Connection, id: Int) -> Result(User, pog.QueryError) {
-  pog.query(
-    "SELECT id, name, email FROM users WHERE id = $1",
-  )
-  |> pog.parameter(pog.int(id))
-  |> pog.returning(decode_user)
-  |> pog.execute(db)
-  |> result.try(fn(rows) {
-    case rows {
-      [user] -> Ok(user)
-      _ -> Error(pog.NoRowsReturned)
-    }
-  })
-}
-
-fn decode_user(row: List(Any)) -> Result(User, Nil) {
-  case row {
-    [id, name, email] -> {
-      Ok(User(
-        id: int.parse(dynamic.from(id)),
-        name: string.parse(dynamic.from(name)),
-        email: string.parse(dynamic.from(email)),
-      ))
-    }
-    _ -> Error(Nil)
+pub fn get_user(db: pog.Connection, id: Int) -> Result(pog.Returned(User), pog.QueryError) {
+  let decoder = {
+    use id <- decode.field(0, decode.int)
+    use name <- decode.field(1, decode.string)
+    use email <- decode.field(2, decode.string)
+    decode.success(User(id:, name:, email:))
   }
+  
+  "SELECT id, name, email FROM users WHERE id = $1"
+  |> pog.query()
+  |> pog.parameter(pog.int(id))
+  |> pog.returning(decoder)
+  |> pog.execute(db)
 }
 ```
 
 ### SQLite Bindings
 
 #### sqlight
-[repo](https://github.com/gleam-lang/sqlight) · [🥈](#leaderboard)
+[repo](https://github.com/lpil/sqlight) · [🥉](#leaderboard)
 
-Official SQLite bindings for Gleam. Lower-level than pog — you manage connections directly and decode results. Good for embedding SQLite in Gleam applications or when PostgreSQL isn't needed.
+SQLite bindings for Gleam. Lower-level than pog — you manage connections directly and decode results. Good for embedding SQLite in Gleam applications or when PostgreSQL isn't needed.
 
-| Criterion | [sqlight](https://github.com/gleam-lang/sqlight) |
+| Criterion | [sqlight](https://github.com/lpil/sqlight) |
 | --- | --- |
-| Stars | 63★ · 🟨 |
+| Stars | 147★ · 🟩 |
 | License | Apache-2.0 · 🟩 |
 | Target | ☎️ BEAM |
 | Deps | 2 |
 | Gleam compat | `>= 0.32 and < 2.0` · 🟩 |
-| Maintenance | 🟩 (last commit 2026-03-05, ~6 weeks) |
-| Age | ~3 years (Apr 2023) · 🟩🟩 |
+| Maintenance | 🟩🟩 (last commit 2026-04-18, same day as snapshot) |
+| Age | ~3.5 years (Dec 2022) · 🟩🟩 |
 | README maturity | 🟩 (tagline + basic example + list of functions) |
 | Idiomaticity | 🟩 (typed, explicit) |
 
@@ -178,43 +164,58 @@ fn decode_user(row: sqlight.Row) -> Result(User, Nil) {
 }
 ```
 
-### Query Builders
+### SQL Code Generators
 
 #### squirrel
-[repo](https://github.com/gleam-lang/squirrel) · [🥉](#leaderboard)
+[repo](https://github.com/giacomocavalieri/squirrel) · [🥇](#leaderboard)
 
-Composable query builder for SQL. Works with any backend (PostgreSQL, SQLite, MySQL, etc.) by building SQL strings. Useful when you want to compose queries dynamically or avoid string concatenation.
+SQL-first code generator: write `.sql` files, squirrel generates type-safe Gleam functions with decoders. Embraces SQL + editor support (syntax highlighting, formatting) without ORM magic. Requires PostgreSQL 16+.
 
-| Criterion | [squirrel](https://github.com/gleam-lang/squirrel) |
+| Criterion | [squirrel](https://github.com/giacomocavalieri/squirrel) |
 | --- | --- |
-| Stars | 23★ · 🟨 |
+| Stars | 630★ · 🟩🟩 |
 | License | Apache-2.0 · 🟩 |
-| Target | ☎️ BEAM |
+| Target | ☎️ BEAM (Postgres 16+ required) |
 | Deps | 2 |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩 (last commit 2025-11-02, ~6 months) |
-| Age | ~1.5 years (Oct 2024) · 🟩 |
-| README maturity | 🟩🟩 (comprehensive guide with SELECT, INSERT, UPDATE, DELETE examples) |
-| Idiomaticity | 🟩 (builder pattern, typed) |
+| Maintenance | 🟩 (last commit 2026-03-19, ~1 month) |
+| Age | ~1.5 years (Aug 2024) · 🟩 |
+| README maturity | 🟩🟩 (FOSDEM talk, detailed guides, real examples) |
+| Idiomaticity | 🟩 (generated code matches hand-written idiomatic Gleam) |
 
 **Key features:**
-- Builder API for SELECT, INSERT, UPDATE, DELETE
-- Automatic parameterization
-- Works database-agnostic (you choose the driver)
-- Composable — chain filters, joins, ordering
+- Write queries in `.sql` files (syntax highlighting, formatting, `explain`)
+- Auto-generate type-safe decoders from SQL result types
+- Convention-based: `src/**/sql/` → `src/**/sql.gleam`
+- Works with `pog` driver for execution
+- Prevent decoder/query drift automatically
 
+```sql
+-- src/app/sql/find_user.sql
+-- Find user by name with owned items count.
+select
+  u.id,
+  u.name,
+  count(i.id) as items_count
+from
+  users u
+left join items i on u.id = i.user_id
+where
+  u.name = $1
+group by u.id, u.name
+```
+
+Generated Gleam (automatic):
 ```gleam
-import squirrel as sq
+import pog
+import app/sql
 
-pub fn find_active_users() -> String {
-  sq.select([sq.col("id"), sq.col("name")])
-  |> sq.from("users")
-  |> sq.where(sq.col("active") |> sq.eq(sq.bool(True)))
-  |> sq.order_by(sq.col("created_at"), sq.Desc)
-  |> sq.to_string
+pub fn main(db: pog.Connection) {
+  let assert Ok(pog.Returned(_count, rows)) = 
+    sql.find_user(db, "alice")
+  
+  let assert [sql.FindUserRow(id: 1, name: "alice", items_count: 5)] = rows
 }
-
-// Generates: SELECT id, name FROM users WHERE active = true ORDER BY created_at DESC
 ```
 
 ### Migration Tools
@@ -233,7 +234,7 @@ No ORM exists for Gleam yet. The philosophy is:
 
 For feature-rich abstractions, consider:
 - **Nested decoders** — Build reusable decoder functions to map rows to typed structures.
-- **Query builders + drivers** — Combine `squirrel` for query building + `pog`/`sqlight` for execution.
+- **SQL codegen + drivers** — Use `squirrel` to generate type-safe decoders from SQL files + `pog`/`sqlight` for execution.
 
 ### Related Work
 
@@ -244,10 +245,10 @@ For feature-rich abstractions, consider:
 
 | Position | Award | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 🥇 | [gleam-lang/pog](https://github.com/gleam-lang/pog) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **10** |
-| 2 | 🥈 | [gleam-lang/sqlight](https://github.com/gleam-lang/sqlight) | 🟨 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩 | **8** |
-| 3 | 🥉 | [gleam-lang/squirrel](https://github.com/gleam-lang/squirrel) | 🟨 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
+| 1 | 🥇 | [lpil/pog](https://github.com/lpil/pog) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **10** |
+| 2 | 🥈 | [giacomocavalieri/squirrel](https://github.com/giacomocavalieri/squirrel) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
+| 2 | 🥈 | [lpil/sqlight](https://github.com/lpil/sqlight) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩 | **9** |
 
-**Summary:** pog leads with active maintenance and comprehensive docs. sqlight is the established SQLite choice. squirrel fills the query-building gap. No migrations or ORM yet.
+**Summary:** pog leads with active maintenance and comprehensive docs. sqlight and squirrel are tied: sqlight for low-level SQLite control, squirrel for SQL-first development (code generation, zero decoder drift). No migrations or ORM standard yet.
 
 [How scores are calculated →](#scoring-dimensions)
