@@ -20,7 +20,8 @@ Start here.
    - [Core HTTP Types](#core-http-types) — [http](#http)
    - [HTTP Servers](#http-servers) — [mist](#mist) · [ewe](#ewe) · [cowboy](#cowboy)
    - [Network Infrastructure](#network-infrastructure) — [glisten](#glisten)
-4. [Leaderboard](#leaderboard)
+4. [Full-stack approaches compared](#full-stack-approaches-compared-libero-vs-lustre-server-components-vs-glimr) — libero vs lustre server components vs glimr
+5. [Leaderboard](#leaderboard)
 
 ## Summary
 
@@ -40,7 +41,7 @@ The essentials to build something great are there.
 | **[Static Site Generators](#static-site-generators)** | · [arctic](#arctic) ([repo](https://github.com/RyanBrewer317/arctic), 26★) — *content collections, parsers, SSG via lustre_ssg* | — |
 | **[Frontend Frameworks](#frontend-frameworks)** (Elm-style) | · [🥇](#leaderboard) [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *declarative UI, SSR, universal* | · [🥇](#leaderboard) [lustre](#lustre) ([repo](https://github.com/lustre-labs/lustre), 2.2k★) — *also runs on JS target* |
 | **[Frontend Frameworks](#frontend-frameworks)** (React) | — | · [redraw](#redraw) ([repo](https://github.com/ghivert/redraw), 62★) — *full React 19 bindings, type-checked* |
-| **[RPC Layer](#rpc-layer)** | · [libero](#libero) ([repo](https://github.com/pairshaped/libero), 3★) — *young; typed RPC for Lustre+server, WebSocket, codegen* | · [libero](#libero) — *also generates JS client stubs* |
+| **[RPC Layer](#rpc-layer)** | · [libero](#libero) ([repo](https://github.com/pairshaped/libero), 18★) — *young; full-stack framework with typed RPC over WebSocket, project scaffold, ETF wire* | · [libero](#libero) — *also generates JS client stubs* |
 | **[Dev Tools](#dev-tools)** | · [lustre_dev_tools](#lustre_dev_tools) ([repo](https://github.com/lustre-labs/dev-tools), 112★) — *dev server, bundling, Tailwind*<br>· [gleam-radiate](#gleam-radiate) ([repo](https://github.com/pta2002/gleam-radiate), 66★) — *BEAM module reload* | — |
 | **[HTTP Servers](#http-servers)** | · [🥇](#leaderboard) [mist](#mist) ([repo](https://github.com/rawhat/mist), 489★) — *HTTP server, WebSocket, SSE, streaming*<br>· [ewe](#ewe) ([repo](https://github.com/vshakitskiy/ewe), 106★) — *HTTP server, TLS, WebSocket, SSE, file serving*<br>· [cowboy](#cowboy) ([repo](https://github.com/gleam-lang/cowboy), 75★) — *adapter for existing Erlang/Elixir Cowboy setups* | — |
 | **[Network Infrastructure](#network-infrastructure)** | · [glisten](#glisten) ([repo](https://github.com/rawhat/glisten), 197★) — *TCP/TLS layer, powers mist and ewe* | — |
@@ -354,35 +355,49 @@ Typed remote procedure calls between server and client. Replaces REST boilerplat
 
 | Criterion | [libero](https://github.com/pairshaped/libero) |
 | --- | --- |
-| Stars | 3★ · 🟥 |
+| Stars | 18★ · 🟨 |
 | License | MIT · 🟩 |
 | Target | ☎️📜 Both (BEAM server + JS client) |
-| Deps | 6 |
-| Gleam compat | `>= 0.69 and < 1.0` · 🟩 |
-| Maintenance | 🟩🟩 |
-| Age | 2 days (Apr 2026) · 🟥 |
-| README maturity | 🟩🟩 (full guide, annotated examples, error docs, CLI reference) |
-| Idiomaticity | 🟩 (explicit codegen step) |
+| Deps | 7 |
+| Gleam compat | `>= 0.69.0 and < 2.0.0` · 🟩 |
+| Maintenance | 🟩🟩 (last commit 2026-04-21, zero open issues) |
+| Age | ~12 days (Apr 2026) · 🟥 |
+| README maturity | 🟩🟩 (full guide, scaffold, CLI, wire format, push, HTTP fallback) |
+| Idiomaticity | 🟩 (explicit codegen step, explicit message types) |
 
 #### libero
-[repo](https://github.com/pairshaped/libero)
+[repo](https://github.com/pairshaped/libero) · [hexdocs](https://hexdocs.pm/libero/)
 
-Young (2 days old at snapshot), typed RPC layer for Lustre + any Gleam server. Annotate server functions with `/// @rpc`, run the code generator, and call them from the client as if local. WebSocket transport, compile-time type safety across the wire, panic recovery with trace IDs. Works with any server (wisp, mist, glimr). Impressive scope and docs for its age — zero community track record yet.
+Self-described as "a full-stack Gleam framework with typed RPC." Young (~12 days old at snapshot, 9 hex releases 1.0.0 → 4.1.1 in that window — API still churning). `libero new` scaffolds a multi-package project: server entry point on mist, shared message types, one or more Lustre SPA clients, SSR + hydration, handler tests. The wire is **ETF (Erlang Term Format) over binary WebSocket** — Gleam types serialize without JSON codecs; a JS-side ETF codec ships with the framework. Server-to-client push uses BEAM `pg` groups (no external broker). No HTTP routing, no DB, no auth, no templates — the "framework" part is the scaffold + server/client boundary + wire; the "full-stack" claim refers to coordinated project structure, not feature breadth.
 
 ```gleam
-// Server: annotate a function
-/// @rpc
-pub fn greet(name: String) -> String {
-  "Hello, " <> name <> "!"
+// shared/src/shared/messages.gleam — types shared by server + client
+pub type MsgFromClient {
+  Create(params: TodoParams)
+  Toggle(id: Int)
+  LoadAll
 }
 
-// Client: generated stub, call it like a local function
-libero.call(rpc.greet("World"), fn(result) {
-  case result {
-    Ok(greeting) -> io.println(greeting)
-    Error(_) -> io.println("RPC failed")
+pub type MsgFromServer {
+  TodoCreated(Result(Todo, TodoError))
+  TodosLoaded(Result(List(Todo), TodoError))
+}
+
+// src/server/handler.gleam — single dispatch, no routes
+pub fn update_from_client(
+  msg msg: MsgFromClient,
+  state state: SharedState,
+) -> Result(#(MsgFromServer, SharedState), AppError) {
+  case msg {
+    messages.LoadAll -> Ok(#(TodosLoaded(Ok(all())), state))
+    messages.Create(params:) ->
+      Ok(#(TodoCreated(Ok(insert(params.title))), state))
   }
-})
+}
+
+// clients/web — Lustre update, generated typed stub
+ToggleTodo(id) ->
+  #(model, rpc.send_to_server(msg: Toggle(id:), on_response: GotResponse))
 ```
 
 
@@ -601,6 +616,129 @@ pub fn main() {
 ```
 
 
+## Full-stack approaches compared: libero vs lustre server components vs glimr
+
+Three tools call themselves "full-stack" or aim at the same job — shipping a real Gleam app with an interactive UI — but they solve very different problems.
+
+| | [libero](https://github.com/pairshaped/libero) | [lustre server components](https://hexdocs.pm/lustre/lustre/server_component.html) | [glimr](https://github.com/glimr-org/glimr) |
+| --- | --- | --- | --- |
+| **Shape** | Typed RPC + project scaffold | Server-rendered MVU component streaming DOM patches | Batteries-included MVC framework |
+| **Where state lives** | Both sides (shared types); client is a real SPA | Server process (BEAM); client is a thin runtime (~10 KB) | Server; browser gets rendered HTML (+ optional Vite SPA) |
+| **Wire** | ETF over WebSocket (no JSON codecs) | Diff patches over WebSocket / SSE / polling | HTTP requests + rendered templates |
+| **Routing** | — (message dispatch) | — (per-component; you plug into any HTTP server) | ✅ annotation-based (`/// @get "/path"`) compiled to pattern match |
+| **Templates** | — (Lustre view functions) | — (Lustre view functions) | ✅ Loom (custom template lang, `l-*` directives) |
+| **DB + migrations** | — | — | ✅ schema DSL + migration runner |
+| **Auth / sessions** | — | — | ✅ scaffolded (Postgres / SQLite / Redis stores) |
+| **Offline-capable client** | ✅ (client is an SPA with local state) | — (needs server socket) | Depends — SSR by default |
+| **Built on** | mist + lustre + BEAM `pg` + glance | lustre runtime + your HTTP server | mist + Vite |
+| **Best when** | You want a Lustre SPA and typed server calls without REST boilerplate | You want rich interactivity but most state + logic belongs on the server | You want Rails/Laravel ergonomics for a new Gleam project |
+
+### libero — what you write
+
+A single `update_from_client` handler dispatches typed messages. No HTTP routes, no JSON.
+
+```gleam
+// src/server/handler.gleam
+pub fn update_from_client(
+  msg msg: MsgFromClient,
+  state state: SharedState,
+) -> Result(#(MsgFromServer, SharedState), AppError) {
+  case msg {
+    messages.LoadAll -> Ok(#(TodosLoaded(Ok(all())), state))
+    messages.Toggle(id:) -> Ok(#(TodoToggled(toggle(id)), state))
+  }
+}
+
+// clients/web — generated stub, called from a Lustre update
+import generated/messages as rpc
+ToggleTodo(id) ->
+  #(model, rpc.send_to_server(msg: Toggle(id:), on_response: GotResponse))
+```
+
+### lustre server components — what you write
+
+A normal Lustre `init` / `update` / `view` component. The runtime ships the diffs; the `<lustre-server-component>` custom element applies patches in the browser.
+
+```gleam
+// src/counter.gleam — universal: runs on the server, renders in the browser
+pub fn component() -> App(_, Model, Message) {
+  lustre.simple(init, update, view)
+}
+
+pub opaque type Message {
+  UserClickedIncrement
+  UserClickedDecrement
+}
+
+fn update(model: Int, message: Message) -> Int {
+  case message {
+    UserClickedIncrement -> model + 1
+    UserClickedDecrement -> model - 1
+  }
+}
+
+fn view(model: Int) -> Element(Message) {
+  html.div([], [
+    html.button([event.on_click(UserClickedDecrement)], [html.text("-")]),
+    html.p([], [html.text(int.to_string(model))]),
+    html.button([event.on_click(UserClickedIncrement)], [html.text("+")]),
+  ])
+}
+```
+
+Boot it on the server; render the custom element in your HTML and serve `/lustre/runtime.mjs`:
+
+```gleam
+let counter = counter.component()
+let assert Ok(component) = lustre.start_server_component(counter, Nil)
+server_component.register_subject(process.new_subject())
+|> lustre.send(to: component)
+
+// In your page HTML:
+html.body([], [
+  server_component.element([server_component.route("/ws")], []),
+])
+```
+
+### glimr — what you write
+
+Annotated controllers compile to a typed router. Loom templates render views.
+
+```gleam
+// src/app/http/controllers/user_controller.gleam
+import app/app.{type App}
+import compiled/loom/user_show
+import glimr/http/context.{type Context}
+import glimr/http/middleware
+import glimr/http/response.{type Response}
+import app/http/middleware/auth
+import app/models/user
+
+/// @get "/users/:id"
+pub fn show(ctx: Context(App), id: Int) -> Response {
+  use ctx <- middleware.apply([auth.run], ctx)
+  use person <- user.find_or_fail(ctx.app.db, id)
+  user_show.render(user: person)
+  |> response.string_tree(200)
+}
+
+/// @post "/users"
+pub fn store(ctx: Context(App)) -> Response {
+  use validated <- user_store.validate(ctx)
+  // validated.name, validated.email already typed; 422 on fail
+  // ...
+}
+```
+
+### How to pick
+
+- **Want REST replaced, SPA kept, types end-to-end?** → libero. You trade an emerging API and zero track record for zero JSON boilerplate.
+- **Server owns the state; UI is reactive but thin?** → lustre server components. You keep MVU everywhere and pay a WebSocket + one BEAM process per connected session.
+- **New app, want everything — router, DB, auth, assets — decided for you?** → glimr. You accept non-idiomatic templating + magic directives in exchange for scaffolding breadth.
+
+These are not mutually exclusive. libero works with any Gleam server (wisp, mist, glimr); lustre server components plug into any HTTP server; glimr ships its own runtime but its Lustre integration can host either approach on top.
+
+
 ## Leaderboard
 Every contribution is invaluable and appreciated.
 
@@ -627,10 +765,10 @@ Special thanks for their unwavering dedication to bringing joy to development go
 | 3 | 🥉 | [gleam-lang/http](https://github.com/gleam-lang/http) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩 | **9** |
 | 4 | | · [rawhat/glisten](https://github.com/rawhat/glisten)<br>· [vshakitskiy/ewe](https://github.com/vshakitskiy/ewe)<br>· [lustre-labs/dev-tools](https://github.com/lustre-labs/dev-tools)<br>· [ghivert/redraw](https://github.com/ghivert/redraw) | 🟩<br>🟩<br>🟩<br>🟨 | 🟩<br>🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩<br>🟩 | 🟩<br>🟩🟩<br>🟩🟩<br>🟩🟩 | 🟩🟩<br>🟨<br>🟩<br>🟩 | 🟩<br>🟩🟩<br>🟩<br>🟩🟩 | 🟩<br>🟩<br>🟩<br>🟩 | **8** |
 | 5 | | · [TrustBound/dream](https://github.com/TrustBound/dream)<br>· [gleam-lang/cowboy](https://github.com/gleam-lang/cowboy)<br>· [RyanBrewer317/arctic](https://github.com/RyanBrewer317/arctic) | 🟨<br>🟨<br>🟨 | 🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | 🟩🟩<br>🟩<br>🟩🟩 | 🟨<br>🟩🟩<br>🟩 | 🟩🟩<br>🟩<br>🟩 | 🟩<br>🟩<br>🟩 | **7** |
-| 6 | | [glimr-org/glimr](https://github.com/glimr-org/glimr) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟨 | 🟩🟩 | 🟥 | **6** |
-| 7 | | · [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate)<br>· [pairshaped/libero](https://github.com/pairshaped/libero) | 🟨<br>🟥 | 🟩<br>🟩 | 🟩<br>🟩 | 🟨<br>🟩🟩 | 🟩<br>🟥 | 🟩<br>🟩🟩 | 🟩<br>🟩 | **5** |
+| 6 | | · [glimr-org/glimr](https://github.com/glimr-org/glimr)<br>· [pairshaped/libero](https://github.com/pairshaped/libero) | 🟩<br>🟨 | 🟩<br>🟩 | 🟩<br>🟩 | 🟩🟩<br>🟩🟩 | 🟨<br>🟥 | 🟩🟩<br>🟩🟩 | 🟥<br>🟩 | **6** |
+| 7 | | [pta2002/gleam-radiate](https://github.com/pta2002/gleam-radiate) | 🟨 | 🟩 | 🟩 | 🟨 | 🟩 | 🟩 | 🟩 | **5** |
 | 8 | | [MystPi/glen](https://github.com/MystPi/glen) | 🟩 | 🟩 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **4** |
 
-**By target:** ☎️ BEAM **102** (13 repos) · 📜 JS **37** (5 repos). Dual-target repos (lustre, http, libero) count toward both.
+**By target:** ☎️ BEAM **103** (13 repos) · 📜 JS **38** (5 repos). Dual-target repos (lustre, http, libero) count toward both.
 
 [How scores are calculated →](#scoring-dimensions)
