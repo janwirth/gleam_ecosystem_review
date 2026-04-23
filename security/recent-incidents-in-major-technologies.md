@@ -17,11 +17,14 @@ Incidents here are restricted to items that have a public advisory, CVE record, 
 3. [Python / PyPI](#python--pypi)
 4. [npm / JavaScript](#npm--javascript)
 5. [Linux / system libraries — XZ Utils](#linux--system-libraries--xz-utils)
-6. [GitHub Actions / CI](#github-actions--ci)
-7. [RubyGems](#rubygems)
-8. [Docker Hub](#docker-hub)
-9. [Cross-cutting patterns](#cross-cutting-patterns)
-10. [Takeaways for tech selection](#takeaways-for-tech-selection)
+6. [Elixir / BEAM (Erlang VM)](#elixir--beam-erlang-vm)
+7. [Java / JVM](#java--jvm)
+8. [GitHub Actions / CI](#github-actions--ci)
+9. [RubyGems](#rubygems)
+10. [Docker Hub](#docker-hub)
+11. [Cross-cutting patterns](#cross-cutting-patterns)
+12. [Security ranking](#security-ranking)
+13. [Takeaways for tech selection](#takeaways-for-tech-selection)
 
 
 ## Next.js
@@ -95,6 +98,38 @@ Not an "ecosystem" per se, but worth calling out because it reframed how the ind
 **Shape of risk:** long-con maintainer takeover on critical infrastructure. Unlike npm-style "phish and go," this was a years-long credibility-building operation. The discovery was essentially luck — a performance anomaly noticed by one engineer. The follow-on in Docker Hub shows that even after disclosure, **stale container images carry the risk forward**.
 
 
+## Elixir / BEAM (Erlang VM)
+
+The Elixir / Erlang world is small, and its core ecosystem is relatively quiet — but 2025 delivered the most severe Erlang/OTP advisory on record, plus an audit-driven hex_core finding that landed in early 2026. Nothing on the Phoenix or Plug level in this window.
+
+| Date | CVE / ID | Severity | What happened | Impact | Patched |
+| --- | --- | --- | --- | --- | --- |
+| 2025-04-16 | [CVE-2025-32433](https://nvd.nist.gov/vuln/detail/CVE-2025-32433) ([GHSA-37cp-fgq5-7wc2](https://github.com/erlang/otp/security/advisories/GHSA-37cp-fgq5-7wc2)) | Critical (CVSS 10.0) | **Pre-auth RCE in Erlang/OTP SSH server.** The SSH daemon accepted `SSH_MSG_CHANNEL_REQUEST` packets *before* authentication completed, letting an unauthenticated attacker execute arbitrary shell commands. In many deployments the SSH daemon runs as root, so the attacker lands as root. Exploit code was public within days of disclosure. | Added to CISA KEV on [2025-06-09](https://unit42.paloaltonetworks.com/erlang-otp-cve-2025-32433/) with active exploitation observed. Affected Cisco products (ConfD, NSO) and any Erlang-embedded device exposing SSH. | OTP-27.3.3, OTP-26.2.5.11, OTP-25.3.2.20 |
+| 2025-11 | [CVE-2025-46712](https://github.com/erlang/otp/security/advisories/GHSA-37cp-fgq5-7wc2) | Medium | Erlang/OTP SSH failed to enforce strict KEX handshake hardening, allowing optional messages during the handshake. A MitM attacker could inject messages into the connection during key exchange. Found by the Ruhr-University Bochum team behind the original Terrapin attack. | MitM / downgrade against Erlang SSH connections. | OTP-27.3.4, OTP-26.2.5.12, OTP-25.3.2.21 |
+| 2026-02 (disclosed) | [CVE-2026-21619](https://cna.erlef.org/cves/CVE-2026-21619.html) ([GHSA-hx9w-f2w9-9g96](https://github.com/hexpm/hex_core/security/advisories/GHSA-hx9w-f2w9-9g96)) | High | **Unsafe deserialization in `hex_core`.** The reference client library for the Hex package registry used `binary_to_term/1` on HTTP response bodies, so a spoofed Hex API response (compromised mirror, MitM, malicious proxy) could trigger atom-table exhaustion DoS or object-injection RCE in any build using `rebar3` or `mix`. Found by the Paraxial.io audit of Hex funded under the EEF Ægis Initiative. | Any Elixir / Erlang build reaching a compromised mirror would execute attacker-chosen Erlang terms at build time. No in-the-wild exploitation reported. | hex_core 0.12.1, hex 2.3.2, rebar3 3.27.0 |
+
+**Shape of Elixir / BEAM risk:** small ecosystem, concentrated blast radius in the **runtime and package-manager client**. Hex.pm itself has not had a headline supply-chain incident in this window — the Paraxial audit explicitly rated it robust — but the `hex_core` issue shows that "robust registry" does not help if the client library silently deserializes untrusted responses. CVE-2025-32433 is a reminder that running a language's *own* SSH daemon exposes an attack surface most teams never audit (compare OpenSSH, which gets adversarial review continuously). For most Elixir apps, risk is well below npm/PyPI levels — the catch is that when Erlang/OTP itself breaks, it breaks deep.
+
+
+## Java / JVM
+
+Java's risk profile in this window is the **enterprise-framework** pattern: big, long-lived codebases (Struts, Tomcat, Spring) with decades of accumulated features where a single parser quirk or deserialization path turns into an unauth RCE across a huge installed base. Shai-Hulud 2.0 also crossed the ecosystem boundary into Maven Central for the first time.
+
+| Date | CVE / ID | Severity | What happened | Impact | Patched |
+| --- | --- | --- | --- | --- | --- |
+| 2024-01-24 | [CVE-2024-23897](https://nvd.nist.gov/vuln/detail/CVE-2024-23897) | Critical (CVSS 9.8) | **Jenkins args4j CLI arbitrary file read / RCE.** The Jenkins CLI parser treated `@filepath` arguments as "substitute file contents here" (args4j's `expandAtFiles`), unauthenticated by default. Attackers with `Overall/Read` could read full files; without it, they could still read the first few lines — enough to grab secrets, SSH keys, or config that chains to RCE. Exploited in the wild within days. | Any internet-exposed Jenkins 2.441 / LTS 2.426.2 or earlier. Used in ransomware campaigns through 2024. | Jenkins 2.442 / LTS 2.426.3 |
+| 2024-10-17 | [CVE-2024-38819](https://spring.io/security/cve-2024-38819/) / [CVE-2024-38820](https://spring.io/security/cve-2024-38820/) | High | Spring Framework path-traversal + DataBinder case-sensitivity bypass. 38819 let WebMvc/WebFlux apps serving static resources via `RouterFunctions` be path-traversed; 38820 extended CVE-2022-22968's `disallowedFields` bypass via locale-dependent `toLowerCase()`. | Static-resource disclosure and mass-assignment protection bypass in Spring-based apps. | 5.3.41, 6.0.25, 6.1.14 |
+| 2024-12-11 | [CVE-2024-53677](https://nvd.nist.gov/vuln/detail/CVE-2024-53677) | Critical (CVSS 9.5) | **Apache Struts 2 file-upload path traversal → RCE.** Crafted upload parameters escaped the upload directory; writing to an arbitrary web-servable path gave RCE. Affects Struts 2.0.0-2.3.37 (EOL), 2.5.0-2.5.33, 6.0.0-6.3.0.2. [Sonatype reported](https://www.sonatype.com/blog/cve-2024-53677-a-critical-file-upload-vulnerability-in-apache-struts2) that 90%+ of weekly Struts 2 downloads were vulnerable versions weeks after patch release. | Full server RCE on legacy enterprise Struts deployments — which are plentiful, and often un-upgradable because Struts 6.4+ requires migrating off the legacy `FileUploadInterceptor`. | Struts 6.4.0 |
+| 2025-03-10 | [CVE-2025-24813](https://nvd.nist.gov/vuln/detail/CVE-2025-24813) | Critical (CVSS 9.8) | **Apache Tomcat partial-PUT RCE.** Path-equivalence bug combined with the default partial-PUT behavior let an attacker upload a serialized session file to a writable directory and then trigger deserialization on a later request. Requires non-default settings (writes enabled for default servlet + file-based session persistence + a deserialization-gadget library on classpath), but those conditions exist in many real deployments. PoCs public within days. | Under-classloader RCE on affected Tomcat deployments. Active in-the-wild exploitation reported by Zscaler and SonicWall. | 11.0.3, 10.1.35, 9.0.99 |
+| 2025-04-05 | [CVE-2025-30065](https://nvd.nist.gov/vuln/detail/CVE-2025-30065) | Critical (CVSS 10.0) | **Apache Parquet (Java) unsafe deserialization via Avro schema.** The `parquet-avro` module abused the `getDefaultValue()` mechanism to instantiate arbitrary Java record types during schema parsing, so a crafted Parquet file triggered RCE in any Java process reading it. Affects Parquet ≤ 1.15.0 (bug introduced in 1.8.0). | Data-pipeline RCE — anywhere untrusted Parquet files get parsed (ingestion services, lakehouse jobs, analytics notebooks). | parquet-java 1.15.1 |
+| 2025-04-28 | [CVE-2025-31650](https://nvd.nist.gov/vuln/detail/CVE-2025-31650) / [CVE-2025-31651](https://nvd.nist.gov/vuln/detail/cve-2025-31651) | High / Low | Tomcat DoS via invalid HTTP priority header (memory leak → OOM) and rewrite-rule bypass for a subset of rewrite configs that enforced security constraints. | DoS on current Tomcat 11.0; auth / rewrite-based constraint bypass where applicable. | 11.0.6, 10.1.40, 9.0.104 |
+| 2025-09-15 | [CVE-2025-41248](https://spring.io/security/cve-2025-41248/) / [CVE-2025-41249](https://spring.io/security/cve-2025-41249/) | Medium | Spring Security / Spring Framework annotation-detection bug — method-level security annotations on generic superclasses or interfaces were not always detected, so `@PreAuthorize` etc. could silently not apply. | Authorization bypass anywhere the affected annotation-inheritance pattern is used. Not exploitable remotely without the right class hierarchy, but silent when it hits. | Spring Security 6.4.11 / 6.5.5, Spring Framework 5.3.45 / 6.1.23 / 6.2.11 |
+| 2025-11 | [Shai-Hulud 2.0 into Maven Central](https://thehackernews.com/2025/11/shai-hulud-v2-campaign-spreads-from-npm.html) | High (supply chain) | Maven Central caught the spillover of the npm Shai-Hulud worm — compromised npm components were being rebundled and pushed as Java artifacts. Maven Central purged the mirrored copies and added rebundle-detection rules. | First Maven Central supply-chain incident of this class. Limited user impact because it was caught during mirroring, not at publish-time. | Sonatype tooling update + artifact purge |
+| 2025-12 | [Jackson-typosquat `org.fasterxml` → Cobalt Strike](https://www.aikido.dev/blog/maven-central-jackson-typosquatting-malware) | High (supply chain) | Malicious package published on Maven Central under `org.fasterxml.jackson.core/jackson-databind` (note: real coords are `com.fasterxml...`). Multi-stage loader with encrypted config, platform-specific executables, and a Cobalt Strike beacon payload on Linux/macOS. Described as the first sophisticated malware detected on Maven Central. | CI pipelines pulling the lookalike coordinate received a C2-enabled beacon. | Package removed |
+
+**Shape of Java / JVM risk:** the dominant pattern is **deserialization + legacy framework surface**. Struts, Tomcat, Parquet, Spring — all 2024-2025 advisories here are either "parse attacker input via a permissive parser" or "deserialize a Java object from the network." The installed base is huge, long-lived, and often not on the current major version, so patch uptake lags even after public advisories. Maven Central was the last mainstream registry to see a sophisticated typosquat campaign; Shai-Hulud showed that npm-origin worms can now cross into JVM builds. Log4Shell (2021) is out of this window but the shape — network-reachable deserialization — keeps recurring (CVE-2025-30065, CVE-2025-24813, CVE-2025-55182 in React).
+
+
 ## GitHub Actions / CI
 
 Not a language — but every ecosystem depends on it, and 2025 made clear that compromised Actions are a cross-ecosystem multiplier.
@@ -149,7 +184,35 @@ Across all of the above, a small number of themes keep recurring:
 
 7. **Plugin sprawl + secondhand plugins is the WordPress shape.** The unique WordPress pattern is that plugins get **sold**, and new owners inherit the user base but not the scrutiny. Essential Plugin (2026-04) is the most recent example, but it is not the first.
 
-8. **Deserialization comes back every cycle.** CVE-2025-55182 (React Server Components) is, structurally, the same class of bug as Log4Shell, Spring4Shell, and countless Java RMI / .NET BinaryFormatter issues: trusting a serialized payload from the network. New frameworks using serialization as a transport mechanism keep rediscovering this.
+8. **Deserialization comes back every cycle.** CVE-2025-55182 (React Server Components) is, structurally, the same class of bug as Log4Shell, Spring4Shell, and countless Java RMI / .NET BinaryFormatter issues: trusting a serialized payload from the network. New frameworks using serialization as a transport mechanism keep rediscovering this. CVE-2025-30065 (Parquet) and CVE-2025-24813 (Tomcat) are both in-window examples in the Java ecosystem alone.
+
+
+## Security ranking
+
+Ranking every ecosystem covered above on three axes, restricted to the **2024-01-01 → 2026-04-23** window. The axes:
+
+- **Incident frequency** — how often this ecosystem produced a notable advisory or supply-chain incident in the window. Many small ones count.
+- **Gravity** — worst-case impact observed (CVSS, exploit-in-the-wild, blast radius, whether CISA KEV picked it up).
+- **Churn / maintenance heaviness** — how much ongoing work a well-run team has to do to stay out of trouble (patch cadence, mass-exploitation pressure, pinning discipline, supply-chain hygiene).
+
+Scale: 🟩🟩 = low risk / well-contained, 🟩 = okay / manageable with discipline, 🟥 = concerning / high ongoing effort required.
+
+| Ecosystem | Incident frequency | Gravity | Churn / maintenance | Overall | One-line take |
+| --- | --- | --- | --- | --- | --- |
+| **Elixir / BEAM** | 🟩🟩 (3 notable: 32433, 46712, hex_core) | 🟥 (32433 was CVSS 10, CISA KEV, pre-auth RCE, in-the-wild) | 🟩🟩 (small ecosystem, low patch pressure) | 🟩🟩 | Rare events, but the events that do hit hit the runtime or the registry client — deep, not wide. |
+| **RubyGems** | 🟩 (2 campaigns in window) | 🟩 (credential theft, not RCE-class) | 🟩🟩 (slow-moving ecosystem, manageable) | 🟩🟩 | Same playbook as npm / PyPI, fraction of the volume. |
+| **Docker Hub** | 🟩 (imageless spam, XZ residual, KICS) | 🟩 (supply chain, scoped to pull) | 🟩 (pin by digest + rebuild schedule and you're fine) | 🟩 | Mutable tags are the core issue; digest-pinning solves most of it. |
+| **GitHub Actions** | 🟩 (tj-actions + reviewdog in one event) | 🟩 (23k repos, secret exfiltration) | 🟥 (every workflow needs SHA pinning, review of transitive actions) | 🟩 | Structural: mutable tags + broad secret access. Not going away. |
+| **Next.js** | 🟩 (29927, 55182, plus smaller ones) | 🟥 (29927 + 55182 both in-the-wild, 55182 CVSS 10 added to CISA KEV) | 🟥 (aggressive patch cadence — two critical advisories in 2025 alone) | 🟩 | Framework-internal trust boundaries keep leaking; patch-or-bleed. |
+| **Python / PyPI** | 🟥 (ultralytics, JarkaStealer campaign, dYdX, litellm, ongoing typosquats) | 🟥 (litellm: ~3M daily downloads, credential stealer; ultralytics: crypto-miner) | 🟥 (hash pinning, trusted publishing, AI-stack extra scrutiny, install-hook awareness) | 🟥 | Install-time code + huge registry + AI-stack targeting = continuous pressure. |
+| **Java / JVM** | 🟥 (Struts, Tomcat ×3, Parquet, Spring ×2, Jenkins, Maven ×2) | 🟥 (Struts 53677 + Tomcat 24813 + Parquet 30065 all CVSS 9.5–10 with real exploitation) | 🟥 (long-lived enterprise deployments, legacy Struts / Tomcat chains, slow patch uptake) | 🟥 | Enterprise patch-lag is the story. Many CVSS-10 issues, large installed base, slow rollout. |
+| **Linux / XZ** | 🟩🟩 (one event — but the event) | 🟥 (CVSS 10, nation-state-grade, years-in-the-making) | 🟩 (for consumers: rebuild bases + watch for stale images) | 🟩 | One-off in raw frequency, but reshaped the entire industry's trust model for upstream maintainers. |
+| **npm / JavaScript** | 🟥 (Qix, Shai-Hulud, Shai-Hulud 2.0, dYdX, others) | 🟥 (worm-class: ~$50M crypto theft, 796 packages trojanized in v2, CISA AA25-266A) | 🟥 (lockfiles, `--ignore-scripts`, hardware-key publishing, provenance, constant vigilance) | 🟥 | The current worst offender — self-replicating worms are now a real class of attack. |
+| **WordPress** | 🟥 (Really Simple Security, Multi Uploader, Service Finder, Sneeit, King Addons, Essential Plugin hijack — 6+ in window) | 🟥 (multiple CVSS 9.8 unauth RCE / priv-esc, mass exploitation within hours of patch) | 🟥 (plugin policy + auto-update + ownership-change monitoring + perimeter scanning all needed) | 🟥 | Plugin sprawl + sold-and-backdoored plugins + hours-from-patch-to-exploit. Highest ongoing operational cost. |
+
+A word on the "🟥🟥🟥" bucket: WordPress, npm, Java, and Python all earned a full red overall, but for different reasons — WordPress for **operational load** (patch windows measured in hours), npm for **novel attack classes** (worms), Java for **installed-base lag** (everyone is running something unpatched), Python for **install-time code + AI-stack targeting**. "🟩🟩 overall" means something genuinely different for Elixir/BEAM (low volume, but serious when it hits) versus RubyGems (same shape as npm, lower scale).
+
+This ranking is a snapshot. The npm row could flip green for a year if Shai-Hulud-class worms stop appearing. The Elixir row could flip red overnight if a second OTP-level runtime bug lands. Pick-time security is a risk distribution, not a verdict.
 
 
 ## Takeaways for tech selection
