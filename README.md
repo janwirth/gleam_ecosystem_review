@@ -17,14 +17,25 @@ Coverage starts where the author's own projects demand answers, then widens outw
 
 ### Gleam
 
-- [Tools for building web apps](gleam/tools-for-building-web-apps.md) — full-stack, server frameworks, HTTP servers, frontend, dev tools, RPC. 15 repos reviewed.
-- [HTTP clients](gleam/http-clients.md) — making outbound HTTP requests.
+**Web & HTTP**
+
+- [Web apps](gleam/web-and-http/web-apps.md) — full-stack, server frameworks, HTTP servers, frontend, dev tools, RPC. 15 repos reviewed.
+- [HTTP clients](gleam/web-and-http/http-clients.md) — making outbound HTTP requests.
+- [Hot reloading](gleam/web-and-http/hot-reloading.md) — BEAM module swap, browser live reload, JS dev servers, file watcher primitives.
+
+**Testing**
+
+- [Browser automation](gleam/testing/browser-automation.md) — CDP clients, E2E frameworks, integration test infra.
+- [BDD with Gherkin](gleam/testing/bdd-with-gherkin.md) — cross-ecosystem Gherkin/BDD survey for BEAM/Gleam devs.
+
+**Other**
+
 - [OpenAPI → Gleam generators](gleam/openapi-to-gleam-generators.md) — client/server codegen from OpenAPI specs.
 - [Gleam → OpenAPI generators](gleam/gleam-to-openapi-generators.md) — code-first spec generation from mist/wisp routes (gap: no tool exists yet).
-- [Tools for spawning subprocesses](gleam/tools-for-spawning-subprocesses.md) — shelling out, streaming stdio, process control.
-- [Hot reloading tools](gleam/hot-reloading-tools.md) — BEAM module swap, browser live reload, JS dev servers, file watcher primitives.
+- [Subprocesses](gleam/subprocesses.md) — shelling out, streaming stdio, process control.
 - [Syntax highlighting](gleam/syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
-- [Tools for talking to databases](gleam/tools-for-talking-to-databases.md) — PostgreSQL drivers, SQLite bindings, query builders. 3 repos reviewed.
+- [Databases](gleam/databases.md) — PostgreSQL drivers, SQLite bindings, query builders. 3 repos reviewed.
+- [Logging](gleam/logging.md) — OTP `logger` adapters, structured dual-target loggers, specialist sinks. 11 repos reviewed.
 
 ### OpenAPI
 
@@ -33,6 +44,14 @@ Coverage starts where the author's own projects demand answers, then widens outw
 ### Shell
 
 - [Browser-based SSH terminals](shell/browser-ssh-terminals.md) — embeddable web SSH clients for iframe / Notion use.
+
+### Security
+
+- [Recent incidents in major technologies](security/recent-incidents-in-major-technologies.md) — 2024-2026 CVE and supply-chain highlights across Next.js, WordPress, Python, npm, and others.
+
+### Languages
+
+- [Programming language popularity & desire](languages/programming-languages-popularity-and-desire.md) — Stack Overflow 2025 rankings: what's used vs what's loved.
 
 ### Upcoming
 
@@ -47,7 +66,7 @@ Every review uses the same scoring scaffold: **stars, license, language-compat, 
 - Disregarded repos are listed with reasons, so the triage is auditable.
 - Scores combine into a leaderboard so authors can sanity-check their own metrics at a glance.
 
-The full scoring formalization lives in [formalization.md](formalization.md). The first worked example is in the [Gleam web apps review](gleam/tools-for-building-web-apps.md#research-method).
+The full scoring formalization lives in [formalization.md](formalization.md). The first worked example is in the [Gleam web apps review](gleam/web-and-http/web-apps.md#research-method).
 
 ## Contributing
 

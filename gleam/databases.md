@@ -39,7 +39,7 @@ Snapshot: **2026-04-22**.
 
 ### Scoring Dimensions
 
-Same rubric as [tools-for-building-web-apps.md](./tools-for-building-web-apps.md#scoring-dimensions). Recap:
+Same rubric as [web-apps.md](./web-and-http/web-apps.md#scoring-dimensions). Recap:
 
 - **Stars:** 🟩🟩 ≥200★, 🟩 ≥100★, 🟨 ≥10★, 🟥 <10★.
 - **License:** 🟩 permissive (MIT/Apache/BSD), 🟥 viral or missing.
@@ -238,8 +238,8 @@ For feature-rich abstractions, consider:
 
 ### Related Work
 
-- **[gleam/http](./tools-for-building-web-apps.md#http)** — Core HTTP types, often paired with database tools for REST APIs.
-- **[lustre](./tools-for-building-web-apps.md#lustre)** — Web framework; Lustre Server Components often interact with databases on the BEAM side.
+- **[gleam/http](./web-and-http/web-apps.md#http)** — Core HTTP types, often paired with database tools for REST APIs.
+- **[lustre](./web-and-http/web-apps.md#lustre)** — Web framework; Lustre Server Components often interact with databases on the BEAM side.
 
 ## Leaderboard
 

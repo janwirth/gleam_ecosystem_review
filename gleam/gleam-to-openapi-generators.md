@@ -1,6 +1,6 @@
 # Gleam → OpenAPI generators
 
-You have a [mist](./tools-for-building-web-apps.md#mist) or [wisp](./tools-for-building-web-apps.md#wisp) app.
+You have a [mist](./web-and-http/web-apps.md#mist) or [wisp](./web-and-http/web-apps.md#wisp) app.
 You want an OpenAPI spec emitted from the routes and handler types you already wrote.
 Short answer: no such tool exists in Gleam yet.
 
@@ -36,7 +36,7 @@ The [OpenAPI → Gleam generators](./openapi-to-gleam-generators.md) review cove
 
 ## Research Method
 
-Same rubric as [tools-for-building-web-apps.md](./tools-for-building-web-apps.md#scoring-dimensions) — but there are no repos to score.
+Same rubric as [web-apps.md](./web-and-http/web-apps.md#scoring-dimensions) — but there are no repos to score.
 
 ### Discovery
 
@@ -46,8 +46,8 @@ Queries run on **2026-04-21**:
 | --- | --- | --- |
 | `openapi` | [Gleam packages registry](https://packages.gleam.run/?search=openapi) | 2 hits — both **spec → code** ([oaspec](./openapi-to-gleam-generators.md#oaspec), [gilly](./openapi-to-gleam-generators.md#gilly)) |
 | `swagger` | [Gleam packages registry](https://packages.gleam.run/?search=swagger) | 0 hits |
-| `mist` | [Gleam packages registry](https://packages.gleam.run/?search=mist) | [mist](./tools-for-building-web-apps.md#mist), [mist_reload](./hot-reloading-tools.md#mist_reload), [sprocket_mist](./tools-for-building-web-apps.md#sprocket), [howdy](./tools-for-building-web-apps.md#howdy) — none emit specs |
-| `wisp` | [Gleam packages registry](https://packages.gleam.run/?search=wisp) | [wisp](./tools-for-building-web-apps.md#wisp) + adapters — none emit specs |
+| `mist` | [Gleam packages registry](https://packages.gleam.run/?search=mist) | [mist](./web-and-http/web-apps.md#mist), [mist_reload](./web-and-http/hot-reloading.md#mist_reload), [sprocket_mist](./web-and-http/web-apps.md#sprocket), [howdy](./web-and-http/web-apps.md#howdy) — none emit specs |
+| `wisp` | [Gleam packages registry](https://packages.gleam.run/?search=wisp) | [wisp](./web-and-http/web-apps.md#wisp) + adapters — none emit specs |
 | `gleam openapi mist` | [GitHub repo search](https://github.com/search?q=gleam+openapi+mist&type=repositories) | 0 hits |
 | `gleam code-first openapi` / `gleam openapi generator` / `gleam swagger` | Web search | Only reverse-direction results + the `oas` parser |
 
@@ -99,4 +99,4 @@ No entries at snapshot. This article will be updated when a Gleam → OpenAPI to
 
 **Related reviews**
 - [OpenAPI → Gleam generators](./openapi-to-gleam-generators.md) — the direction that *is* covered.
-- [Tools for building web apps](./tools-for-building-web-apps.md) — mist, wisp, howdy, and adapter packages referenced above.
+- [Web apps](./web-and-http/web-apps.md) — mist, wisp, howdy, and adapter packages referenced above.

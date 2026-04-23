@@ -21,7 +21,7 @@ This article maps out what's available.
 
 The BEAM side of the HTTP-client story is solid: official `gleam_httpc` covers most cases, `gleam_hackney` covers the rest, and `dream_http_client` layers a typed streaming/recording API on top. The JS side is `gleam_fetch` (official) plus `rsvp` for Lustre apps.
 
-RPC is thinner. JSON-RPC 2.0 coverage exists (`pollux`) but only at the codec level — no batteries. For typed Gleam-to-Gleam RPC over WebSocket see [libero](./tools-for-building-web-apps.md#libero).
+RPC is thinner. JSON-RPC 2.0 coverage exists (`pollux`) but only at the codec level — no batteries. For typed Gleam-to-Gleam RPC over WebSocket see [libero](./web-apps.md#libero).
 
 Snapshot: **2026-04-18**.
 
@@ -33,7 +33,7 @@ Snapshot: **2026-04-18**.
 | **[JSON-RPC](#json-rpc)** | · [pollux](#pollux) ([repo](https://github.com/CrowdHailer/pollux), 2★) — *JSON-RPC 2.0 codec; bring your own transport* | · [pollux](#pollux) — *pure Gleam, runs on both targets* |
 
 > [!IMPORTANT]
-> All clients here share `gleam/http` request/response types. Switching clients = swapping one call. See [http](./tools-for-building-web-apps.md#http) for the core types.
+> All clients here share `gleam/http` request/response types. Switching clients = swapping one call. See [http](./web-apps.md#http) for the core types.
 
 > [!NOTE]
 > **No single HTTP client runs on both targets — this is the [function coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).** The two runtimes disagree on how I/O composes:
@@ -78,7 +78,7 @@ Snapshot: **2026-04-18**.
 > **[JSON-RPC](#json-rpc):**
 > - [pollux](#pollux) → `gleam_json` (codec only, no transport)
 >
-> All of the above → [http](./tools-for-building-web-apps.md#http) (shared request/response types).
+> All of the above → [http](./web-apps.md#http) (shared request/response types).
 >
 > </details>
 
@@ -86,7 +86,7 @@ Snapshot: **2026-04-18**.
 
 ### Scoring Dimensions
 
-Same rubric as [tools-for-building-web-apps.md](./tools-for-building-web-apps.md#scoring-dimensions). Recap:
+Same rubric as [web-apps.md](./web-apps.md#scoring-dimensions). Recap:
 
 - **Stars:** 🟩🟩 ≥200★, 🟩 ≥100★, 🟨 ≥10★, 🟥 <10★.
 - **License:** 🟩 permissive (MIT/Apache/BSD), 🟥 viral or missing.
@@ -355,10 +355,10 @@ pub fn server() {
 
 ### Related Work
 
-Covered fully in [tools-for-building-web-apps.md](./tools-for-building-web-apps.md):
+Covered fully in [web-apps.md](./web-apps.md):
 
-- **[http](./tools-for-building-web-apps.md#http)** — `Request`/`Response`/`Header`/`Method` types shared by every client here. Not a client; the thing every client consumes.
-- **[libero](./tools-for-building-web-apps.md#libero)** — Typed RPC for Lustre + any Gleam server. WebSocket transport with codegen'd client stubs. Use when both ends are Gleam and you want compile-time type safety across the wire — as opposed to the lower-level JSON-RPC envelope that `pollux` provides.
+- **[http](./web-apps.md#http)** — `Request`/`Response`/`Header`/`Method` types shared by every client here. Not a client; the thing every client consumes.
+- **[libero](./web-apps.md#libero)** — Typed RPC for Lustre + any Gleam server. WebSocket transport with codegen'd client stubs. Use when both ends are Gleam and you want compile-time type safety across the wire — as opposed to the lower-level JSON-RPC envelope that `pollux` provides.
 
 ## Leaderboard
 

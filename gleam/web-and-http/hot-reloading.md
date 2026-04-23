@@ -51,7 +51,7 @@ Gleam has separate tools for each and no single cross-target answer — the mech
 > - [olive](#olive) → `fs` + `simplifile` + `mist` + `wisp` (self-contained)
 >
 > **JS stack:**
-> - [lustre_dev_tools](#lustre_dev_tools) → [polly](#polly) (file watcher) + [mist](./tools-for-building-web-apps.md#mist) (dev HTTP) + [lustre](./tools-for-building-web-apps.md#lustre) + Bun (bundler, runtime dep)
+> - [lustre_dev_tools](#lustre_dev_tools) → [polly](#polly) (file watcher) + [mist](./web-apps.md#mist) (dev HTTP) + [lustre](./web-apps.md#lustre) + Bun (bundler, runtime dep)
 > - [vite-gleam](#vite-gleam), [vite-plugin-gleam](#vite-plugin-gleam) → Vite (external, npm)
 >
 > **Watchers:**
@@ -65,7 +65,7 @@ Gleam has separate tools for each and no single cross-target answer — the mech
 
 ### Scoring Dimensions
 
-Same rubric as [tools-for-building-web-apps.md](./tools-for-building-web-apps.md#scoring-dimensions). Recap:
+Same rubric as [web-apps.md](./web-apps.md#scoring-dimensions). Recap:
 
 - **Stars:** 🟩🟩 ≥200★, 🟩 ≥100★, 🟨 ≥10★, 🟥 <10★.
 - **License:** 🟩 permissive (MIT/Apache/BSD), 🟥 viral or missing.
@@ -195,7 +195,7 @@ JS-target apps need browser HMR, not BEAM code swap. Two paths: Lustre's officia
 #### lustre_dev_tools
 [repo](https://github.com/lustre-labs/dev-tools) · [🥇](#leaderboard)
 
-Lustre's official CLI. Zero-config dev server, Bun-based bundling, TailwindCSS v4 auto-detection, browser live reload. Watches via [polly](#polly). CLI-driven — no Gleam API to integrate. Also covered in the main [tools-for-building-web-apps](./tools-for-building-web-apps.md#lustre_dev_tools) article; included here because live reload is its core dev-UX feature.
+Lustre's official CLI. Zero-config dev server, Bun-based bundling, TailwindCSS v4 auto-detection, browser live reload. Watches via [polly](#polly). CLI-driven — no Gleam API to integrate. Also covered in the main [web-apps](./web-apps.md#lustre_dev_tools) article; included here because live reload is its core dev-UX feature.
 
 ```sh
 gleam add lustre_dev_tools --dev

@@ -41,7 +41,7 @@ Gleam has three live options for spawning OS processes. They carve up the space 
 
 ## Research Method
 
-Methodology matches [tools-for-building-web-apps.md](./tools-for-building-web-apps.md). Same scoring dimensions, same snapshot-date discipline.
+Methodology matches [web-apps.md](./web-and-http/web-apps.md). Same scoring dimensions, same snapshot-date discipline.
 
 ### Scoring Dimensions
 
