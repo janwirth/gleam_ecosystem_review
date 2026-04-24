@@ -20,21 +20,24 @@ This article maps out what's available.
 
 ## Summary
 
-**Snapshot 2026-04-23.** The Gleam logging story splits cleanly on target: on BEAM, most libraries delegate to Erlang's OTP `logger`; on JS, everything falls back to `console.*`. **[logging](#logging)** (lpil) is the minimum-viable wrapper and the most widely-depended-on option. **[palabres](#palabres)** is the most polished dual-target structured logger. The rest is a long tail of experiments, some young, some abandoned.
+**Snapshot 2026-04-24.** The Gleam logging story splits cleanly on target: on BEAM, most libraries delegate to Erlang's OTP `logger`; on JS, everything falls back to `console.*`. **[logging](#logging)** (lpil) is the minimum-viable wrapper and the most widely-depended-on option. **[palabres](#palabres)** is the most polished dual-target structured logger. The rest is a long tail of experiments, some young, some abandoned.
 
 A recurring pattern: Louis Pilfold (Gleam's creator) has filed issues against several libraries (`flash`, `woof`, `glimt`) pointing out they *print* rather than integrate with the BEAM `logger` — so log level filtering, `logger:add_handler`, and log forwarding don't work. Treat that as the defining line between "toy logger" and "production logger" on BEAM.
 
 | Category | ☎️ BEAM | 📜 JS |
 | --- | --- | --- |
 | **[Erlang `logger` Adapters](#erlang-logger-adapters)** | · [🥇](#leaderboard) [logging](#logging) ([repo](https://github.com/lpil/logging), 12★) — *minimal OTP `logger` config wrapper*<br>· [glog](#glog) ([repo](https://github.com/defgenx/glog), 11★) — *Logrus-inspired fluent fields, dormant since 2024* | — |
-| **[Structured Loggers (Dual-Target)](#structured-loggers-dual-target)** | · [🥇](#leaderboard) [palabres](#palabres) ([repo](https://github.com/ghivert/palabres), 9★) — *opinionated structured + JSON, Wisp integration*<br>· [🥈](#leaderboard) [glogg](#glogg) ([repo](https://github.com/webermarci/glogg), 1★) — *handler-based, hook pipelines*<br>· [flash](#flash) ([repo](https://github.com/larzconwell/flash), 18★) — *structured, but prints instead of logging on BEAM*<br>· [woof](#woof) ([repo](https://github.com/lupodevelop/woof), 11★) — *typed fields, BEAM sinks; same printing caveat* | · [🥇](#leaderboard) [palabres](#palabres)<br>· [🥈](#leaderboard) [glogg](#glogg)<br>· [flash](#flash)<br>· [woof](#woof) |
-| **[Structured Loggers (BEAM)](#structured-loggers-beam)** | · [glight](#glight) ([repo](https://github.com/distrill/glight), 4★) — *multi-transport, fluent context*<br>· [glimt](#glimt) ([repo](https://github.com/JohnBjrk/glimt), 31★) — *dispatcher/serializer split, dormant since 2024* | — |
-| **[Specialist Logs](#specialist-logs)** | · [gbr_disk_log](#gbr_disk_log) ([repo](https://github.com/gleam-br/gbr_disk_log), 1★) — *typed wrapper for Erlang `disk_log`*<br>· [gclog](#gclog) ([repo](https://github.com/sam-kenney/gclog), 0★) — *GCP-compliant JSON entries* | · [gclog](#gclog) *(pure Gleam; infer JS support)* |
+| **[Structured Loggers (Dual-Target)](#structured-loggers-dual-target)** | · [🥇\*](#leaderboard) [woof](#woof) ([repo](https://github.com/lupodevelop/woof), 11★) — *highest raw score; default sink prints — opt in to `beam_logger_sink`*<br>· [🥇](#leaderboard) [palabres](#palabres) ([repo](https://github.com/ghivert/palabres), 9★) — *opinionated structured + JSON, Wisp integration*<br>· [🥈](#leaderboard) [glogg](#glogg) ([repo](https://github.com/webermarci/glogg), 1★) — *handler-based, hook pipelines*<br>· [🥈\*](#leaderboard) [flash](#flash) ([repo](https://github.com/larzconwell/flash), 18★) — *structured, but prints instead of logging on BEAM* | · [🥇\*](#leaderboard) [woof](#woof)<br>· [🥇](#leaderboard) [palabres](#palabres)<br>· [🥈](#leaderboard) [glogg](#glogg)<br>· [🥈\*](#leaderboard) [flash](#flash) |
+| **[Structured Loggers (BEAM)](#structured-loggers-beam)** | · [🥇](#leaderboard) [glight](#glight) ([repo](https://github.com/distrill/glight), 4★) — *multi-transport, fluent context*<br>· [🥉](#leaderboard) [glimt](#glimt) ([repo](https://github.com/JohnBjrk/glimt), 31★) — *dispatcher/serializer split, dormant since 2024* | — |
+| **[Specialist Logs](#specialist-logs)** | · [🥉](#leaderboard) [gbr_disk_log](#gbr_disk_log) ([repo](https://github.com/gleam-br/gbr_disk_log), 1★) — *typed wrapper for Erlang `disk_log`*<br>· [gclog](#gclog) ([repo](https://github.com/sam-kenney/gclog), 0★) — *GCP-compliant JSON entries* | · [gclog](#gclog) *(pure Gleam; infer JS support)* |
 | **[Observability Suites](#observability-suites)** | · [viva_telemetry](#viva_telemetry) ([repo](https://github.com/gabrielmaialva33/viva_telemetry), 1★) — *logs + metrics + benchmarks* | — |
 | **[Adjacent](#adjacent)** | · [redact](#redact) ([repo](https://gitlab.com/ericcodes/gleam-redact)) — *mask secrets before they hit any logger*<br>· [stacky](#stacky) ([repo](https://github.com/inoas/stacky), 12★) — *BEAM stack traces in typed Gleam* | · [redact](#redact) *(pure Gleam)* |
 
+<a id="sink-callout"></a>
 > [!IMPORTANT]
-> On BEAM, the gold-standard path is: use [logging](#logging) for basic output, or [palabres](#palabres) if you need structured/JSON. Both route through OTP `logger`, so your application code, Wisp middleware, and any OTP dependency (`gleam_otp`, `ssl`, `inets`…) all log through the same pipeline — meaning one `logger:set_module_level/2` call works everywhere, and formatters/handlers compose. Libraries that call `io:format` directly (flash, woof — confirmed by upstream issues) skip this; their output can't be filtered by level or redirected to a file handler via OTP config.
+> **What "sink" means and why it's the load-bearing question on BEAM.** A *sink* is the final piece of code that actually writes log bytes somewhere — stdout, a file, OTP `logger`, etc. On BEAM the right sink is **OTP `logger`**, because routing through it gives you: runtime level filtering (`logger:set_module_level/2`), pluggable handlers (file rotation, syslog, journald, JSON formatters, log shippers like Datadog/Loki), shared output with library logs (`gleam_otp`, `ssl`, `inets`, Wisp middleware), per-process metadata (request IDs etc.), and OTP-native test capture/suppression. A sink that calls `io:format` straight to stdout skips all of that — your debug lines print no matter what config says, your shipper sees nothing, and your logs interleave with library logs in a mess.
+>
+> The gold-standard path on BEAM is: use [logging](#logging) for basic output, or [palabres](#palabres) if you need structured/JSON. Both route through OTP `logger` by default. [woof](#woof) (since v1.4) ships `woof.prod()` — a one-call preset that wires the OTP `logger` sink — so it's also gold-tier as long as you call it (the bare-`woof.info` quick-start path still bypasses OTP). [flash](#flash) currently has no opt-in escape and is the only library here that's unconditionally a stdout printer on BEAM ([upstream #4](https://github.com/larzconwell/flash/issues/4)).
 
 > [!NOTE]
 > On JS, OTP `logger` doesn't exist. Dual-target libraries fall back to `console.log` / `console.error` with a level prefix. That's a fine baseline, but don't expect parity with the BEAM side for things like handler routing — that's a platform gap, not a library gap.
@@ -52,7 +55,7 @@ A recurring pattern: Louis Pilfold (Gleam's creator) has filed issues against se
 > - [palabres](#palabres) → Erlang OTP `logger` + `json` (OTP 27+) / `console.*` on JS
 > - [glogg](#glogg) → [logging](#logging) + custom JSON formatter / `console.*` on JS
 > - [flash](#flash) → `io:format` on BEAM / `console.*` on JS (no OTP `logger` integration — [see issue #4](https://github.com/larzconwell/flash/issues/4))
-> - [woof](#woof) → `io:format` by default (has `beam_logger_sink` opt-in) / `console.*` on JS
+> - [woof](#woof) → `io:format` by default; `woof.prod()` preset (or `set_sinks([beam_logger_sink])`) routes through OTP `logger` / `console.*` on JS
 >
 > **BEAM structured:**
 > - [glight](#glight) → [logging](#logging) + Erlang `logger` + file transport
@@ -153,7 +156,7 @@ Erlang `logger` wrapper with a fluent API deliberately modelled on Go's Logrus: 
 
 Pure-Gleam libraries that claim to run on both BEAM and JavaScript. All four ship JSON output and a field/context API; they diverge sharply on **how the BEAM side emits bytes** — the load-bearing question on this platform.
 
-| Criterion | [palabres](https://github.com/ghivert/palabres) [🥇](#leaderboard) | [glogg](https://github.com/webermarci/glogg) [🥈](#leaderboard) | [flash](https://github.com/larzconwell/flash) | [woof](https://github.com/lupodevelop/woof) |
+| Criterion | [palabres](https://github.com/ghivert/palabres) [🥇](#leaderboard) | [glogg](https://github.com/webermarci/glogg) [🥈](#leaderboard) | [flash](https://github.com/larzconwell/flash) [🥈\*](#leaderboard) | [woof](https://github.com/lupodevelop/woof) [🥇\*](#leaderboard) |
 | --- | --- | --- | --- | --- |
 | Stars | 9★ · 🟥 | 1★ · 🟥 | 18★ · 🟨 | 11★ · 🟨 |
 | License | MIT · 🟩 | MIT · 🟩 | BSD-2-Clause-Patent · 🟩 | MIT · 🟩 |
@@ -170,7 +173,7 @@ Pure-Gleam libraries that claim to run on both BEAM and JavaScript. All four shi
 | Structured fields | ✅ | ✅ | ✅ | ✅ |
 | JSON output | ✅ | ✅ (default) | ✅ | ✅ |
 | Log levels | ✅ (debug..error) | ✅ | ✅ | ✅ (8 levels) |
-| OTP `logger` integration | ✅ | ✅ (via `logging`) | ❌ (prints) | opt-in (`beam_logger_sink`) |
+| OTP `logger` integration | ✅ | ✅ (via `logging`) | ❌ (prints) | one-call (`woof.prod()`) or explicit (`beam_logger_sink`) |
 | Hook / middleware pipeline | — | ✅ | — | — |
 | Framework integration | Wisp (`palabres_wisp`) | — | — | — |
 
@@ -219,7 +222,7 @@ pub fn main() {
 ```
 
 #### flash
-[repo](https://github.com/larzconwell/flash)
+[repo](https://github.com/larzconwell/flash) · [🥈\*](#leaderboard)
 
 "Gleam package enabling structured logging in both Erlang and JavaScript environments." Typed attributes, text and JSON writers, nested groups. On paper it ticks every structured-logging box.
 
@@ -227,26 +230,26 @@ pub fn main() {
 **Caveat ([#4](https://github.com/larzconwell/flash/issues/4)):** lpil filed an issue on 2025-08-08 titled *"Package is printing to the console instead of logging"* — on BEAM, flash writes to stdout via `io:format` rather than routing through OTP `logger`. That means OTP-level handlers, level filtering, and log forwarding don't see flash output. Unresolved at snapshot. Rules flash out of production BEAM use until fixed.
 
 #### woof
-[repo](https://github.com/lupodevelop/woof)
+[repo](https://github.com/lupodevelop/woof) · [🥇\*](#leaderboard)
 
-"A straightforward logging library for Gleam. Dedicated to Echo, my dog." Eight log levels (Info..Emergency), typed fields that preserve Gleam types for pattern matching in tests, multi-sink dispatch, and instanced loggers for per-request scoped context. README is the most thorough of the four, and has the only built-in env-var level control (`set_level_from_env()`).
+"A straightforward logging library for Gleam. Dedicated to Echo, my dog." Eight log levels (Info..Emergency), typed fields that preserve Gleam types for pattern matching in tests, multi-sink dispatch, and instanced loggers for per-request scoped context. README is the most thorough of the four, and has the only built-in env-var level control (`set_level_from_env()`). Highest raw score in this review (8) — but see caveat below.
 
 <a id="woof-caveat"></a>
-**Caveat ([#6](https://github.com/lupodevelop/woof/issues/6)):** lpil filed *"implemented as a printing library instead of a logging library"* on 2026-03-15. Woof has an opt-in `beam_logger_sink` that routes through OTP `logger`, but the default path writes directly. Pending a default-sink switch, use the BEAM-logger sink explicitly or treat woof as a pretty stdout printer.
+**Caveat ([#6](https://github.com/lupodevelop/woof/issues/6)):** lpil filed *"implemented as a printing library instead of a logging library"* on 2026-03-15. The author responded in v1.4 (Apr 2026) by adding two one-call presets: `woof.dev()` (Debug level, text format, stdout — matches the pre-v1.4 default) and `woof.prod()` (Info level, JSON format, **OTP `logger` sink**). So the "fix" is now in the library: call `woof.prod()` once at startup and woof routes through OTP `logger` like `logging`/`palabres` do — every concern in the [main callout above](#sink-callout) is addressed.
+
+What's still imperfect: if you write a quick-start `woof.info(...)` with no setup at all (the README's own opening example), you get the dev-style stdout path, not the production one. Beginners who copy that snippet into a deployed service will ship the broken behaviour. Cure: always end your `pub fn main()` setup block with `woof.prod()` for production builds.
 
 ```gleam
 import woof
-import woof/level
 
 pub fn main() {
-  woof.new()
-  |> woof.with_level(level.Info)
-  |> woof.with_sink(woof.beam_logger_sink())
-  |> woof.configure
+  // Production: OTP logger sink + JSON, one call.
+  woof.prod()
 
-  woof.info("cache hit")
-  |> woof.string("key", "user:42")
-  |> woof.log
+  // — or, for explicit control —
+  // woof.set_sinks([woof.beam_logger_sink])
+
+  woof.info("cache hit", [woof.str("key", "user:42")])
 }
 ```
 
@@ -254,7 +257,7 @@ pub fn main() {
 
 BEAM-only pure-Gleam loggers. Same shape as the dual-target group but narrower in scope.
 
-| Criterion | [glight](https://github.com/distrill/glight) | [glimt](https://github.com/JohnBjrk/glimt) |
+| Criterion | [glight](https://github.com/distrill/glight) [🥇](#leaderboard) | [glimt](https://github.com/JohnBjrk/glimt) [🥉](#leaderboard) |
 | --- | --- | --- |
 | Stars | 4★ · 🟥 | 31★ · 🟨 |
 | License | MIT · 🟩 | Apache-2.0 · 🟩 |
@@ -268,7 +271,7 @@ BEAM-only pure-Gleam loggers. Same shape as the dual-target group but narrower i
 | Idiomaticity | 🟩 (fluent `with()` chaining, typed levels) | 🟩 (explicit dispatcher + serializer split) |
 
 #### glight
-[repo](https://github.com/distrill/glight)
+[repo](https://github.com/distrill/glight) · [🥇](#leaderboard)
 
 "Shining light onto your gleam applications." Fluent API — `glight.logger() |> glight.with("user_id", "42") |> glight.info("login")` — with multiple transports (console, JSON file), colour output, eight log levels, and configurable JSON field names. Builds on lpil's `logging` for the OTP `logger` hop, so it plays nicely with the rest of the BEAM ecosystem. Zero open issues, active (last commit March 2026).
 
@@ -287,7 +290,7 @@ pub fn main() {
 ```
 
 #### glimt
-[repo](https://github.com/JohnBjrk/glimt)
+[repo](https://github.com/JohnBjrk/glimt) · [🥉](#leaderboard)
 
 "Get a glimpse (glimt in Swedish) of what is going on inside your software." The most architecturally ambitious of the pure-Gleam loggers: explicit separation between *dispatcher* (sync vs actor-based async) and *serializer* (human-readable, JSON, Erlang `logger` formatter). Levels from trace to fatal, contextual data binding, async dispatch via BEAM actors. Highest star count (31★) in this review — but last commit March 2024, stdlib pinned to `~> 0.36`, and the single open issue (from lpil in 2022) is still *"Consider using the BEAM logger."* Interesting reference design; not currently a maintained choice.
 
@@ -295,7 +298,7 @@ pub fn main() {
 
 Narrow-purpose libraries outside the general-purpose logger shape.
 
-| Criterion | [gbr_disk_log](https://github.com/gleam-br/gbr_disk_log) | [gclog](https://github.com/sam-kenney/gclog) |
+| Criterion | [gbr_disk_log](https://github.com/gleam-br/gbr_disk_log) [🥉](#leaderboard) | [gclog](https://github.com/sam-kenney/gclog) |
 | --- | --- | --- |
 | Stars | 1★ · 🟥 | 0★ · 🟥 |
 | License | Apache-2.0 · 🟩 | MIT · 🟩 |
@@ -307,7 +310,7 @@ Narrow-purpose libraries outside the general-purpose logger shape.
 | Idiomaticity | 🟩 (typed wrapper over OTP primitive) | 🟩 (typed severities, custom serializers) |
 
 #### gbr_disk_log
-[repo](https://github.com/gleam-br/gbr_disk_log)
+[repo](https://github.com/gleam-br/gbr_disk_log) · [🥉](#leaderboard)
 
 Type-safe Gleam wrapper around Erlang's `disk_log` — the OTP built-in for circular on-disk event persistence. Not a general logger; purpose-built for high-frequency, crash-safe event streams (audit trails, WALs, IoT telemetry). README is refreshingly honest about what it *isn't*: not human-readable, not distributed, single-node only. Zero open issues, active. Very young (~6 weeks), so 🟥 on age.
 
@@ -374,38 +377,45 @@ Not loggers themselves, but routinely paired with one.
 
 Thanks to everyone writing Gleam logging primitives — the ecosystem is young and every serious attempt teaches the rest of us something.
 
+Every entry below is ranked by raw score (tie-break: maintenance recency, then README maturity). Caveats — like woof's default sink bypassing OTP `logger` — are flagged inline rather than used to drop a repo out of the ranking.
+
 **🥇 Gold**
-- **logging** ([lpil](https://github.com/lpil)) — The canonical OTP `logger` wrapper. Small, current, the default import in many other Gleam projects.
+- **woof\*** ([lupodevelop](https://github.com/lupodevelop)) — Highest raw score in the review (8). Eight log levels, typed fields, instanced loggers, env-var level control. *\*The default `woof.info(...)` quick-start path prints to stdout; call `woof.prod()` (or `set_sinks([beam_logger_sink])`) once at startup to route through OTP `logger` — see [caveat](#woof-caveat).*
 - **palabres** ([ghivert](https://github.com/ghivert)) — Best-in-class dual-target structured logger. Real OTP integration on BEAM, sensible JS fallback, Wisp middleware.
+- **logging** ([lpil](https://github.com/lpil)) — The canonical OTP `logger` wrapper. Small, current, the default import in many other Gleam projects.
+- **glight** ([distrill](https://github.com/distrill)) — Fluent BEAM logger layered on `logging`. Multi-transport, zero open issues.
 
 **🥈 Silver**
 - **glogg** ([webermarci](https://github.com/webermarci)) — Handler + hook pipeline design is genuinely useful for redaction/transform pipelines. Low stars, thorough README.
+- **flash\*** ([larzconwell](https://github.com/larzconwell)) — Typed attributes, JSON writer, nested groups. *\*Same default-sink problem as woof but no opt-in escape hatch yet — see [caveat](#flash-caveat).*
 
 **🥉 Bronze**
-- **glight** ([distrill](https://github.com/distrill)) — Fluent BEAM logger layered on `logging`. Multi-transport, zero open issues.
-- **gbr_disk_log** ([gleam-br](https://github.com/gleam-br)) — Niche but necessary: the only typed wrapper for Erlang's `disk_log`.
+- **gbr_disk_log** ([gleam-br](https://github.com/gleam-br)) — Niche but necessary: the only typed wrapper for Erlang's `disk_log`. Young (~6 weeks at snapshot).
+- **glimt** ([JohnBjrk](https://github.com/JohnBjrk)) — Most architecturally ambitious of the pure-Gleam loggers (dispatcher/serializer split). 2 years dormant, pinned to old stdlib.
 
-**Do-not-use-in-prod-yet**
-- **flash** — Confirmed by upstream to print instead of logging on BEAM. Don't ship.
-- **woof** — Same issue; has an opt-in BEAM-logger sink but default path prints.
-- **glimt** — Sophisticated design, 2 years dormant, pinned to old stdlib.
-- **glog** — Dormant since April 2024.
+**No award (dormant or unverifiable)**
+- **glog** ([defgenx](https://github.com/defgenx)) — Logrus-inspired fluent fields. Dormant since April 2024.
+- **gclog** ([sam-kenney](https://github.com/sam-kenney)) — GCP-compliant JSON entries. Specialist output, 17 months dormant.
+- **viva_telemetry** ([gabrielmaialva33](https://github.com/gabrielmaialva33)) — Logs + metrics + benchmarks bundle. Commit history not browsable at snapshot — can't verify maintenance.
 
 | Position | Award | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 🥇 | [lpil/logging](https://github.com/lpil/logging) | 🟨 | 🟩 | 🟨 | 🟩🟩 | 🟩 | 🟩 | 🟩 | **7** |
-| 1 | 🥇 | [ghivert/palabres](https://github.com/ghivert/palabres) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **7** |
-| 2 | 🥈 | [webermarci/glogg](https://github.com/webermarci/glogg) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟨 | 🟩🟩 | 🟩 | **6** |
-| 3 | 🥉 | [distrill/glight](https://github.com/distrill/glight) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **7** |
-| 3 | 🥉 | [gleam-br/gbr_disk_log](https://github.com/gleam-br/gbr_disk_log) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
-| — | | [lupodevelop/woof](https://github.com/lupodevelop/woof) | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8** ([caveat](#woof-caveat)) |
-| — | | [larzconwell/flash](https://github.com/larzconwell/flash) | 🟨 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | **6** ([caveat](#flash-caveat)) |
-| — | | [JohnBjrk/glimt](https://github.com/JohnBjrk/glimt) | 🟨 | 🟩 | 🟥 | 🟥 | 🟩🟩 | 🟩🟩 | 🟩 | **5** |
-| — | | [defgenx/glog](https://github.com/defgenx/glog) | 🟨 | 🟩 | 🟥 | 🟥 | 🟩🟩 | 🟩 | 🟩 | **4** |
-| — | | [sam-kenney/gclog](https://github.com/sam-kenney/gclog) | 🟥 | 🟩 | 🟩 | 🟥 | 🟩 | 🟩🟩 | 🟩 | **4** |
-| — | | [gabrielmaialva33/viva_telemetry](https://github.com/gabrielmaialva33/viva_telemetry) | 🟥 | 🟩 | 🟩 | ⬜ | ⬜ | 🟩🟩 | 🟩 | **4** |
+| 1 | 🥇 | [lupodevelop/woof](https://github.com/lupodevelop/woof) | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8**\* ([caveat](#woof-caveat)) |
+| 2 | 🥇 | [ghivert/palabres](https://github.com/ghivert/palabres) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **7** |
+| 2 | 🥇 | [lpil/logging](https://github.com/lpil/logging) | 🟨 | 🟩 | 🟨 | 🟩🟩 | 🟩 | 🟩 | 🟩 | **7** |
+| 2 | 🥇 | [distrill/glight](https://github.com/distrill/glight) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **7** |
+| 3 | 🥈 | [webermarci/glogg](https://github.com/webermarci/glogg) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟨 | 🟩🟩 | 🟩 | **6** |
+| 3 | 🥈 | [larzconwell/flash](https://github.com/larzconwell/flash) | 🟨 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩 | **6**\* ([caveat](#flash-caveat)) |
+| 4 | 🥉 | [gleam-br/gbr_disk_log](https://github.com/gleam-br/gbr_disk_log) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
+| 4 | 🥉 | [JohnBjrk/glimt](https://github.com/JohnBjrk/glimt) | 🟨 | 🟩 | 🟥 | 🟥 | 🟩🟩 | 🟩🟩 | 🟩 | **5** |
+| 5 | | [sam-kenney/gclog](https://github.com/sam-kenney/gclog) | 🟥 | 🟩 | 🟩 | 🟥 | 🟩 | 🟩🟩 | 🟩 | **4** |
+| 5 | | [defgenx/glog](https://github.com/defgenx/glog) | 🟨 | 🟩 | 🟥 | 🟥 | 🟩🟩 | 🟩 | 🟩 | **4** |
+| 5 | | [gabrielmaialva33/viva_telemetry](https://github.com/gabrielmaialva33/viva_telemetry) | 🟥 | 🟩 | 🟩 | ⬜ | ⬜ | 🟩🟩 | 🟩 | **4** |
 
-**Note on woof score:** the dimensional score is 8 — highest in this review — but on BEAM the default sink prints instead of logging (upstream issue #6). Raw score rewards activity/README/compat, which woof has in abundance; the caveat is an *integration* signal the rubric doesn't capture. Use the explicit `beam_logger_sink` or wait for default fix.
+**\*Note on woof and flash:**
+
+- **woof (raw score 8, position 1)** — highest in this review. The dimensional rubric rewards activity/README/compat, all of which woof nails. The asterisk is for an *integration* signal the rubric doesn't capture: a "sink" is the piece of code that actually writes log bytes somewhere, and woof's bare quick-start (`woof.info("...")`) writes straight to stdout (`io:format`) instead of handing the line to OTP `logger`. That breaks `logger:set_module_level/2`, OTP file/syslog/JSON handlers, log shippers, and log co-mingling with `gleam_otp`/`ssl`/Wisp output. **Woof v1.4 (Apr 2026) shipped a fix:** call `woof.prod()` once at startup and you get OTP `logger` sink + JSON in one line. So as long as you don't deploy the bare quick-start example, woof is production-grade. Pending [upstream issue #6](https://github.com/lupodevelop/woof/issues/6) making `woof.prod()` (or equivalent) the default, woof keeps its #1 ranking with this asterisk.
+- **flash (raw score 6, position 3)** — same default-sink-bypassing-OTP problem as woof, but without the opt-in escape. Until [upstream issue #4](https://github.com/larzconwell/flash/issues/4) lands, flash on BEAM is a pretty stdout printer rather than a logger.
 
 **By target:** ☎️ BEAM **11** · 📜 JS **5** (palabres, glogg, flash, woof, gclog; redact is pure Gleam but its practical use is pre-logger sanitization on either target).
 
