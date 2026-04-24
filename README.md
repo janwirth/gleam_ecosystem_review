@@ -25,8 +25,8 @@ Coverage starts where the author's own projects demand answers, then widens outw
 
 **Testing**
 
+- [Testing libraries](gleam/testing/general-testing.md) — gleeunit, dream_test, property testing, snapshot, assertions. 17 repos reviewed.
 - [Browser automation](gleam/testing/browser-automation.md) — CDP clients, E2E frameworks, integration test infra.
-- [BDD with Gherkin](gleam/testing/bdd-with-gherkin.md) — cross-ecosystem Gherkin/BDD survey for BEAM/Gleam devs.
 
 **Other**
 
@@ -36,6 +36,10 @@ Coverage starts where the author's own projects demand answers, then widens outw
 - [Syntax highlighting](gleam/syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
 - [Databases](gleam/databases.md) — PostgreSQL drivers, SQLite bindings, query builders. 3 repos reviewed.
 - [Logging](gleam/logging.md) — OTP `logger` adapters, structured dual-target loggers, specialist sinks. 11 repos reviewed.
+
+### Testing
+
+- [BDD with Gherkin](testing/bdd-with-gherkin.md) — cross-ecosystem Cucumber-family survey across Ruby, JS, JVM, Python, .NET, Go, Rust, PHP, Elixir, Gleam, Haskell.
 
 ### OpenAPI
 
