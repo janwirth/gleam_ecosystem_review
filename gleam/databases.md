@@ -10,28 +10,31 @@ This article maps out what's available.
    - [Scoring Dimensions](#scoring-dimensions)
    - [Discovery](#discovery)
 3. [Categories](#categories)
-   - [PostgreSQL Drivers](#postgresql-drivers) — [pog](#pog)
-   - [SQLite Bindings](#sqlite-bindings) — [sqlight](#sqlight)
-   - [SQL Query Builders](#sql-query-builders) — [cake](#cake)
-   - [SQL Code Generators](#sql-code-generators) — [squirrel](#squirrel), [sqlode](#sqlode)
-   - [Migration Tools](#migration-tools) — [cigogne](#cigogne), [gorrion](#gorrion), [migrant](#migrant), [storch](#storch), [akaridb](#akaridb)
+   - [PostgreSQL Drivers](#postgresql-drivers) — [pog](#pog-)
+   - [SQLite Bindings](#sqlite-bindings) — [sqlight](#sqlight-)
+   - [SQL Query Builders](#sql-query-builders) — [cake](#cake-)
+   - [SQL Code Generators](#sql-code-generators) — [squirrel](#squirrel-), [sqlode](#sqlode-)
+   - [Migration Tools](#migration-tools) — [cigogne](#cigogne-), [gorrion](#gorrion-), [Disregarded](#disregarded-migration-tools)
    - [ORMs & Higher-Level Abstractions](#orms--higher-level-abstractions)
    - [Related Work](#related-work)
 4. [Leaderboard](#leaderboard)
 
+Dialect legend: 🐘 PostgreSQL · 🪶 SQLite.
+
 ## Summary
 
-Gleam database tools span drivers, bindings, query builders, code generators, and migrations. **pog** (PostgreSQL driver), **sqlight** (SQLite bindings), **cake** (multi-dialect SQL builder), **squirrel** and **sqlode** (SQL→Gleam codegen) cover query construction and execution. Migration tooling has matured into multiple options (**cigogne**, **gorrion** for PostgreSQL; **migrant**, **storch** for SQLite; **akaridb** as a closed-source outlier). ORMs remain a gap.
+Gleam database tools span drivers, bindings, query builders, code generators, and migrations. **pog** 🐘 (PostgreSQL driver), **sqlight** 🪶 (SQLite bindings), **cake** 🐘🪶 (multi-dialect SQL builder), **squirrel** 🐘 and **sqlode** 🐘🪶 (SQL→Gleam codegen) cover query construction and execution. PostgreSQL migration tooling has two options (**cigogne**, **gorrion**); SQLite migration is currently a gap — every published candidate is either superseded, stale, or has an outdated `gleam_stdlib` cap. ORMs remain a gap as well.
 
 Snapshot: **2026-04-26**.
 
 | Layer | BEAM | Status |
 | --- | --- | --- |
-| **[PostgreSQL Drivers](#postgresql-drivers)** | [pog](#pog) (driver with pooling) | 🟩🟩 active |
-| **[SQLite Bindings](#sqlite-bindings)** | [sqlight](#sqlight) (low-level bindings) | 🟩🟩 active |
-| **[SQL Query Builders](#sql-query-builders)** | [cake](#cake) (multi-dialect composer) | 🟩🟩 active |
-| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel) (PostgreSQL), [sqlode](#sqlode) (multi-dialect) | 🟩🟩 active |
-| **[Migrations](#migration-tools)** | [cigogne](#cigogne) (pg), [gorrion](#gorrion) (pg, ecto-like), [migrant](#migrant) (sqlite), [storch](#storch) (sqlite, **superseded**), [akaridb](#akaridb) (closed-source) | 🟩 active, fragmented |
+| **[PostgreSQL Drivers](#postgresql-drivers)** | [pog](#pog-) 🐘 (driver with pooling) | 🟩🟩 active |
+| **[SQLite Bindings](#sqlite-bindings)** | [sqlight](#sqlight-) 🪶 (low-level bindings) | 🟩🟩 active |
+| **[SQL Query Builders](#sql-query-builders)** | [cake](#cake-) 🐘🪶 (multi-dialect composer) | 🟩🟩 active |
+| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel-) 🐘, [sqlode](#sqlode-) 🐘🪶 | 🟩🟩 active |
+| **[Migrations](#migration-tools)** | [cigogne](#cigogne-) 🐘, [gorrion](#gorrion-) 🐘 (ecto-like) | 🟩 active (PG only) |
+| **SQLite migrations** | None recommended ([disregarded](#disregarded-migration-tools)) | 🟥 Gap |
 | **[ORMs](#orms--higher-level-abstractions)** | ⬜ No ORM found | Gap |
 
 > [!IMPORTANT]
@@ -69,7 +72,7 @@ Repos identified via [packages.gleam.run](https://packages.gleam.run/) searches:
 
 ### PostgreSQL Drivers
 
-#### pog
+#### pog 🐘
 [repo](https://github.com/lpil/pog) · [🥇](#leaderboard)
 
 PostgreSQL driver for Gleam. Provides connection pooling, parameterized queries, and type-safe result decoding. No ORM — write SQL directly and decode results with custom decoders.
@@ -115,7 +118,7 @@ pub fn get_user(db: pog.Connection, id: Int) -> Result(pog.Returned(User), pog.Q
 
 ### SQLite Bindings
 
-#### sqlight
+#### sqlight 🪶
 [repo](https://github.com/lpil/sqlight) · [🥉](#leaderboard)
 
 SQLite bindings for Gleam. Lower-level than pog — you manage connections directly and decode results. Good for embedding SQLite in Gleam applications or when PostgreSQL isn't needed.
@@ -171,7 +174,7 @@ fn decode_user(row: sqlight.Row) -> Result(User, Nil) {
 
 ### SQL Query Builders
 
-#### cake
+#### cake 🐘🪶
 [repo](https://github.com/inoas/gleam-cake) · [🥇](#leaderboard)
 
 Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for PostgreSQL, SQLite, MariaDB, and MySQL. Composes queries — does **not** execute. Pairs with execution adapters (`pog`, `sqlight`, `shork`, `gmysql`).
@@ -197,7 +200,7 @@ Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for Pos
 
 ### SQL Code Generators
 
-#### squirrel
+#### squirrel 🐘
 [repo](https://github.com/giacomocavalieri/squirrel) · [🥇](#leaderboard)
 
 SQL-first code generator: write `.sql` files, squirrel generates type-safe Gleam functions with decoders. Embraces SQL + editor support (syntax highlighting, formatting) without ORM magic. Requires PostgreSQL 16+.
@@ -249,7 +252,7 @@ pub fn main(db: pog.Connection) {
 }
 ```
 
-#### sqlode
+#### sqlode 🐘🪶
 [repo](https://github.com/nao1215/sqlode) · [leaderboard ↓](#leaderboard)
 
 Multi-dialect sqlc-style code generator. Reads SQL schema + query files, emits typed Gleam code. Supports PostgreSQL (via pog), MySQL 8 (via shork), and SQLite (via sqlight). Two output modes: **raw** (returns SQL string + params) and **native** (full adapter binding/decoding). Brand new — created 2026-04-12.
@@ -276,9 +279,18 @@ Multi-dialect sqlc-style code generator. Reads SQL schema + query files, emits t
 
 ### Migration Tools
 
-Migration tooling has matured rapidly in 2026. Five Hex-published tools cover both PostgreSQL and SQLite, with Ecto-style and CLI-driven workflows.
+Two PostgreSQL migration tools are recommendable. SQLite migrations are a current gap — every published candidate is disregarded for cause (see [Disregarded](#disregarded-migration-tools) below).
 
-#### cigogne
+#### Comparison
+
+| Tool | Dialect | Style | Hash check | Library-bundled | Down migrations | CLI | Stars | Latest | Maint |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [cigogne](#cigogne-) | 🐘 PostgreSQL | SQL up/down | ✅ | ✅ | ✅ | ✅ | 43★ | 5.0.6 | 🟩🟩 (3 days) |
+| [gorrion](#gorrion-) | 🐘 PostgreSQL | Ecto-style API | ❌ | ❌ | optional | ❌ | 1★ | 0.2.0-rc1 | 🟩🟩 (1 wk) |
+
+**Pick:** **cigogne** for production PostgreSQL — mature, hash-verified, library-bundled migrations, real CLI. **gorrion** if you want an Ecto-style programmatic API and don't need a CLI; brand new (Mar 2026), one-month-old project, RC release.
+
+#### cigogne 🐘
 [repo](https://github.com/Billuc/cigogne) · [leaderboard ↓](#leaderboard)
 
 PostgreSQL migration tool (via pog). SQL up/down migrations with hash verification (tamper detection), CLI for apply/rollback/status, and library-bundled migration support (deps can ship their own migrations).
@@ -302,7 +314,7 @@ PostgreSQL migration tool (via pog). SQL up/down migrations with hash verificati
 - Library-bundled migrations (deps can ship migrations)
 - Configurable transaction control via `cigogne.toml`
 
-#### gorrion
+#### gorrion 🐘
 [repo](https://github.com/davecaos/gorrion) · [leaderboard ↓](#leaderboard)
 
 Ecto-inspired PostgreSQL migration library. Reads `.sql` migration files from a directory, tracks state in `_schema_migrations` table, supports `migrate()`, `rollback()`, `rollback_to()`, `status()`. Brand new (Mar 2026), comprehensive README, but only 1 star.
@@ -326,74 +338,19 @@ Ecto-inspired PostgreSQL migration library. Reads `.sql` migration files from a 
 - State table: `_schema_migrations`
 - Optional down migrations
 
-#### migrant
-[repo](https://github.com/aosasona/migrant) · [leaderboard ↓](#leaderboard)
+#### Disregarded migration tools
 
-SQLite-only migration tool (via sqlight). Oldest of the migration libs. Works on Erlang + JS targets.
+The following migration packages turned up in the search but are **not recommended**. They are listed only so future reviewers know why they were skipped.
 
-| Criterion | [migrant](https://github.com/aosasona/migrant) |
-| --- | --- |
-| Stars | 19★ · 🟨 |
-| License | MIT (repo) / Apache-2.0 (gleam.toml) — inconsistent · 🟩 |
-| Target | ☎️ BEAM + JS (SQLite via sqlight) |
-| Gleam compat | `>= 0.53.0 and < 1.0.0` · 🟥 (capped below stdlib 1.0 — restrictive) |
-| Maintenance | 🟩 (last commit 2025-11-30, ~5 months vs snapshot) |
-| Age | ~2.5 years (Oct 2023) · 🟩🟩 |
-| README maturity | 🟩 (basic install + usage) |
-| Idiomaticity | 🟩 |
-| Latest version | **1.0.1** (Hex) — Notion list says 1.0.0 |
-| Issues | 5 open |
-
-**Key features:**
-- SQLite migrations via sqlight
-- Erlang + JS targets (Erlang primary)
-- Local dependency install supported
+| Package | Dialect | Reason disregarded |
+| --- | --- | --- |
+| [migrant](https://github.com/aosasona/migrant) | 🪶 SQLite | `gleam_stdlib` constraint capped at `< 1.0.0` — incompatible with current stdlib. Last commit 2025-11-30 (~5 months stale). License inconsistency (repo MIT, gleam.toml Apache-2.0). |
+| [storch](https://github.com/VioletBuse/storch) | 🪶 SQLite | Repo README states it is **superseded by `feather`**. Last commit 2024-06-28 (~22 months stale). |
+| [feather](https://hex.pm/packages/feather) | 🪶 SQLite | Storch's named successor — but itself stale: last release 2024-08-14 (~20 months), no commits since. Same author as storch. |
+| [akaridb](https://hex.pm/packages/akaridb) | ❓ unspecified | **No public source repository.** Hex package has no repo link in metadata, hexdocs, or footer. Cannot audit, fork, or contribute. Last release 2024-08-11. |
 
 > [!WARNING]
-> `migrant`'s gleam_stdlib constraint (`< 1.0.0`) is restrictive — will block compatibility with newer stdlib versions. Also has a license inconsistency (repo: MIT; gleam.toml: Apache-2.0).
-
-#### storch
-[repo](https://github.com/VioletBuse/storch) · [leaderboard ↓](#leaderboard)
-
-> [!WARNING]
-> **Superseded.** Repo README explicitly states storch is "superceded by the feather package, which offers a superset of storch's functionality." Do not pick up for new projects.
-
-SQLite migration runner (via sqlight). CLI generates migration files; on apply, also writes a schema file.
-
-| Criterion | [storch](https://github.com/VioletBuse/storch) |
-| --- | --- |
-| Stars | 1★ · 🟥 |
-| License | Apache-2.0 (gleam.toml; GitHub API reports none specified) · 🟩 |
-| Target | ☎️ BEAM (SQLite via sqlight) |
-| Gleam compat | `>= 0.34.0 and < 2.0.0` · 🟩 |
-| Maintenance | 🟥 (last commit 2024-06-28, ~22 months stale) |
-| Age | ~2 years (May 2024) · 🟩🟩 |
-| README maturity | 🟩 (basic setup + code example) |
-| Idiomaticity | 🟩 |
-| Latest version | **2.1.0** |
-| Issues | 1 open |
-
-#### akaridb
-[hex](https://hex.pm/packages/akaridb) · [docs](https://hexdocs.pm/akaridb) · [leaderboard ↓](#leaderboard)
-
-> [!IMPORTANT]
-> **No public source.** akaridb is published on Hex with no GitHub/GitLab repository link in package metadata, hexdocs sidebar, or footer. Source is not inspectable; you cannot audit, fork, or contribute.
-
-| Criterion | [akaridb](https://hex.pm/packages/akaridb) |
-| --- | --- |
-| Stars | ⬜ (no public repo) |
-| License | Apache-2.0 · 🟩 |
-| Target | ⬜ (no inspectable gleam.toml) |
-| Gleam compat | ⬜ (no inspectable gleam.toml) |
-| Maintenance | 🟥 (last release 2024-08-11, ~20 months stale) |
-| Age | ~20 months · 🟩 |
-| README maturity | 🟥 (hexdocs shows minimal README + single `akaridb.create_database()` function) |
-| Idiomaticity | ⬜ (cannot inspect) |
-| Latest version | **1.0.0** |
-| Downloads | 16,111 all-time (1,832 last week, 266 last day — surprisingly active for an unverifiable package) |
-| Issues | ⬜ (no public tracker) |
-
-**Notes:** Despite high download counts, the absence of a public repository makes this package unsuitable for projects that require source-level audit, vendoring, or community contribution. Treat as a closed-source dependency.
+> **SQLite migration is currently a gap in the Gleam ecosystem.** Every published SQLite migration package is either superseded, stale, or has an outdated `gleam_stdlib` cap. For new SQLite projects today, run migrations from outside Gleam (sqlite shell scripts, Make targets) or roll your own thin runner on top of [sqlight](#sqlight-).
 
 ### ORMs & Higher-Level Abstractions
 
@@ -404,8 +361,8 @@ No ORM exists for Gleam yet. The philosophy is:
 
 For feature-rich abstractions, consider:
 - **Nested decoders** — Build reusable decoder functions to map rows to typed structures.
-- **SQL codegen + drivers** — Use `squirrel` (PostgreSQL) or `sqlode` (multi-dialect) to generate type-safe decoders from SQL files + `pog`/`sqlight`/`shork` for execution.
-- **Query builders** — Use `cake` to compose dialect-portable SQL fragments at runtime, then execute via your driver of choice.
+- **SQL codegen + drivers** — Use `squirrel` 🐘 (PostgreSQL) or `sqlode` 🐘🪶 (multi-dialect) to generate type-safe decoders from SQL files + `pog`/`sqlight`/`shork` for execution.
+- **Query builders** — Use `cake` 🐘🪶 to compose dialect-portable SQL fragments at runtime, then execute via your driver of choice.
 
 ### Related Work
 
@@ -414,24 +371,23 @@ For feature-rich abstractions, consider:
 
 ## Leaderboard
 
-| Position | Award | Repo | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 🥇 | [lpil/pog](https://github.com/lpil/pog) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **10** |
-| 2 | 🥈 | [giacomocavalieri/squirrel](https://github.com/giacomocavalieri/squirrel) | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
-| 2 | 🥈 | [lpil/sqlight](https://github.com/lpil/sqlight) | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩 | **9** |
-| 4 | 🥉 | [Billuc/cigogne](https://github.com/Billuc/cigogne) | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8** |
-| 5 | — | [inoas/gleam-cake](https://github.com/inoas/gleam-cake) | 🟩 | 🟥 | 🟨 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **7** |
-| 6 | — | [nao1215/sqlode](https://github.com/nao1215/sqlode) | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
-| 6 | — | [aosasona/migrant](https://github.com/aosasona/migrant) | 🟨 | 🟩 | 🟥 | 🟩 | 🟩🟩 | 🟩 | 🟩 | **5** |
-| 8 | — | [davecaos/gorrion](https://github.com/davecaos/gorrion) | 🟥 | 🟩 | 🟨 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **4** |
-| 8 | — | [VioletBuse/storch](https://github.com/VioletBuse/storch) ⚠ superseded | 🟥 | 🟩 | 🟩 | 🟥 | 🟩🟩 | 🟩 | 🟩 | **4** |
-| — | ⬜ | [akaridb](https://hex.pm/packages/akaridb) (no public source) | ⬜ | 🟩 | ⬜ | 🟥 | 🟩 | 🟥 | ⬜ | **n/a** |
+Disregarded packages (akaridb, storch, migrant, feather) are excluded — see [Disregarded migration tools](#disregarded-migration-tools) for reasons.
+
+| Position | Award | Repo | Dialect | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 🥇 | [lpil/pog](https://github.com/lpil/pog) | 🐘 | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **10** |
+| 2 | 🥈 | [giacomocavalieri/squirrel](https://github.com/giacomocavalieri/squirrel) | 🐘 | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
+| 2 | 🥈 | [lpil/sqlight](https://github.com/lpil/sqlight) | 🪶 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩 | **9** |
+| 4 | 🥉 | [Billuc/cigogne](https://github.com/Billuc/cigogne) | 🐘 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8** |
+| 5 | — | [inoas/gleam-cake](https://github.com/inoas/gleam-cake) | 🐘🪶 | 🟩 | 🟥 | 🟨 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **7** |
+| 6 | — | [nao1215/sqlode](https://github.com/nao1215/sqlode) | 🐘🪶 | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
+| 7 | — | [davecaos/gorrion](https://github.com/davecaos/gorrion) | 🐘 | 🟥 | 🟩 | 🟨 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **4** |
 
 **Summary:**
-- **Drivers & bindings:** **pog** (PostgreSQL) leads the article overall with active maintenance, mature pooling, and comprehensive docs. **sqlight** is the SQLite low-level binding of choice and just received a same-day commit at snapshot time.
-- **Codegen:** **squirrel** is the established SQL→Gleam code generator (PostgreSQL only, 630★, FOSDEM-talked). **sqlode** is a brand-new (Apr 2026) multi-dialect challenger with a comprehensive README — promising but unproven.
-- **Query builder:** **cake** is the only multi-dialect composer (PG/SQLite/MariaDB/MySQL, BEAM + JS) with active development. MPL-2.0 license is the main caveat for shops standardising on permissive licenses.
-- **Migrations:** **cigogne** leads PostgreSQL migrations (mature, 5.0.6, hash-verified migrations, library-bundled migration support). **gorrion** is an Ecto-style alternative — well-documented but only one month old. **migrant** is the established SQLite option but its `< 1.0.0` stdlib cap is a flag. **storch** is explicitly **superseded by `feather`** — avoid for new projects. **akaridb** has no public source — treat as closed-source.
-- **Notable patterns:** Three of nine actively-tracked repos (cigogne, sqlode, cake) had a commit within 3 days of snapshot — heavy churn in the Gleam DB space right now.
+- **Drivers & bindings:** **pog** 🐘 leads overall — active maintenance, mature pooling, comprehensive docs. **sqlight** 🪶 is the SQLite low-level binding of choice and received a same-day commit at snapshot time.
+- **Codegen:** **squirrel** 🐘 is the established SQL→Gleam code generator (PostgreSQL only, 630★, FOSDEM-talked). **sqlode** 🐘🪶 is a brand-new (Apr 2026) multi-dialect challenger with a comprehensive README — promising but unproven.
+- **Query builder:** **cake** 🐘🪶 is the only multi-dialect composer (PG/SQLite/MariaDB/MySQL, BEAM + JS) with active development. MPL-2.0 license is the main caveat for shops standardising on permissive licenses.
+- **Migrations:** **cigogne** 🐘 leads PostgreSQL migrations (mature, 5.0.6, hash-verified, library-bundled). **gorrion** 🐘 is an Ecto-style alternative — well-documented but one month old. **SQLite migration is a gap**: every candidate (migrant, storch, feather, akaridb) is disregarded — see the [Disregarded](#disregarded-migration-tools) table.
+- **Notable patterns:** Three of seven recommendable repos (cigogne, sqlode, cake) had a commit within 3 days of snapshot — heavy churn in the Gleam DB space right now.
 
 [How scores are calculated →](#scoring-dimensions)
