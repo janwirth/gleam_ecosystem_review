@@ -36,6 +36,7 @@ Coverage starts where the author's own projects demand answers, then widens outw
 - [Syntax highlighting](gleam/syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
 - [Databases](gleam/databases.md) — PostgreSQL drivers, SQLite bindings, query builders, codegen, migrations. 7 repos reviewed (+ 4 disregarded).
 - [Logging](gleam/logging.md) — OTP `logger` adapters, structured dual-target loggers, specialist sinks. 11 repos reviewed.
+- [Authentication](gleam/authentication.md) — password hashing, JOSE/JWT, OAuth2 clients, TOTP, WebAuthn, sessions, IDaaS. 20+ repos reviewed.
 
 ### Testing
 
