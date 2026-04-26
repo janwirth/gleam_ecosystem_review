@@ -30,11 +30,10 @@ Coverage starts where the author's own projects demand answers, then widens outw
 
 **Other**
 
-- [OpenAPI → Gleam generators](gleam/openapi-to-gleam-generators.md) — client/server codegen from OpenAPI specs.
-- [Gleam → OpenAPI generators](gleam/gleam-to-openapi-generators.md) — code-first spec generation from mist/wisp routes (gap: no tool exists yet).
+- [Parsers & generators](gleam/parsers-and-generators.md) — parser combinators, format parsers, code generators (SQL→Gleam, OpenAPI→Gleam, JSON Schema), and gap analysis for Gleam→OpenAPI.
 - [Subprocesses](gleam/subprocesses.md) — shelling out, streaming stdio, process control.
 - [Syntax highlighting](gleam/syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
-- [Databases](gleam/databases.md) — PostgreSQL drivers, SQLite bindings, query builders, codegen, migrations. 7 repos reviewed (+ 4 disregarded).
+- [Databases](gleam/databases.md) — PostgreSQL / SQLite / MySQL drivers, query builders, codegen, migrations, framework-bundled DB. 9 repos reviewed (+ 4 disregarded).
 - [Logging](gleam/logging.md) — OTP `logger` adapters, structured dual-target loggers, specialist sinks. 11 repos reviewed.
 - [Authentication](gleam/authentication.md) — password hashing, JOSE/JWT, OAuth2 clients, TOTP, WebAuthn, sessions, IDaaS. 20+ repos reviewed.
 
@@ -60,7 +59,6 @@ Coverage starts where the author's own projects demand answers, then widens outw
 
 ### Upcoming
 
-- Parsers & generators
 - Linters
 
 ## Method

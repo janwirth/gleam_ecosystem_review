@@ -42,8 +42,10 @@ Use **public web UI only** (no API, no clone). Visitor-level access. Check: READ
 - Work volume: describe pagination or visible span + emoji (🟩🟩 large, 🟩 solid, 🟥 sparse)
 - **README maturity:** Full guide-style + examples + API docs = 🟩🟩 (including "batteries-included" frameworks with comprehensive feature docs). Tagline + basic usage = 🟩. Minimal or scaffolding = 🟥.
 - **Issues count:** Zero issues = positive signal (note explicitly). High count = possible problems. Balance against maintenance activity (active projects may have more open issues).
-- **License:** Record from repo homepage sidebar. Most Gleam ecosystem uses Apache-2.0 or MIT.
+- **License:** Record from repo homepage sidebar. Most Gleam ecosystem uses Apache-2.0 or MIT. Weak copyleft (LGPL/MPL) = 🟥 with caveat note for permissive-only shops.
 - **Target platform:** Check gleam.toml for `target` field. If absent, infer from dependencies (gleam_erlang/gleam_otp = BEAM, JS adapters = JavaScript). Note whether explicit or inferred.
+- **Frozen-mirror repos:** If a GitHub README announces the project has moved to another forge (e.g., Codeberg), score the GitHub repo on its frozen state but flag the move with a `[!CAUTION]` callout. Add a footnote on the leaderboard row noting that Hex/active development continues elsewhere. Do not penalize Hex usability — only the GitHub-visible activity score.
+- **Framework-bundled modules:** Sub-libraries shipped inside a framework (not consumable standalone) get scored on the framework's metadata but flagged with a `[!IMPORTANT]` callout and a leaderboard footnote. Pin the dialect/feature description to the bundle's specific scope, not the parent framework's full surface area.
 - No ranking: present data, let reader decide
 
 ## Running a Review

@@ -12,18 +12,19 @@ This article maps out what's available.
 3. [Categories](#categories)
    - [PostgreSQL Drivers](#postgresql-drivers) — [pog](#pog-)
    - [SQLite Bindings](#sqlite-bindings) — [sqlight](#sqlight-)
+   - [MySQL Drivers](#mysql-drivers) — [shork](#shork-)
    - [SQL Query Builders](#sql-query-builders) — [cake](#cake-)
    - [SQL Code Generators](#sql-code-generators) — [squirrel](#squirrel-), [sqlode](#sqlode-)
    - [Migration Tools](#migration-tools) — [cigogne](#cigogne-), [gorrion](#gorrion-), [Disregarded](#disregarded-migration-tools)
-   - [ORMs & Higher-Level Abstractions](#orms--higher-level-abstractions)
+   - [ORMs & Higher-Level Abstractions](#orms--higher-level-abstractions) — [glimr db](#glimr-db-)
    - [Related Work](#related-work)
 4. [Leaderboard](#leaderboard)
 
-Dialect legend: 🐘 PostgreSQL · 🪶 SQLite.
+Dialect legend: 🐘 PostgreSQL · 🪶 SQLite · 🐬 MySQL.
 
 ## Summary
 
-Gleam database tools span drivers, bindings, query builders, code generators, and migrations. **pog** 🐘 (PostgreSQL driver), **sqlight** 🪶 (SQLite bindings), **cake** 🐘🪶 (multi-dialect SQL builder), **squirrel** 🐘 and **sqlode** 🐘🪶 (SQL→Gleam codegen) cover query construction and execution. PostgreSQL migration tooling has two options (**cigogne**, **gorrion**); SQLite migration is currently a gap — every published candidate is either superseded, stale, or has an outdated `gleam_stdlib` cap. ORMs remain a gap as well.
+Gleam database tools span drivers, bindings, query builders, code generators, migrations, and (newly) framework-bundled abstractions. **pog** 🐘 (PostgreSQL driver), **sqlight** 🪶 (SQLite bindings), **shork** 🐬 (MySQL/MariaDB driver), **cake** 🐘🪶🐬 (multi-dialect SQL builder), **squirrel** 🐘 and **sqlode** 🐘🪶🐬 (SQL→Gleam codegen) cover query construction and execution. PostgreSQL migration tooling has two standalone options (**cigogne**, **gorrion**); SQLite migration remains a gap — every standalone candidate is either superseded, stale, or has an outdated `gleam_stdlib` cap. The first batteries-included approximation of an ORM ships inside the **glimr** framework's [db module](#glimr-db-) — schema-diff migrations + typed query repositories — but it's not a standalone library.
 
 Snapshot: **2026-04-26**.
 
@@ -31,11 +32,13 @@ Snapshot: **2026-04-26**.
 | --- | --- | --- |
 | **[PostgreSQL Drivers](#postgresql-drivers)** | [pog](#pog-) 🐘 (driver with pooling) | 🟩🟩 active |
 | **[SQLite Bindings](#sqlite-bindings)** | [sqlight](#sqlight-) 🪶 (low-level bindings) | 🟩🟩 active |
-| **[SQL Query Builders](#sql-query-builders)** | [cake](#cake-) 🐘🪶 (multi-dialect composer) | 🟩🟩 active |
-| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel-) 🐘, [sqlode](#sqlode-) 🐘🪶 | 🟩🟩 active |
+| **[MySQL Drivers](#mysql-drivers)** | [shork](#shork-) 🐬 (mysql-otp wrapper, pog-style API) | 🟨 stale, GitHub mirror archived ([moved](#shork-) to Codeberg) |
+| **[SQL Query Builders](#sql-query-builders)** | [cake](#cake-) 🐘🪶🐬 (multi-dialect composer) | 🟩🟩 active |
+| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel-) 🐘, [sqlode](#sqlode-) 🐘🪶🐬 | 🟩🟩 active |
 | **[Migrations](#migration-tools)** | [cigogne](#cigogne-) 🐘, [gorrion](#gorrion-) 🐘 (ecto-like) | 🟩 active (PG only) |
-| **SQLite migrations** | None recommended ([disregarded](#disregarded-migration-tools)) | 🟥 Gap |
-| **[ORMs](#orms--higher-level-abstractions)** | ⬜ No ORM found | Gap |
+| **SQLite migrations (standalone)** | None recommended ([disregarded](#disregarded-migration-tools)) | 🟥 Gap |
+| **[Framework-bundled DB](#orms--higher-level-abstractions)** | [glimr db](#glimr-db-) 🐘🪶 (schema-diff migrations + typed query repos) | 🟩🟩 active (framework-only) |
+| **Standalone ORM** | ⬜ None found | Gap |
 
 > [!IMPORTANT]
 > All database tools here target **BEAM only**. No cross-target (JS) database libraries exist yet.
@@ -64,9 +67,12 @@ Repos identified via [packages.gleam.run](https://packages.gleam.run/) searches:
 - [sql](https://packages.gleam.run/?search=sql)
 - [postgres](https://packages.gleam.run/?search=postgres)
 - [sqlite](https://packages.gleam.run/?search=sqlite)
+- [mysql](https://packages.gleam.run/?search=mysql)
 - [migration](https://packages.gleam.run/?search=migration)
 - [orm](https://packages.gleam.run/?search=orm)
 - [ecto](https://packages.gleam.run/?search=ecto)
+
+Framework-bundled DB modules were surfaced from the [Web apps review](./web-and-http/web-apps.md) — currently only [glimr](#glimr-db-) ships a substantive DB layer.
 
 ## Categories
 
@@ -172,9 +178,70 @@ fn decode_user(row: sqlight.Row) -> Result(User, Nil) {
 }
 ```
 
+### MySQL Drivers
+
+#### shork 🐬
+[repo](https://github.com/ninanomenon/shork) · [leaderboard ↓](#leaderboard)
+
+MySQL / MariaDB driver for Gleam, built on top of Erlang's [mysql-otp](https://github.com/mysql-otp/mysql-otp). API is heavily inspired by [pog](#pog-) — same builder pattern (`shork.query` → `shork.parameter` → `shork.returning` → `shork.execute`), same row-decoder style. Used as the MySQL execution backend by [cake](#cake-) and [sqlode](#sqlode-).
+
+> [!CAUTION]
+> The README announces the project has **moved to Codeberg** ([codeberg.org/ninanonemon/shork](https://codeberg.org/ninanonemon/shork)); the GitHub repo is now a frozen mirror. Last GitHub commit was 2025-10-12, ~6.5 months before snapshot. Hex is still publishing as `shork` (latest 1.4.0), but future releases will originate from Codeberg.
+
+| Criterion | [shork](https://github.com/ninanomenon/shork) |
+| --- | --- |
+| Stars | 9★ · 🟥 |
+| License | LGPL-3.0 · 🟥 (weak copyleft — flag for permissive-only shops) |
+| Target | ☎️ BEAM (via mysql-otp NIF) |
+| Deps | 4 (`gleam_erlang`, `gleam_otp`, `gleam_time`, `mysql`) |
+| Gleam compat | `>= 0.65.0 and < 1.0.0` · 🟥 (capped below current stdlib — risky) |
+| Maintenance | 🟨 (last GitHub commit 2025-10-12, ~6.5 months vs 2026-04-26; mirror frozen) |
+| Age | ~16 months (Dec 2024) · 🟩 |
+| README maturity | 🟩 (clear tagline + worked example + dev/docker setup; relegates further docs to hexdocs) |
+| Idiomaticity | 🟩 (pog-style typed builder + decoder) |
+| Latest version | **1.4.0** (Hex) |
+| Issues | ⬜ (Issues tab disabled on GitHub mirror; see Codeberg) |
+
+**Key features:**
+- MySQL & MariaDB support via Erlang's `mysql-otp`
+- Builder API mirrors `pog`: parameterized queries, typed `returning` decoders
+- Connection lifecycle: `default_config → user → password → database → connect`
+- Synchronous execute path; pooling delegated to OTP supervisor design
+
+```gleam
+import shork
+import gleam/dynamic/decode
+
+pub fn main() {
+  let connection =
+    shork.default_config()
+    |> shork.user("root")
+    |> shork.password("strong_password")
+    |> shork.database("poke")
+    |> shork.connect
+
+  let row_decoder = {
+    use name <- decode.field(0, decode.string)
+    use hp   <- decode.field(1, decode.int)
+    decode.success(#(name, hp))
+  }
+
+  let assert Ok(response) =
+    shork.query("select name, hp from pokemon where id = ?")
+    |> shork.parameter(shork.int(1))
+    |> shork.returning(row_decoder)
+    |> shork.execute(connection)
+}
+```
+
+> [!NOTE]
+> Two other MySQL packages surfaced in the [`mysql`](https://packages.gleam.run/?search=mysql) search but were skipped:
+> - **[gmysql](https://github.com/VioletBuse/gmysql)** — last release ~1 year before snapshot; superseded in active use by shork (which is what cake/sqlode wire to).
+> - **[parrot](https://github.com/daniellionel01/parrot)** — codegen tool (typed SQL across SQLite/PG/MySQL), not a driver. Worth a follow-up review under [SQL Code Generators](#sql-code-generators).
+
 ### SQL Query Builders
 
-#### cake 🐘🪶
+#### cake 🐘🪶🐬
 [repo](https://github.com/inoas/gleam-cake) · [🥇](#leaderboard)
 
 Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for PostgreSQL, SQLite, MariaDB, and MySQL. Composes queries — does **not** execute. Pairs with execution adapters (`pog`, `sqlight`, `shork`, `gmysql`).
@@ -183,7 +250,7 @@ Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for Pos
 | --- | --- |
 | Stars | 124★ · 🟩 |
 | License | MPL-2.0 · 🟥 (weak copyleft, file-level — flag for MIT/Apache shops) |
-| Target | ☎️ BEAM + JS |
+| Target | ☎️ BEAM + JS · 🐘🪶🐬 (PG / SQLite / MariaDB & MySQL via shork) |
 | Gleam compat | unknown (gleam.toml fetch failed) · 🟨 |
 | Maintenance | 🟩🟩 (last commit 2026-04-25, 1 day before snapshot) |
 | Age | ~2 years (Apr 2024) · 🟩🟩 |
@@ -261,7 +328,7 @@ pub fn main(db: pog.Connection) {
 }
 ```
 
-#### sqlode 🐘🪶
+#### sqlode 🐘🪶🐬
 [repo](https://github.com/nao1215/sqlode) · [leaderboard ↓](#leaderboard)
 
 Multi-dialect sqlc-style code generator. Reads SQL schema + query files, emits typed Gleam code. Supports PostgreSQL (via pog), MySQL 8 (via shork), and SQLite (via sqlight). Two output modes: **raw** (returns SQL string + params) and **native** (full adapter binding/decoding). Brand new — created 2026-04-12.
@@ -363,15 +430,81 @@ The following migration packages turned up in the search but are **not recommend
 
 ### ORMs & Higher-Level Abstractions
 
-No ORM exists for Gleam yet. The philosophy is:
+No **standalone** ORM exists for Gleam. The standalone library philosophy is:
 - **Minimal** — Gleam prefers explicit SQL + decoders to auto-magic ORMs.
 - **Control** — Manage queries and result mapping yourself.
 - **Performance** — No hidden N+1 queries or implicit joinloading.
 
 For feature-rich abstractions, consider:
 - **Nested decoders** — Build reusable decoder functions to map rows to typed structures.
-- **SQL codegen + drivers** — Use `squirrel` 🐘 (PostgreSQL) or `sqlode` 🐘🪶 (multi-dialect) to generate type-safe decoders from SQL files + `pog`/`sqlight`/`shork` for execution.
-- **Query builders** — Use `cake` 🐘🪶 to compose dialect-portable SQL fragments at runtime, then execute via your driver of choice.
+- **SQL codegen + drivers** — Use `squirrel` 🐘 (PostgreSQL) or `sqlode` 🐘🪶🐬 (multi-dialect) to generate type-safe decoders from SQL files + `pog`/`sqlight`/`shork` for execution.
+- **Query builders** — Use `cake` 🐘🪶🐬 to compose dialect-portable SQL fragments at runtime, then execute via your driver of choice.
+- **Framework-bundled DB layer** — Use [glimr db](#glimr-db-) 🐘🪶 if you're already building on the [glimr](#glimr-db-) framework — closest thing to an ORM in the ecosystem (schema-diff migrations + typed query repository codegen). Not consumable as a standalone library.
+
+#### glimr db 🐘🪶
+[code](https://github.com/glimr-org/framework/tree/main/src/glimr/db) · [migrations docs](https://github.com/glimr-org/glimr#migrations) · [leaderboard ↓](#leaderboard)
+
+The database module shipped inside the [glimr](https://github.com/glimr-org/glimr) batteries-included web framework. Provides a unified `db.DbPool` type backed by either PostgreSQL (via [`pog`](#pog-) through `glimr_postgres`) or SQLite (via [`sqlight`](#sqlight-) through `glimr_sqlite`), schema-diff migrations, and a CLI-driven typed query repository generator. The closest thing to an "ORM" the Gleam ecosystem currently has — but only consumable inside a glimr application, not as an à la carte library.
+
+> [!IMPORTANT]
+> **Framework-only, not a standalone library.** Code lives at `glimr-org/framework/src/glimr/db` and is published on Hex as part of `glimr`, but the schemas/migrations/queries pipeline (`./glimr make_model`, `./glimr db_gen`, `./glimr setup_database`) is wired through the framework's CLI and project layout. You can't `gleam add glimr` from a non-glimr project and use just the db module. The leaderboard scores it as a framework component, not a drop-in library.
+
+| Criterion | [glimr db](https://github.com/glimr-org/framework/tree/main/src/glimr/db) |
+| --- | --- |
+| Stars | 84★ (framework repo) · 🟨 (template repo `glimr-org/glimr` has 169★) |
+| License | MIT (framework repo) · 🟩 |
+| Target | ☎️ BEAM (PG via pog, SQLite via sqlight) · 🐘🪶 |
+| Gleam compat | `>= 0.44.0 and < 2.0.0` (framework `gleam.toml`) · 🟩 |
+| Maintenance | 🟩🟩 (framework last commit 2026-04-23, 3 days vs 2026-04-26; template same day) |
+| Age | ~5 months (Dec 2025) · 🟨 |
+| README maturity | 🟩🟩 (full guide: schema DSL, column-type table, modifiers, migrations diffing, query naming convention, repository codegen, connection pooling, multi-database setup) |
+| Idiomaticity | 🟩 (typed `DbPool`, generated typed query functions, `_or_fail` continuation variants for HTTP handlers) |
+| Latest version | **1.3.3** (framework on Hex), **1.0.0** (template) |
+| Issues | 1 open (framework), 1 open (template) |
+
+**Key features:**
+- **Schema DSL** — `glimr/db/schema` defines tables, columns (with PG/SQLite-aware types), modifiers (`nullable`, `default_*`, `array`, `on_delete`/`on_update`), enums (generates a Gleam custom type with `*_to_string`/`*_from_string`), indexes.
+- **Automatic migrations** — diffs current schema definitions against a stored snapshot and emits driver-specific SQL. No hand-written `up`/`down` files.
+- **Query repository codegen** — `./glimr make_model user` generates `create.sql` / `find.sql` / `list.sql` / `update.sql` / `delete.sql` from the schema; `./glimr db_gen` compiles all `.sql` files into typed Gleam functions. Each query yields **four** variants: `find` (returns `Result`), `find_wc` (in-transaction, takes `Connection`), `find_or_fail` (continuation-style for HTTP handlers), `find_or_fail_wc` (in-transaction continuation).
+- **Naming convention** — file prefix `list` / `list_*` returns `List(T)`; everything else returns a single row.
+- **Multi-database support** — multiple named connections in `config/database.toml`, can mix PG and SQLite in one app.
+- **Driver-agnostic API** — application code uses `DbPool`; swap `glimr_postgres` ↔ `glimr_sqlite` without changing query call sites.
+- **Connection pooling, transactions** with automatic deadlock retry.
+
+```gleam
+// src/database/main/models/user/user_schema.gleam
+import glimr/db/schema
+
+pub const table_name = "users"
+
+pub fn definition() {
+  schema.table(table_name, [
+    schema.id(),
+    schema.foreign("organization_id", "organizations")
+      |> schema.nullable()
+      |> schema.on_delete(schema.Cascade),
+    schema.string("email"),
+    schema.enum("role", ["admin", "editor", "viewer"]),
+    schema.unix_timestamps(),
+  ])
+  |> schema.indexes([
+    schema.unique(["email"]),
+  ])
+}
+```
+
+```gleam
+// In a controller — _or_fail short-circuits to a 404/503/500 Response on error
+import database/models/user/gen/user
+import glimr/http/response.{type Response}
+
+pub fn show(ctx: Context(App), id: Int) -> Response {
+  use user <- user.find_or_fail(ctx.app.db, id)
+
+  user_show.render(user: user)
+  |> response.string_tree(200)
+}
+```
 
 ### Related Work
 
@@ -380,7 +513,7 @@ For feature-rich abstractions, consider:
 
 ## Leaderboard
 
-Disregarded packages (akaridb, storch, migrant, feather) are excluded — see [Disregarded migration tools](#disregarded-migration-tools) for reasons.
+Disregarded packages (akaridb, storch, migrant, feather) are excluded — see [Disregarded migration tools](#disregarded-migration-tools) for reasons. **glimr db** is included for reference but flagged as framework-bundled (not a standalone library).
 
 | Position | Award | Repo | Dialect | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -388,15 +521,22 @@ Disregarded packages (akaridb, storch, migrant, feather) are excluded — see [D
 | 2 | 🥈 | [giacomocavalieri/squirrel](https://github.com/giacomocavalieri/squirrel) | 🐘 | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
 | 2 | 🥈 | [lpil/sqlight](https://github.com/lpil/sqlight) | 🪶 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩 | **9** |
 | 4 | 🥉 | [Billuc/cigogne](https://github.com/Billuc/cigogne) | 🐘 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8** |
-| 5 | — | [inoas/gleam-cake](https://github.com/inoas/gleam-cake) | 🐘🪶 | 🟩 | 🟥 | 🟨 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **7** |
-| 6 | — | [nao1215/sqlode](https://github.com/nao1215/sqlode) | 🐘🪶 | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
-| 7 | — | [davecaos/gorrion](https://github.com/davecaos/gorrion) | 🐘 | 🟥 | 🟩 | 🟨 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **4** |
+| 5 | — | [glimr-org/framework (db)](https://github.com/glimr-org/framework/tree/main/src/glimr/db) † | 🐘🪶 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟨 | 🟩🟩 | 🟩 | **7** |
+| 5 | — | [inoas/gleam-cake](https://github.com/inoas/gleam-cake) | 🐘🪶🐬 | 🟩 | 🟥 | 🟨 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **7** |
+| 7 | — | [nao1215/sqlode](https://github.com/nao1215/sqlode) | 🐘🪶🐬 | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
+| 8 | — | [davecaos/gorrion](https://github.com/davecaos/gorrion) | 🐘 | 🟥 | 🟩 | 🟨 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **4** |
+| 9 | — | [ninanomenon/shork](https://github.com/ninanomenon/shork) ‡ | 🐬 | 🟥 | 🟥 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **0** |
+
+† **glimr db** is bundled inside the glimr web framework, not consumable as a standalone library. Score is informational; treat it as a framework feature, not a library to compare with the others. See the [glimr db](#glimr-db-) entry.
+
+‡ **shork** GitHub mirror is frozen — repo has [moved to Codeberg](https://codeberg.org/ninanonemon/shork). Hex package (`shork`, 1.4.0) is still the recommended MySQL/MariaDB driver in practice (used by cake and sqlode), but the GitHub-visible activity score does not reflect ongoing Codeberg development.
 
 **Summary:**
-- **Drivers & bindings:** **pog** 🐘 leads overall — active maintenance, mature pooling, comprehensive docs. **sqlight** 🪶 is the SQLite low-level binding of choice and received a same-day commit at snapshot time.
-- **Codegen:** **squirrel** 🐘 is the established SQL→Gleam code generator (PostgreSQL only, 630★, FOSDEM-talked). **sqlode** 🐘🪶 is a brand-new (Apr 2026) multi-dialect challenger with a comprehensive README — promising but unproven.
-- **Query builder:** **cake** 🐘🪶 is the only multi-dialect composer (PG/SQLite/MariaDB/MySQL, BEAM + JS) with active development. MPL-2.0 license is the main caveat for shops standardising on permissive licenses.
-- **Migrations:** **cigogne** 🐘 leads PostgreSQL migrations (mature, 5.0.6, hash-verified, library-bundled). **gorrion** 🐘 is an Ecto-style alternative — well-documented but one month old. **SQLite migration is a gap**: every candidate (migrant, storch, feather, akaridb) is disregarded — see the [Disregarded](#disregarded-migration-tools) table.
-- **Notable patterns:** Three of seven recommendable repos (cigogne, sqlode, cake) had a commit within 3 days of snapshot — heavy churn in the Gleam DB space right now.
+- **Drivers & bindings:** **pog** 🐘 leads overall — active maintenance, mature pooling, comprehensive docs. **sqlight** 🪶 is the SQLite low-level binding of choice and received a same-day commit at snapshot time. **shork** 🐬 fills the MySQL/MariaDB slot but the GitHub mirror has been frozen since Oct 2025 in favour of Codeberg, the gleam_stdlib cap is `< 1.0.0`, and the LGPL-3.0 license is a caveat for permissive-only shops — usable today (cake and sqlode wire to it) but watch for releases on Codeberg, not GitHub.
+- **Codegen:** **squirrel** 🐘 is the established SQL→Gleam code generator (PostgreSQL only, 630★, FOSDEM-talked). **sqlode** 🐘🪶🐬 is a brand-new (Apr 2026) multi-dialect challenger with a comprehensive README — promising but unproven.
+- **Query builder:** **cake** 🐘🪶🐬 is the only standalone multi-dialect composer (PG/SQLite/MariaDB/MySQL, BEAM + JS) with active development. MPL-2.0 license is the main caveat for shops standardising on permissive licenses.
+- **Migrations:** **cigogne** 🐘 leads PostgreSQL migrations (mature, 5.0.6, hash-verified, library-bundled). **gorrion** 🐘 is an Ecto-style alternative — well-documented but one month old. **SQLite migration is a standalone gap**: every standalone candidate (migrant, storch, feather, akaridb) is disregarded — see the [Disregarded](#disregarded-migration-tools) table. **glimr db** 🐘🪶 covers SQLite migrations *if* you adopt the glimr framework.
+- **Framework-bundled:** **glimr db** 🐘🪶 ships the Gleam ecosystem's first batteries-included DB layer (schema-diff migrations + typed query repository codegen) — the closest thing to an ORM, but framework-only.
+- **Notable patterns:** Four of nine repos (cigogne, sqlode, cake, glimr) had a commit within 3 days of snapshot — heavy churn in the Gleam DB space right now. Zero open issues on **gorrion** and **sqlode** is a positive signal balanced by their newness; **shork** disables the GitHub Issues tab entirely (issue tracking is on Codeberg).
 
 [How scores are calculated →](#scoring-dimensions)
