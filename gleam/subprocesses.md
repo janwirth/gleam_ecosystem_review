@@ -16,6 +16,8 @@ This is the shortlist.
 
 ## Summary
 
+Snapshot: **2026-04-23**.
+
 Gleam has three live options for spawning OS processes. They carve up the space by ambition: one-shot command execution vs. long-lived interactive processes with stdin/stdout streaming.
 
 | Category | ☎️ BEAM | 📜 JS |
