@@ -200,6 +200,15 @@ Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for Pos
 
 ### SQL Code Generators
 
+#### Comparison
+
+| Tool | Dialects | Style | Driver coupling | Output modes | Stars | Latest | Maint |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [squirrel](#squirrel-) | 🐘 PostgreSQL 16+ | `.sql` files → typed Gleam decoders | tight (pog) | single (typed decoders) | 630★ | — | 🟩 (5 wk) |
+| [sqlode](#sqlode-) | 🐘 PostgreSQL · 🪶 SQLite · 🐬 MySQL 8 | sqlc-style schema + queries → typed Gleam | driver-agnostic at codegen (pog/sqlight/shork) | raw (SQL+params) + native (full binding) | 3★ | 0.9.0 | 🟩🟩 (snapshot day) |
+
+**Pick:** **squirrel** for PostgreSQL — established (FOSDEM-talked, 630★), proven, tight pog integration. **sqlode** if you need SQLite or MySQL codegen, or want raw-mode output for custom adapters; brand new (Apr 2026), unproven but comprehensive.
+
 #### squirrel 🐘
 [repo](https://github.com/giacomocavalieri/squirrel) · [🥇](#leaderboard)
 
