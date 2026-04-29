@@ -69,6 +69,18 @@ Created `gleam/parsers-and-generators.md` covering issue #3, merging two prior O
 - **Self-hosted Git hosts gated by Anubis** (e.g., liten.app/krig/mork): WebFetch returns the access-denied page. Mark stars/license/dates as ⬜ with a note. Don't disregard — the package still exists on Hex.
 - **Unknown licenses**: When repo sidebar/LICENSE doesn't render via WebFetch but the project is real, score as 🟨 unknown (not 🟥) and add a footnote inviting the reader to check directly. Don't pretend to know.
 
+### Example: Parsers & Generators folder split (2026-04-26)
+
+Split `gleam/parsers-and-generators.md` into a folder `gleam/parsers-and-generators/` with sub-articles `parse.md`, `decode.md`, `generate.md`, `serialize.md`, plus a `README.md` index. Insights:
+
+- **Operation-axis split**: When a single article spans heterogeneous operation classes (parse vs decode vs emit-code vs encode), splitting by **operation** (what the tool *does*) rather than by **input type** (what it *consumes*) keeps each sub-article internally consistent. The runtime-vs-build-time and structure-extraction-vs-emission axes naturally produce four files.
+- **Per-article discovery**: Each sub-article gets its own Discovery section listing the packages.gleam.run search queries used for *that operation*. Different operations have different keyword surface (e.g. `decode` is mostly silent on `parser`, `generate` needs `codegen` + `swagger` + `protobuf`). Snapshot date repeated per file.
+- **Cross-cutting themes via shared README**: When sub-articles share a rubric (the 7-dim score), document the rubric in the folder `README.md` once and link from each sub-article via `[How scores are calculated →](README.md#scoring-rubric-shared)`. Avoids duplicating the legend across 4 files.
+- **OpenAPI spans three files**: `parse.md` (oas reads specs), `generate.md` (oaspec/gilly emit Gleam), `serialize.md` (Gleam→OpenAPI gap). Cross-link aggressively rather than duplicating; use anchor links like `[oaspec](generate.md#oaspec)` from neighbouring files in the same folder.
+- **Cross-language framing for context, not for review**: When users explicitly ask for "other languages" framing, add a *Cross-language framing* section comparing approaches (serde / Jason / encoding-json / pydantic / utoipa) but do **not** score those tools. The article remains Gleam-scoped; the framing is for contextual orientation.
+- **Per-format packages, per-direction sub-articles**: JSON / CBOR / Protobuf packages tend to bundle encode + decode in one library. The split-by-direction sub-articles cross-link to each other for the inverse side rather than re-listing packages. `decode.md` lists `gleam_json`; `serialize.md` cross-links with a note that the encoder is the same package.
+- **Gap framing**: The Gleam→OpenAPI gap moves to `serialize.md` because it's about emitting a *spec document*, which is structurally a serialization (typed value → output document) rather than a code generation (input → emitted source). Surface it loudly with `[!IMPORTANT]` callouts in both `serialize.md` and the folder `README.md`.
+
 ## Future Article Updates
 
 When adding to existing articles or creating new ones:
@@ -78,3 +90,18 @@ When adding to existing articles or creating new ones:
 4. If new repo type or pattern emerges, note in workflows immediately.
 5. Re-rank all repos when adding new ones (don't append to old ranking).
 6. Update Notes section with summary of any new repos or edge cases.
+
+### Example: Databases article — marmot + parrot + Disregarded hoisted (2026-04-27)
+
+Three changes to `gleam/databases.md`:
+
+- **Add `marmot` (SQLite SQL→Gleam codegen)** — squirrel-inspired, brand new (Apr 2026), 2★, MIT, last commit 4 days before snapshot. Placed under SQL Code Generators (not migrations, not driver).
+- **Re-evaluate `parrot` in proper category (SQL Code Generators)** — previously only mentioned in a footnote-style NOTE under MySQL Drivers ("not a driver, worth follow-up"). Now fully scored: 207★, Apache-2.0, sqlc plugin, multi-dialect (PG/SQLite/MySQL). Score **9** (ties with squirrel + sqlight).
+- **Hoist `Disregarded` from a sub-subsection at the bottom to a top-level `## Disregarded` section after Research Method.** Rationale: when an article accumulates disregarded packages across multiple categories (was just SQLite migrations, now also `gmysql` from MySQL drivers), keeping them in a leading top-level section makes the negative-signal corner discoverable in one place — readers can immediately see "this corner has been considered, here's what was skipped and why" before drilling into per-category leaderboards.
+
+Insights worth codifying:
+
+- **Repo moving out of disregarded/footnote**: When a repo previously dismissed in a NOTE turns out to be in scope for a different category, **do a full 7-dim review in the right category** — don't half-measure with another note. Update the original location's NOTE to point to the new full review (so search-by-text still finds the breadcrumb).
+- **Section reordering rationale (Disregarded at top vs bottom)**: Bottom = "appendix" feel (reader has to know to look). Top = "we considered the corner, this is what's not worth pursuing" (informs the reader before they read recommendations). Top placement is preferred when the disregarded list spans multiple categories. Keep the per-category leaderboards/comparisons clean of dead-end clutter.
+- **Cross-article codegen entry consistency**: parrot/marmot are reviewed in **both** `gleam/databases.md#sql-code-generators` (database lens) and `gleam/parsers-and-generators/generate.md#sql--gleam` (codegen lens). The 7-dim score should match between the two if the underlying metrics haven't drifted; add a `[!NOTE]` callout in the database article cross-linking to the codegen article (and vice-versa) so readers find the matching review either way. Do not duplicate the full code example — let one canonical entry hold the example and have the other cross-link.
+- **Tied leaderboard ranks**: When new entrants tie at a score that already has multiple holders (e.g. parrot ties with squirrel + sqlight at 9), use the same award emoji for all (here: 🥈 × 3) and bump the next-ranked entry's position number to match the count above (3 entries at rank 2 → next is rank 5). Don't fudge the math by giving "2nd place" only to the first one read.

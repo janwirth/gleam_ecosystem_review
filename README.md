@@ -30,16 +30,30 @@ Coverage starts where the author's own projects demand answers, then widens outw
 
 **Other**
 
-- [Parsers & generators](gleam/parsers-and-generators.md) — parser combinators, format parsers, code generators (SQL→Gleam, OpenAPI→Gleam, JSON Schema), and gap analysis for Gleam→OpenAPI.
+- [Parsers & generators](gleam/parsers-and-generators/README.md) — folder split into [parse](gleam/parsers-and-generators/parse.md), [decode](gleam/parsers-and-generators/decode.md), [generate](gleam/parsers-and-generators/generate.md), [serialize](gleam/parsers-and-generators/serialize.md). Covers combinators, format parsers, JSON / CBOR / Protobuf decoders, Gleam DSL codegen (gleamgen, trick), SQL→Gleam, OpenAPI→Gleam, and the Gleam→OpenAPI gap.
 - [Subprocesses](gleam/subprocesses.md) — shelling out, streaming stdio, process control.
 - [Syntax highlighting](gleam/syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
 - [Databases](gleam/databases.md) — PostgreSQL / SQLite / MySQL drivers, query builders, codegen, migrations, framework-bundled DB. 9 repos reviewed (+ 4 disregarded).
 - [Logging](gleam/logging.md) — OTP `logger` adapters, structured dual-target loggers, specialist sinks. 11 repos reviewed.
 - [Authentication](gleam/authentication.md) — password hashing, JOSE/JWT, OAuth2 clients, TOTP, WebAuthn, sessions, IDaaS. 20+ repos reviewed.
+- [Mobile apps](gleam/mobile-apps.md) — JS-compile-then-shell paths (Lustre + Capacitor / Tauri Mobile / RN-as-logic-only / PWA / bare WebView). Honest about the gaps.
+- [Guides & learning resources](gleam/guides.md) — interactive tour, Exercism, CodeCrafters, awesome-gleam, framework-shipped guides (Lustre, Wisp), YouTube, newsletter, Discord. 15 resources scored. Honest about the no-book / no-paid-course gap.
+
+### Mobile
+
+- [Building mobile apps — cross-ecosystem survey](mobile/building-mobile-apps.md) — native (Kotlin/Swift), Flutter, React Native / Expo, Capacitor, Tauri Mobile, Compose Multiplatform / KMP, .NET MAUI, NativeScript, Lynx, Quasar, Solito, PWA. 14 frameworks reviewed + 7 disregarded/EOL.
 
 ### Testing
 
 - [BDD with Gherkin](testing/bdd-with-gherkin.md) — cross-ecosystem Cucumber-family survey across Ruby, JS, JVM, Python, .NET, Go, Rust, PHP, Elixir, Gleam, Haskell.
+
+### UX
+
+- [UX resources & tools](ux/resources-and-tools.md) — curated review of UX (not visual design) resources: Laws of UX, NN/g heuristics + training, dogfooding practice, PostHog instrumentation, and the BDD/Gherkin connection.
+
+### Diagramming
+
+- [Diagramming tools — cross-ecosystem survey](diagramming/README.md) — Mermaid, PlantUML, D2, Graphviz/DOT, LaTeX/TikZ, Kroki, mingrammer/diagrams, Structurizr, WaveDrom, Excalidraw, plus 20+ ASCII renderers and terminal-chart tools. ~40 tools reviewed.
 
 ### OpenAPI
 
@@ -56,6 +70,10 @@ Coverage starts where the author's own projects demand answers, then widens outw
 ### Languages
 
 - [Programming language popularity & desire](languages/programming-languages-popularity-and-desire.md) — Stack Overflow 2025 rankings: what's used vs what's loved.
+
+### Meta
+
+- [Navigating software ecosystems](meta/navigating-ecosystems.md) — meta-review of the discovery toolkit itself: awesome lists, friends & experts, bundlephobia and friends, ossinsight, comparison pages, and how to combine them with this repo's structured-review approach.
 
 ### Upcoming
 

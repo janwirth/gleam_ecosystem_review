@@ -22,10 +22,12 @@ For the full scoring formalization see [../formalization.md](../formalization.md
 
 ### Other
 
-- [Parsers & generators](parsers-and-generators.md) — parser combinators, format parsers, code generators (SQL→Gleam, OpenAPI→Gleam, JSON Schema), and gap analysis for Gleam→OpenAPI.
+- [Parsers & generators](parsers-and-generators/README.md) — split into [parse](parsers-and-generators/parse.md) (combinators, format parsers, HTML, glance/oas), [decode](parsers-and-generators/decode.md) (JSON / CBOR / MsgPack / BSON / Protobuf runtime), [generate](parsers-and-generators/generate.md) (gleamgen, trick, SQL→Gleam, OpenAPI→Gleam), and [serialize](parsers-and-generators/serialize.md) (encoders + Gleam→OpenAPI gap).
 - [Subprocesses](subprocesses.md) — shelling out, streaming stdio, process control.
 - [Syntax highlighting](syntax-highlighting.md) — per-language lexers, multi-language grammars, tree-sitter NIFs. 6 repos reviewed.
 - [Databases](databases.md) — PostgreSQL / SQLite / MySQL drivers, query builders, codegen, migrations, framework-bundled DB. 9 repos reviewed (+ 4 disregarded).
 - [Logging](logging.md) — OTP `logger` adapters, structured dual-target loggers, specialist sinks. 11 repos reviewed.
 - [Authentication](authentication.md) — password hashing, JOSE/JWT, OAuth2 clients, TOTP, WebAuthn, sessions, IDaaS. 20+ repos reviewed.
 - [Email](email.md) — SMTP clients, transactional email vendor wrappers, HTML email composition, and the inbound / IMAP gap.
+- [Mobile apps](mobile-apps.md) — Gleam has no native mobile target; the realistic 2026 paths all compile to JS then plug into a shell (Capacitor, Tauri Mobile, RN-as-logic-only, PWA, bare WebView). 5 paths scored. Cross-links to [../mobile/building-mobile-apps.md](../mobile/building-mobile-apps.md) for shell internals.
+- [Guides & learning resources](guides.md) — Language Tour, Writing Gleam guide, Cheatsheets, Exercism, CodeCrafters, awesome-gleam, framework-shipped guides (Lustre, Wisp), YouTube talks, community blog series, newsletter, Discord. 15 resources scored. Honest about the no-book / no-paid-course gap.

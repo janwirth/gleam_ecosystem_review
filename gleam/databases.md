@@ -9,24 +9,25 @@ This article maps out what's available.
 2. [Research Method](#research-method)
    - [Scoring Dimensions](#scoring-dimensions)
    - [Discovery](#discovery)
-3. [Categories](#categories)
+3. [Disregarded](#disregarded)
+4. [Categories](#categories)
    - [PostgreSQL Drivers](#postgresql-drivers) — [pog](#pog-)
    - [SQLite Bindings](#sqlite-bindings) — [sqlight](#sqlight-)
    - [MySQL Drivers](#mysql-drivers) — [shork](#shork-)
    - [SQL Query Builders](#sql-query-builders) — [cake](#cake-)
-   - [SQL Code Generators](#sql-code-generators) — [squirrel](#squirrel-), [sqlode](#sqlode-)
-   - [Migration Tools](#migration-tools) — [cigogne](#cigogne-), [gorrion](#gorrion-), [Disregarded](#disregarded-migration-tools)
+   - [SQL Code Generators](#sql-code-generators) — [squirrel](#squirrel-), [parrot](#parrot-), [sqlode](#sqlode-), [marmot](#marmot-)
+   - [Migration Tools](#migration-tools) — [cigogne](#cigogne-), [gorrion](#gorrion-)
    - [ORMs & Higher-Level Abstractions](#orms--higher-level-abstractions) — [glimr db](#glimr-db-)
    - [Related Work](#related-work)
-4. [Leaderboard](#leaderboard)
+5. [Leaderboard](#leaderboard)
 
 Dialect legend: 🐘 PostgreSQL · 🪶 SQLite · 🐬 MySQL.
 
 ## Summary
 
-Gleam database tools span drivers, bindings, query builders, code generators, migrations, and (newly) framework-bundled abstractions. **pog** 🐘 (PostgreSQL driver), **sqlight** 🪶 (SQLite bindings), **shork** 🐬 (MySQL/MariaDB driver), **cake** 🐘🪶🐬 (multi-dialect SQL builder), **squirrel** 🐘 and **sqlode** 🐘🪶🐬 (SQL→Gleam codegen) cover query construction and execution. PostgreSQL migration tooling has two standalone options (**cigogne**, **gorrion**); SQLite migration remains a gap — every standalone candidate is either superseded, stale, or has an outdated `gleam_stdlib` cap. The first batteries-included approximation of an ORM ships inside the **glimr** framework's [db module](#glimr-db-) — schema-diff migrations + typed query repositories — but it's not a standalone library.
+Gleam database tools span drivers, bindings, query builders, code generators, migrations, and (newly) framework-bundled abstractions. **pog** 🐘 (PostgreSQL driver), **sqlight** 🪶 (SQLite bindings), **shork** 🐬 (MySQL/MariaDB driver), **cake** 🐘🪶🐬 (multi-dialect SQL builder), and four SQL→Gleam code generators — **squirrel** 🐘, **parrot** 🐘🪶🐬, **sqlode** 🐘🪶🐬, **marmot** 🪶 — cover query construction and execution. PostgreSQL migration tooling has two standalone options (**cigogne**, **gorrion**); SQLite migration remains a gap — every standalone candidate is either superseded, stale, or has an outdated `gleam_stdlib` cap (see [Disregarded](#disregarded)). The first batteries-included approximation of an ORM ships inside the **glimr** framework's [db module](#glimr-db-) — schema-diff migrations + typed query repositories — but it's not a standalone library.
 
-Snapshot: **2026-04-26**.
+Snapshot: **2026-04-27**.
 
 | Layer | BEAM | Status |
 | --- | --- | --- |
@@ -34,9 +35,9 @@ Snapshot: **2026-04-26**.
 | **[SQLite Bindings](#sqlite-bindings)** | [sqlight](#sqlight-) 🪶 (low-level bindings) | 🟩🟩 active |
 | **[MySQL Drivers](#mysql-drivers)** | [shork](#shork-) 🐬 (mysql-otp wrapper, pog-style API) | 🟨 stale, GitHub mirror archived ([moved](#shork-) to Codeberg) |
 | **[SQL Query Builders](#sql-query-builders)** | [cake](#cake-) 🐘🪶🐬 (multi-dialect composer) | 🟩🟩 active |
-| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel-) 🐘, [sqlode](#sqlode-) 🐘🪶🐬 | 🟩🟩 active |
+| **[SQL Code Generators](#sql-code-generators)** | [squirrel](#squirrel-) 🐘, [parrot](#parrot-) 🐘🪶🐬, [sqlode](#sqlode-) 🐘🪶🐬, [marmot](#marmot-) 🪶 | 🟩🟩 active |
 | **[Migrations](#migration-tools)** | [cigogne](#cigogne-) 🐘, [gorrion](#gorrion-) 🐘 (ecto-like) | 🟩 active (PG only) |
-| **SQLite migrations (standalone)** | None recommended ([disregarded](#disregarded-migration-tools)) | 🟥 Gap |
+| **SQLite migrations (standalone)** | None recommended ([disregarded](#disregarded)) | 🟥 Gap |
 | **[Framework-bundled DB](#orms--higher-level-abstractions)** | [glimr db](#glimr-db-) 🐘🪶 (schema-diff migrations + typed query repos) | 🟩🟩 active (framework-only) |
 | **Standalone ORM** | ⬜ None found | Gap |
 
@@ -71,8 +72,28 @@ Repos identified via [packages.gleam.run](https://packages.gleam.run/) searches:
 - [migration](https://packages.gleam.run/?search=migration)
 - [orm](https://packages.gleam.run/?search=orm)
 - [ecto](https://packages.gleam.run/?search=ecto)
+- [marmot](https://packages.gleam.run/?search=marmot) (re-checked 2026-04-27 — surfaced [`marmot`](#marmot-), the SQLite codegen)
+- [parrot](https://packages.gleam.run/?search=parrot) (re-checked 2026-04-27 — confirmed [`parrot`](#parrot-) under SQL Code Generators, not a driver)
 
 Framework-bundled DB modules were surfaced from the [Web apps review](./web-and-http/web-apps.md) — currently only [glimr](#glimr-db-) ships a substantive DB layer.
+
+## Disregarded
+
+These packages turned up in the searches but are **not recommended**. Listed up-front so future reviewers know the corner has been considered and why each entry was skipped — keeping the per-category pages free of dead-end clutter.
+
+| Package | Dialect | Reason disregarded |
+| --- | --- | --- |
+| [migrant](https://github.com/aosasona/migrant) | 🪶 SQLite (migrations) | `gleam_stdlib` constraint capped at `< 1.0.0` — incompatible with current stdlib. Last commit 2025-11-30 (~5 months stale). License inconsistency (repo MIT, gleam.toml Apache-2.0). |
+| [storch](https://github.com/VioletBuse/storch) | 🪶 SQLite (migrations) | Repo README states it is **superseded by `feather`**. Last commit 2024-06-28 (~22 months stale). |
+| [feather](https://hex.pm/packages/feather) | 🪶 SQLite (migrations) | Storch's named successor — but itself stale: last release 2024-08-14 (~20 months), no commits since. Same author as storch. |
+| [akaridb](https://hex.pm/packages/akaridb) | ❓ unspecified (migrations) | **No public source repository.** Hex package has no repo link in metadata, hexdocs, or footer. Cannot audit, fork, or contribute. Last release 2024-08-11. |
+| [gmysql](https://github.com/VioletBuse/gmysql) | 🐬 MySQL (driver) | Last release ~1 year before snapshot; superseded in active use by [shork](#shork-) (which is what cake/sqlode wire to). |
+
+> [!WARNING]
+> **SQLite migration is currently a gap in the Gleam ecosystem.** Every published SQLite migration package above is either superseded, stale, or has an outdated `gleam_stdlib` cap. For new SQLite projects today, run migrations from outside Gleam (sqlite shell scripts, Make targets) or roll your own thin runner on top of [sqlight](#sqlight-) — or adopt the [glimr](#glimr-db-) framework, which ships schema-diff SQLite migrations.
+
+> [!NOTE]
+> **parrot** previously appeared in a disregard-style note under MySQL Drivers (it isn't a driver). It has now been reviewed as a [SQL Code Generator](#parrot-) — see that section.
 
 ## Categories
 
@@ -90,7 +111,7 @@ PostgreSQL driver for Gleam. Provides connection pooling, parameterized queries,
 | Target | ☎️ BEAM |
 | Deps | 5 |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩 (last commit 2026-03-09, ~7 weeks vs 2026-04-26) |
+| Maintenance | 🟩 (last commit 2026-03-09, ~7 weeks vs 2026-04-27) |
 | Age | ~6 years (Nov 2019) · 🟩🟩 |
 | README maturity | 🟩🟩 (comprehensive guide with pooling example, SQL API, error handling) |
 | Idiomaticity | 🟩 (typed queries, explicit decoders) |
@@ -136,7 +157,7 @@ SQLite bindings for Gleam. Lower-level than pog — you manage connections direc
 | Target | ☎️ BEAM |
 | Deps | 2 |
 | Gleam compat | `>= 0.32 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (last commit 2026-04-18, ~8 days vs 2026-04-26) |
+| Maintenance | 🟩🟩 (last commit 2026-04-18, ~9 days vs 2026-04-27) |
 | Age | ~3.5 years (Dec 2022) · 🟩🟩 |
 | README maturity | 🟩 (tagline + basic example + list of functions) |
 | Idiomaticity | 🟩 (typed, explicit) |
@@ -195,7 +216,7 @@ MySQL / MariaDB driver for Gleam, built on top of Erlang's [mysql-otp](https://g
 | Target | ☎️ BEAM (via mysql-otp NIF) |
 | Deps | 4 (`gleam_erlang`, `gleam_otp`, `gleam_time`, `mysql`) |
 | Gleam compat | `>= 0.65.0 and < 1.0.0` · 🟥 (capped below current stdlib — risky) |
-| Maintenance | 🟨 (last GitHub commit 2025-10-12, ~6.5 months vs 2026-04-26; mirror frozen) |
+| Maintenance | 🟨 (last GitHub commit 2025-10-12, ~6.5 months vs 2026-04-27; mirror frozen) |
 | Age | ~16 months (Dec 2024) · 🟩 |
 | README maturity | 🟩 (clear tagline + worked example + dev/docker setup; relegates further docs to hexdocs) |
 | Idiomaticity | 🟩 (pog-style typed builder + decoder) |
@@ -235,9 +256,9 @@ pub fn main() {
 ```
 
 > [!NOTE]
-> Two other MySQL packages surfaced in the [`mysql`](https://packages.gleam.run/?search=mysql) search but were skipped:
-> - **[gmysql](https://github.com/VioletBuse/gmysql)** — last release ~1 year before snapshot; superseded in active use by shork (which is what cake/sqlode wire to).
-> - **[parrot](https://github.com/daniellionel01/parrot)** — codegen tool (typed SQL across SQLite/PG/MySQL), not a driver. Worth a follow-up review under [SQL Code Generators](#sql-code-generators).
+> Two other packages surfaced in the [`mysql`](https://packages.gleam.run/?search=mysql) search but live elsewhere:
+> - **[gmysql](https://github.com/VioletBuse/gmysql)** — driver, but stale and superseded by shork. See [Disregarded](#disregarded).
+> - **[parrot](https://github.com/daniellionel01/parrot)** — typed SQL codegen across SQLite/PG/MySQL, not a driver. Reviewed under [SQL Code Generators → parrot](#parrot-).
 
 ### SQL Query Builders
 
@@ -252,7 +273,7 @@ Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for Pos
 | License | MPL-2.0 · 🟥 (weak copyleft, file-level — flag for MIT/Apache shops) |
 | Target | ☎️ BEAM + JS · 🐘🪶🐬 (PG / SQLite / MariaDB & MySQL via shork) |
 | Gleam compat | unknown (gleam.toml fetch failed) · 🟨 |
-| Maintenance | 🟩🟩 (last commit 2026-04-25, 1 day before snapshot) |
+| Maintenance | 🟩🟩 (last commit 2026-04-25, 2 days before snapshot) |
 | Age | ~2 years (Apr 2024) · 🟩🟩 |
 | README maturity | 🟩🟩 (full guide: install, worked examples, design goals/non-goals, dialect adapter list) |
 | Idiomaticity | 🟩 (typed fragment composition, prepared-statement-safe) |
@@ -272,9 +293,15 @@ Multi-dialect SQL composer. Builds prepared-statement-safe SQL fragments for Pos
 | Tool | Dialects | Style | Driver coupling | Output modes | Stars | Latest | Maint |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [squirrel](#squirrel-) | 🐘 PostgreSQL 16+ | `.sql` files → typed Gleam decoders | tight (pog) | single (typed decoders) | 630★ | — | 🟩 (5 wk) |
-| [sqlode](#sqlode-) | 🐘 PostgreSQL · 🪶 SQLite · 🐬 MySQL 8 | sqlc-style schema + queries → typed Gleam | driver-agnostic at codegen (pog/sqlight/shork) | raw (SQL+params) + native (full binding) | 3★ | 0.9.0 | 🟩🟩 (snapshot day) |
+| [parrot](#parrot-) | 🐘 PostgreSQL · 🪶 SQLite · 🐬 MySQL | sqlc plugin → typed Gleam (auto-downloads sqlc binary) | driver-agnostic, ships utility wrappers for pog/sqlight | typed functions + decoders | 207★ | 2.2.1 | 🟩 (~12 wk on `main`; ~2 wk on `version3` branch) |
+| [sqlode](#sqlode-) | 🐘 PostgreSQL · 🪶 SQLite · 🐬 MySQL 8 | sqlc-style schema + queries → typed Gleam | driver-agnostic at codegen (pog/sqlight/shork) | raw (SQL+params) + native (full binding) | 3★ | 0.9.0 | 🟩🟩 (1 day) |
+| [marmot](#marmot-) | 🪶 SQLite | `.sql` files → typed Gleam (squirrel-style introspection) | tight (sqlight) | typed functions + decoders | 2★ | 1.1.1 | 🟩🟩 (4 days) |
 
-**Pick:** **squirrel** for PostgreSQL — established (FOSDEM-talked, 630★), proven, tight pog integration. **sqlode** if you need SQLite or MySQL codegen, or want raw-mode output for custom adapters; brand new (Apr 2026), unproven but comprehensive.
+**Pick:**
+- **squirrel** for PostgreSQL — established (FOSDEM-talked, 630★), proven, tight pog integration.
+- **parrot** if you want a single typed codegen across PostgreSQL/SQLite/MySQL on a battle-tested foundation (sqlc) — the largest community of any Gleam SQL codegen (207★), Apache-2.0, listed as a sqlc community plugin upstream. Trade-off: depends on the external `sqlc` binary (auto-downloaded), and recent activity has shifted to a `version3` branch.
+- **sqlode** if you need SQLite or MySQL codegen and prefer raw-mode output for custom adapters; brand new (Apr 2026), unproven but comprehensive, no external binary.
+- **marmot** for SQLite-only projects that want squirrel's exact ergonomics. SQLite-specific, brand new (Apr 2026).
 
 #### squirrel 🐘
 [repo](https://github.com/giacomocavalieri/squirrel) · [🥇](#leaderboard)
@@ -288,7 +315,7 @@ SQL-first code generator: write `.sql` files, squirrel generates type-safe Gleam
 | Target | ☎️ BEAM (Postgres 16+ required) |
 | Deps | 2 |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩 (last commit 2026-03-19, ~5 weeks vs 2026-04-26) |
+| Maintenance | 🟩 (last commit 2026-03-19, ~5.5 weeks vs 2026-04-27) |
 | Age | ~1.5 years (Aug 2024) · 🟩 |
 | README maturity | 🟩🟩 (FOSDEM talk, detailed guides, real examples) |
 | Idiomaticity | 🟩 (generated code matches hand-written idiomatic Gleam) |
@@ -328,6 +355,61 @@ pub fn main(db: pog.Connection) {
 }
 ```
 
+#### parrot 🐘🪶🐬
+[repo](https://github.com/daniellionel01/parrot) · [🥈](#leaderboard) · *(renamed from `sqlc-gen-gleam`)*
+
+Multi-dialect SQL→Gleam code generator built as an [sqlc](https://sqlc.dev/) plugin. Reads SQL schema + queries, leverages sqlc's mature parser/codegen pipeline, and emits typed Gleam functions, parameter encoders, and decoders. Supports PostgreSQL, SQLite, and MySQL. Auto-downloads the sqlc binary on first run; ships utility wrappers for [`lpil/sqlight`](#sqlight-) and [`lpil/pog`](#pog-) so generated code drops cleanly into either driver. Listed as a community plugin on the [sqlc website](https://docs.sqlc.dev/en/latest/reference/language-support.html). README explicitly credits sqlc: *"Most of the heavy lifting features are provided by / built into sqlc, I do not aim to take credit for them."*
+
+| Criterion | [parrot](https://github.com/daniellionel01/parrot) |
+| --- | --- |
+| Stars | 207★ · 🟩🟩 |
+| License | Apache-2.0 · 🟩 |
+| Target | ☎️ BEAM (codegen + generated code) |
+| Deps | 11 |
+| Gleam compat | `>= 0.34.0 and < 2.0.0` · 🟩 |
+| Maintenance | 🟩 (last `main` commit 2026-02-03, ~12 weeks before snapshot; `version3` branch active 2026-04-13) |
+| Age | ~16 months (Dec 2024) · 🟩 |
+| README maturity | 🟩🟩 (features, code showcase, usage guide, dev/quirks/FAQ/future-work sections) |
+| Idiomaticity | 🟩 (typed function signatures, named parameters inferred from SQL, explicit decoders) |
+| Latest version | **2.2.1** (Hex) |
+| Issues | 3 open (issues), 6 open (PRs) |
+
+**Key features:**
+- Three dialects from one codegen: PostgreSQL, SQLite, MySQL
+- Multiple queries per `.sql` file, sqlc-style annotations (`-- name: GetUser :one`)
+- Named parameters: function arg names inferred from SQL columns
+- Auto-downloads sqlc binary; auto-pulls schema from your DB
+- Driver-agnostic at the type layer; utility wrappers for `sqlight` and `pog`
+- Database client agnostic — generated `(SQL, [params])` tuples plug into any driver
+
+```sql
+-- src/sql/users.sql
+-- name: GetUserByUsername :one
+select id, username, created_at, role
+from users
+where username = $1
+limit 1;
+```
+
+Generated Gleam (abridged):
+```gleam
+pub type GetUserByUsername {
+  GetUserByUsername(id: Int, username: String, created_at: Timestamp, role: UserRole)
+}
+
+pub fn get_user_by_username(username username: String) {
+  let sql = "select id, username, created_at, role from users where username = $1 limit 1"
+  #(sql, [dev.ParamString(username)])
+}
+
+pub fn get_user_by_username_decoder() -> decode.Decoder(GetUserByUsername) {
+  // ...
+}
+```
+
+> [!NOTE]
+> Parrot is also reviewed in [parsers-and-generators/generate.md → parrot](./parsers-and-generators/generate.md#parrot) under the broader codegen rubric. The score here is computed against this article's database-context rubric and matches the cross-article entry.
+
 #### sqlode 🐘🪶🐬
 [repo](https://github.com/nao1215/sqlode) · [leaderboard ↓](#leaderboard)
 
@@ -339,7 +421,7 @@ Multi-dialect sqlc-style code generator. Reads SQL schema + query files, emits t
 | License | MIT · 🟩 |
 | Target | ☎️ BEAM (driver-agnostic at codegen time) |
 | Gleam compat | `>= 0.44 and < 2.0` · 🟩 |
-| Maintenance | 🟩🟩 (last commit 2026-04-26, snapshot day) |
+| Maintenance | 🟩🟩 (last commit 2026-04-26, 1 day before snapshot) |
 | Age | ~2 weeks (Apr 2026) · 🟥 |
 | README maturity | 🟩🟩 (comprehensive: tutorials, examples, migration instructions, Docker notes) |
 | Idiomaticity | 🟩 (generated code uses standard adapter APIs) |
@@ -353,9 +435,59 @@ Multi-dialect sqlc-style code generator. Reads SQL schema + query files, emits t
 - `sqlode verify` static-check command
 - Latest version: **0.9.0**
 
+#### marmot 🪶
+[repo](https://github.com/pairshaped/marmot) · [leaderboard ↓](#leaderboard)
+
+SQLite-only SQL→Gleam code generator. Heavily inspired by [squirrel](#squirrel-) — same idea, different dialect: write `.sql` files, point marmot at a SQLite database, and it generates type-safe Gleam functions, row types, and decoders by introspecting the live schema. Pairs with [sqlight](#sqlight-) at runtime. Fills the SQLite-codegen gap that squirrel (PostgreSQL-only) leaves open.
+
+| Criterion | [marmot](https://github.com/pairshaped/marmot) |
+| --- | --- |
+| Stars | 2★ · 🟥 |
+| License | MIT · 🟩 |
+| Target | ☎️ BEAM (SQLite via [`sqlight`](#sqlight-)) |
+| Deps | 6 (`gleam_stdlib`, `sqlight`, `simplifile`, `tom`, `argv`, `gleam_time`) |
+| Gleam compat | `>= 0.34.0 and < 2.0.0` · 🟩 |
+| Maintenance | 🟩🟩 (last commit 2026-04-23, 4 days before snapshot) |
+| Age | ~8 days (created 2026-04-19) · 🟥 |
+| README maturity | 🟩🟩 (squirrel-style guide: motivation, install, usage, type mapping, limitations, comparison) |
+| Idiomaticity | 🟩 (typed functions, labelled args, explicit decoders — matches squirrel ergonomics) |
+| Latest version | **1.1.1** (Hex) |
+| Issues | 0 open |
+
+**Key features:**
+- Reads `src/**/sql/*.sql`, generates typed Gleam functions in `generated/sql/`
+- Schema introspection via a real SQLite database — types inferred from live schema
+- Labelled arguments on generated call sites (`users_sql.find_user(db: db, username: "alice")`)
+- Named parameter support (`@name`, `:name`, `$name`)
+- Shared return types across queries via annotations
+- Configurable query wrapper for logging/instrumentation
+- SQLite type map: `INTEGER → Int`, `TEXT → String`, `BLOB → BitArray`, etc.
+- Configurable via `gleam.toml`, env var, or CLI flag
+
+```sql
+-- src/users/sql/find_user.sql
+select name, email
+from users
+where username = ?
+```
+
+```gleam
+import sqlight
+import generated/sql/users_sql
+
+pub fn main() {
+  use db <- sqlight.with_connection("app.sqlite")
+  let assert Ok([user]) = users_sql.find_user(db: db, username: "alice")
+  // user.name, user.email are fully typed
+}
+```
+
+> [!NOTE]
+> Marmot is also reviewed in [parsers-and-generators/generate.md → marmot](./parsers-and-generators/generate.md#marmot) under the broader codegen rubric. The score here uses this article's database-context rubric.
+
 ### Migration Tools
 
-Two PostgreSQL migration tools are recommendable. SQLite migrations are a current gap — every published candidate is disregarded for cause (see [Disregarded](#disregarded-migration-tools) below).
+Two PostgreSQL migration tools are recommendable. SQLite migrations are a current gap — see [Disregarded](#disregarded) at the top of this article for the disregarded SQLite-migration packages and their reasons.
 
 #### Comparison
 
@@ -377,7 +509,7 @@ PostgreSQL migration tool (via pog). SQL up/down migrations with hash verificati
 | License | MIT · 🟩 |
 | Target | ☎️ BEAM (PostgreSQL via pog) |
 | Gleam compat | `>= 0.60.0 and < 2.0.0` · 🟩 |
-| Maintenance | 🟩🟩 (last commit 2026-04-23, 3 days before snapshot) |
+| Maintenance | 🟩🟩 (last commit 2026-04-23, 4 days before snapshot) |
 | Age | ~17 months (Nov 2024) · 🟩 |
 | README maturity | 🟩🟩 (full guide: install, usage, `cigogne.toml` config, advanced options) |
 | Idiomaticity | 🟩 |
@@ -401,7 +533,7 @@ Ecto-inspired PostgreSQL migration library. Reads `.sql` migration files from a 
 | License | MIT · 🟩 |
 | Target | ☎️ BEAM (PostgreSQL via pog) |
 | Gleam compat | `>= 0.51.0` (no upper bound — risky) · 🟨 |
-| Maintenance | 🟩🟩 (last commit 2026-04-19, 1 week before snapshot) |
+| Maintenance | 🟩🟩 (last commit 2026-04-19, 8 days before snapshot) |
 | Age | ~1 month (Mar 2026) · 🟥 |
 | README maturity | 🟩🟩 (full guide: conventions, examples, API docs, implementation details) |
 | Idiomaticity | 🟩 (Ecto-style API: `migrate`/`rollback`/`status`) |
@@ -413,20 +545,6 @@ Ecto-inspired PostgreSQL migration library. Reads `.sql` migration files from a 
 - File-based `.sql` migrations in a directory
 - State table: `_schema_migrations`
 - Optional down migrations
-
-#### Disregarded migration tools
-
-The following migration packages turned up in the search but are **not recommended**. They are listed only so future reviewers know why they were skipped.
-
-| Package | Dialect | Reason disregarded |
-| --- | --- | --- |
-| [migrant](https://github.com/aosasona/migrant) | 🪶 SQLite | `gleam_stdlib` constraint capped at `< 1.0.0` — incompatible with current stdlib. Last commit 2025-11-30 (~5 months stale). License inconsistency (repo MIT, gleam.toml Apache-2.0). |
-| [storch](https://github.com/VioletBuse/storch) | 🪶 SQLite | Repo README states it is **superseded by `feather`**. Last commit 2024-06-28 (~22 months stale). |
-| [feather](https://hex.pm/packages/feather) | 🪶 SQLite | Storch's named successor — but itself stale: last release 2024-08-14 (~20 months), no commits since. Same author as storch. |
-| [akaridb](https://hex.pm/packages/akaridb) | ❓ unspecified | **No public source repository.** Hex package has no repo link in metadata, hexdocs, or footer. Cannot audit, fork, or contribute. Last release 2024-08-11. |
-
-> [!WARNING]
-> **SQLite migration is currently a gap in the Gleam ecosystem.** Every published SQLite migration package is either superseded, stale, or has an outdated `gleam_stdlib` cap. For new SQLite projects today, run migrations from outside Gleam (sqlite shell scripts, Make targets) or roll your own thin runner on top of [sqlight](#sqlight-).
 
 ### ORMs & Higher-Level Abstractions
 
@@ -455,7 +573,7 @@ The database module shipped inside the [glimr](https://github.com/glimr-org/glim
 | License | MIT (framework repo) · 🟩 |
 | Target | ☎️ BEAM (PG via pog, SQLite via sqlight) · 🐘🪶 |
 | Gleam compat | `>= 0.44.0 and < 2.0.0` (framework `gleam.toml`) · 🟩 |
-| Maintenance | 🟩🟩 (framework last commit 2026-04-23, 3 days vs 2026-04-26; template same day) |
+| Maintenance | 🟩🟩 (framework last commit 2026-04-23, 4 days vs 2026-04-27; template same day) |
 | Age | ~5 months (Dec 2025) · 🟨 |
 | README maturity | 🟩🟩 (full guide: schema DSL, column-type table, modifiers, migrations diffing, query naming convention, repository codegen, connection pooling, multi-database setup) |
 | Idiomaticity | 🟩 (typed `DbPool`, generated typed query functions, `_or_fail` continuation variants for HTTP handlers) |
@@ -513,19 +631,21 @@ pub fn show(ctx: Context(App), id: Int) -> Response {
 
 ## Leaderboard
 
-Disregarded packages (akaridb, storch, migrant, feather) are excluded — see [Disregarded migration tools](#disregarded-migration-tools) for reasons. **glimr db** is included for reference but flagged as framework-bundled (not a standalone library).
+Disregarded packages (akaridb, storch, migrant, feather, gmysql) are excluded — see [Disregarded](#disregarded) at the top of the article for reasons. **glimr db** is included for reference but flagged as framework-bundled (not a standalone library).
 
 | Position | Award | Repo | Dialect | ★ | Lic | Compat | Maint | Age | README | Idiom | Score |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 🥇 | [lpil/pog](https://github.com/lpil/pog) | 🐘 | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **10** |
 | 2 | 🥈 | [giacomocavalieri/squirrel](https://github.com/giacomocavalieri/squirrel) | 🐘 | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
 | 2 | 🥈 | [lpil/sqlight](https://github.com/lpil/sqlight) | 🪶 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩 | **9** |
-| 4 | 🥉 | [Billuc/cigogne](https://github.com/Billuc/cigogne) | 🐘 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8** |
-| 5 | — | [glimr-org/framework (db)](https://github.com/glimr-org/framework/tree/main/src/glimr/db) † | 🐘🪶 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟨 | 🟩🟩 | 🟩 | **7** |
-| 5 | — | [inoas/gleam-cake](https://github.com/inoas/gleam-cake) | 🐘🪶🐬 | 🟩 | 🟥 | 🟨 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **7** |
-| 7 | — | [nao1215/sqlode](https://github.com/nao1215/sqlode) | 🐘🪶🐬 | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
-| 8 | — | [davecaos/gorrion](https://github.com/davecaos/gorrion) | 🐘 | 🟥 | 🟩 | 🟨 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **4** |
-| 9 | — | [ninanomenon/shork](https://github.com/ninanomenon/shork) ‡ | 🐬 | 🟥 | 🟥 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **0** |
+| 2 | 🥈 | [daniellionel01/parrot](https://github.com/daniellionel01/parrot) | 🐘🪶🐬 | 🟩🟩 | 🟩 | 🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩 | **9** |
+| 5 | 🥉 | [Billuc/cigogne](https://github.com/Billuc/cigogne) | 🐘 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | **8** |
+| 6 | — | [glimr-org/framework (db)](https://github.com/glimr-org/framework/tree/main/src/glimr/db) † | 🐘🪶 | 🟨 | 🟩 | 🟩 | 🟩🟩 | 🟨 | 🟩🟩 | 🟩 | **7** |
+| 6 | — | [inoas/gleam-cake](https://github.com/inoas/gleam-cake) | 🐘🪶🐬 | 🟩 | 🟥 | 🟨 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | **7** |
+| 8 | — | [nao1215/sqlode](https://github.com/nao1215/sqlode) | 🐘🪶🐬 | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
+| 8 | — | [pairshaped/marmot](https://github.com/pairshaped/marmot) | 🪶 | 🟥 | 🟩 | 🟩 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **5** |
+| 10 | — | [davecaos/gorrion](https://github.com/davecaos/gorrion) | 🐘 | 🟥 | 🟩 | 🟨 | 🟩🟩 | 🟥 | 🟩🟩 | 🟩 | **4** |
+| 11 | — | [ninanomenon/shork](https://github.com/ninanomenon/shork) ‡ | 🐬 | 🟥 | 🟥 | 🟥 | 🟨 | 🟩 | 🟩 | 🟩 | **0** |
 
 † **glimr db** is bundled inside the glimr web framework, not consumable as a standalone library. Score is informational; treat it as a framework feature, not a library to compare with the others. See the [glimr db](#glimr-db-) entry.
 
@@ -533,10 +653,10 @@ Disregarded packages (akaridb, storch, migrant, feather) are excluded — see [D
 
 **Summary:**
 - **Drivers & bindings:** **pog** 🐘 leads overall — active maintenance, mature pooling, comprehensive docs. **sqlight** 🪶 is the SQLite low-level binding of choice and received a same-day commit at snapshot time. **shork** 🐬 fills the MySQL/MariaDB slot but the GitHub mirror has been frozen since Oct 2025 in favour of Codeberg, the gleam_stdlib cap is `< 1.0.0`, and the LGPL-3.0 license is a caveat for permissive-only shops — usable today (cake and sqlode wire to it) but watch for releases on Codeberg, not GitHub.
-- **Codegen:** **squirrel** 🐘 is the established SQL→Gleam code generator (PostgreSQL only, 630★, FOSDEM-talked). **sqlode** 🐘🪶🐬 is a brand-new (Apr 2026) multi-dialect challenger with a comprehensive README — promising but unproven.
+- **Codegen:** Four SQL→Gleam codegens now sit in this corner. **squirrel** 🐘 is the established choice (PostgreSQL only, 630★, FOSDEM-talked). **parrot** 🐘🪶🐬 is the largest multi-dialect entrant (207★, Apache-2.0, sqlc-backed, listed as a sqlc community plugin) — pick this when you need a battle-tested foundation across PG/SQLite/MySQL and don't mind the auto-downloaded `sqlc` binary. **sqlode** 🐘🪶🐬 is a brand-new (Apr 2026) multi-dialect challenger with a comprehensive README and no external binary — promising but unproven. **marmot** 🪶 is squirrel's SQLite analogue (Apr 2026) — same ergonomics, fills the SQLite-codegen gap.
 - **Query builder:** **cake** 🐘🪶🐬 is the only standalone multi-dialect composer (PG/SQLite/MariaDB/MySQL, BEAM + JS) with active development. MPL-2.0 license is the main caveat for shops standardising on permissive licenses.
-- **Migrations:** **cigogne** 🐘 leads PostgreSQL migrations (mature, 5.0.6, hash-verified, library-bundled). **gorrion** 🐘 is an Ecto-style alternative — well-documented but one month old. **SQLite migration is a standalone gap**: every standalone candidate (migrant, storch, feather, akaridb) is disregarded — see the [Disregarded](#disregarded-migration-tools) table. **glimr db** 🐘🪶 covers SQLite migrations *if* you adopt the glimr framework.
+- **Migrations:** **cigogne** 🐘 leads PostgreSQL migrations (mature, 5.0.6, hash-verified, library-bundled). **gorrion** 🐘 is an Ecto-style alternative — well-documented but one month old. **SQLite migration is a standalone gap**: every standalone candidate (migrant, storch, feather, akaridb) is disregarded — see the [Disregarded](#disregarded) table. **glimr db** 🐘🪶 covers SQLite migrations *if* you adopt the glimr framework.
 - **Framework-bundled:** **glimr db** 🐘🪶 ships the Gleam ecosystem's first batteries-included DB layer (schema-diff migrations + typed query repository codegen) — the closest thing to an ORM, but framework-only.
-- **Notable patterns:** Four of nine repos (cigogne, sqlode, cake, glimr) had a commit within 3 days of snapshot — heavy churn in the Gleam DB space right now. Zero open issues on **gorrion** and **sqlode** is a positive signal balanced by their newness; **shork** disables the GitHub Issues tab entirely (issue tracking is on Codeberg).
+- **Notable patterns:** Five of eleven leaderboard entries (cigogne, sqlode, cake, glimr, marmot) had a commit within ~4 days of snapshot — heavy churn in the Gleam DB space right now. Zero open issues on **gorrion**, **sqlode**, and **marmot** is a positive signal balanced by their newness; **shork** disables the GitHub Issues tab entirely (issue tracking is on Codeberg). **parrot** is the only multi-dialect codegen with a real community-size signal (207★) versus 2–3★ for the brand-new entrants.
 
 [How scores are calculated →](#scoring-dimensions)
