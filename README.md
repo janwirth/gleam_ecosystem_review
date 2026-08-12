@@ -94,6 +94,7 @@ Folder [`design/`](design/README.md).
 
 - [UX resources & tools](design/ux.md) — Laws of UX, NN/g heuristics + training, dogfooding practice, PostHog instrumentation, BDD/Gherkin connection.
 - [Diagramming tools](design/diagramming.md) — Mermaid, PlantUML, D2, Graphviz/DOT, LaTeX/TikZ, Kroki, mingrammer/diagrams, Structurizr, WaveDrom, Excalidraw, + 20 ASCII renderers and terminal-chart tools. ~40 tools reviewed.
+- [Charts](design/charts.md) — D3, Vega/Vega-Lite, Observable Plot, Chart.js, ApexCharts, ECharts, Highcharts, Plotly.js, uPlot, Chartist, Frappe Charts, Billboard.js (JS/web); visx, Recharts, Nivo, Victory, react-chartjs-2 (React layer); matplotlib, Seaborn, Plotly, Bokeh, Altair, HoloViews, Pygal, Plotnine (Python). ~29 tools + a decision guide by use case.
 
 ### Practices — methodologies and how-to-think
 
@@ -135,6 +136,10 @@ Every review uses the same scoring scaffold: **stars, license, language-compat, 
 - Scores combine into a leaderboard so authors can sanity-check their own metrics at a glance.
 
 The full scoring formalization lives in [`practices/formalization.md`](practices/formalization.md). The first worked example is in the [Gleam web apps review](gleam/web-and-http/web-apps.md#research-method). The agent-facing review process lives in [`workflows/`](workflows/README.md).
+
+## Meta
+
+[Meta-review](meta-review.md) — the repo reviewing itself: value, weaknesses, perspectives, methods, structure, target audience, and a punch list for automation (including which parts are worth splitting into standalone Gleam CLIs).
 
 ## Contributing
 

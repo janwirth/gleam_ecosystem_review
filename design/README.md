@@ -6,6 +6,7 @@ Reviews of the tools and resources used to design what your software looks like,
 
 - [**UX resources & tools**](ux.md) — curated review of UX (not visual design) resources: Laws of UX, NN/g heuristics + training, dogfooding practice, PostHog instrumentation for behavioural signal, and the BDD/Gherkin connection. For when you have users and need to know whether they're succeeding.
 - [**Diagramming tools — cross-ecosystem survey**](diagramming.md) — Mermaid, PlantUML, D2, Graphviz/DOT, LaTeX/TikZ, Kroki, mingrammer/diagrams, Structurizr, WaveDrom, Excalidraw, plus 20+ ASCII renderers and terminal-chart tools. ~40 tools reviewed on the [shared scoring rubric](../practices/formalization.md#scoring-dimensions-per-repo).
+- [**Charts — cross-ecosystem survey**](charts.md) — sibling to the diagramming article: charts encode *data*, diagrams encode *structure*. D3 (the foundation), Vega/Vega-Lite/Observable Plot (declarative grammar), Chart.js/ApexCharts/ECharts/Highcharts/Plotly.js/uPlot/Chartist/Frappe Charts/Billboard.js (JS/web), visx/Recharts/Nivo/Victory/react-chartjs-2 (the React-specific layer), and matplotlib/Seaborn/Plotly/Bokeh/Altair/HoloViews/Pygal/Plotnine (Python, including the ggplot2 → Vega-Lite → Altair grammar lineage). ~29 tools reviewed, plus a "Decision guide by use case."
 
 ## Related
 
