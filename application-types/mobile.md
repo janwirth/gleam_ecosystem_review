@@ -12,22 +12,14 @@
 1. [Goal](#goal)
 2. [Legend](#legend)
 3. [Categories — the five archetypes](#categories--the-five-archetypes)
+   - [Native, one toolchain per OS](#native-one-toolchain-per-os) · [Custom canvas](#custom-canvas) · [Native widgets from one codebase](#native-widgets-from-one-codebase) · [Web view shell](#web-view-shell) · [Baseline: PWA](#baseline-pwa)
 4. [What you actually pick when you pick a framework](#what-you-actually-pick-when-you-pick-a-framework)
 5. [Per-framework reviews](#per-framework-reviews)
-   - [Native: Kotlin / Jetpack Compose (Android)](#native-kotlin--jetpack-compose-android)
-   - [Native: Swift / SwiftUI (iOS)](#native-swift--swiftui-ios)
-   - [Flutter](#flutter)
-   - [React Native (bare CLI)](#react-native-bare-cli)
-   - [Expo](#expo)
-   - [Capacitor (+ Ionic UI)](#capacitor--ionic-ui)
-   - [Tauri Mobile](#tauri-mobile)
-   - [Kotlin Multiplatform + Compose Multiplatform](#kotlin-multiplatform--compose-multiplatform)
-   - [.NET MAUI](#net-maui)
-   - [NativeScript](#nativescript)
-   - [Lynx](#lynx)
-   - [Quasar (Vue + Capacitor/Cordova)](#quasar-vue--capacitorcordova)
-   - [Solito (Solid + Expo / RN + Next.js)](#solito-solid--expo--rn--nextjs)
-   - [PWA baseline](#pwa-baseline)
+   - **Native, one toolchain per OS** — [Kotlin / Jetpack Compose (Android)](#native-kotlin--jetpack-compose-android) · [Swift / SwiftUI (iOS)](#native-swift--swiftui-ios)
+   - **Custom canvas** — [Flutter](#flutter) · [Kotlin Multiplatform + Compose Multiplatform](#kotlin-multiplatform--compose-multiplatform)
+   - **Native widgets from one codebase** — [React Native (bare CLI)](#react-native-bare-cli) · [Expo](#expo) · [.NET MAUI](#net-maui) · [NativeScript](#nativescript) · [Lynx](#lynx) · [Solito (Solid + Expo / RN + Next.js)](#solito-solid--expo--rn--nextjs)
+   - **Web view shell** — [Capacitor (+ Ionic UI)](#capacitor--ionic-ui) · [Tauri Mobile](#tauri-mobile) · [Quasar (Vue + Capacitor/Cordova)](#quasar-vue--capacitorcordova)
+   - **Baseline** — [PWA baseline](#pwa-baseline)
 6. [Big comparison table](#big-comparison-table)
 7. [Disregarded / EOL / niche](#disregarded--eol--niche)
 8. [Leaderboards (per use-case)](#leaderboards-per-use-case)
@@ -62,17 +54,49 @@ Mobile-specific extra rows (added per the brief):
 
 ## Categories — the five archetypes
 
-Mobile frameworks split into five disjoint design-intents. The 7-dim score is comparable *within* an archetype, less so *across* — a Capacitor-style web-view shop is not playing the same game as Flutter.
+Mobile frameworks are cut here along **one axis: what draws the pixels.** Four archetypes plus the PWA baseline. The 7-dim score is comparable *within* an archetype, less so *across* — a Capacitor-style web-view shop is not playing the same game as Flutter. Code language is deliberately *not* an axis; it is a facet (see [Legend](#legend)), which is why Tauri Mobile sits with Capacitor rather than in a category of its own.
 
-1. **Native (one toolchain per OS)** — Apple Swift + SwiftUI for iOS; Google Kotlin + Jetpack Compose for Android. Two codebases, maximum platform fidelity, full SDK on day-one of any new OS feature.
-2. **Cross-platform native renderer** — *one codebase, custom rendering pipeline*. Flutter (Dart → Impeller), Compose Multiplatform (Kotlin → Skia/Metal), .NET MAUI (C# → platform-native widgets via abstraction). Promises near-native performance with shared UI code.
-3. **JS bridge to native widgets** — *one JS codebase, real platform widgets driven via bridge*. React Native (Fabric/JSI), NativeScript (direct platform-API binding), Lynx (dual-thread JS engine + native renderer). UI is real `UILabel` / `TextView`, not a canvas.
-4. **Web view wrapper** — *web app + native shell*. Capacitor (Ionic), Cordova (legacy/Apache-stewarded), Quasar (Vue + Capacitor). The UI is HTML/CSS in `WKWebView` or Android `WebView`; native is reached via a JS-to-native bridge.
-5. **Rust-first native shell** — Tauri Mobile. Lightweight Rust core + system web view for UI; mobile target stabilising under Tauri 2.
+The grouping is navigable in both directions: each archetype below lists its members, every [per-framework review](#per-framework-reviews) opens with an **Archetype** line that links back here, and the [comparison table](#big-comparison-table) carries an Archetype row. Section order and table columns follow the order below.
 
-Plus one **non-archetype** worth holding as the baseline:
+### Native, one toolchain per OS
 
-6. **PWA (no shell, no store)** — pure web app installed via "Add to Home Screen". The control case: zero packaging, zero app-store review, but capped capabilities (notably on iOS).
+*N codebases for N platforms, maximum fidelity.* Apple Swift + SwiftUI for iOS; Google Kotlin + Jetpack Compose for Android. Full SDK on day one of any new OS feature; you staff every platform separately.
+
+- [Native: Kotlin / Jetpack Compose (Android)](#native-kotlin--jetpack-compose-android)
+- [Native: Swift / SwiftUI (iOS)](#native-swift--swiftui-ios)
+
+### Custom canvas
+
+*One codebase, the framework draws every pixel itself.* Widgets are not real `UILabel` / `TextView` — they are pixels the framework paints. Upside: identical look across OSes. Downside: platform widgets feel slightly "off" to fluent users of either OS.
+
+- [Flutter](#flutter) — Dart → Impeller on every target.
+- [Kotlin Multiplatform + Compose Multiplatform](#kotlin-multiplatform--compose-multiplatform) — Skia/Metal canvas on iOS, desktop and web; on Android it *is* Jetpack Compose, i.e. native. Filed here because the cross-platform story is the canvas one.
+
+### Native widgets from one codebase
+
+*One codebase, real platform widgets driven through a bridge or an abstraction layer.* Every `<Text>` / `<Button>` becomes a real `UILabel` / `UIButton` / Android `View`. The price: new platform APIs surface through the bridge or binding layer later than in native.
+
+- [React Native (bare CLI)](#react-native-bare-cli) — JS → Fabric/JSI → native views.
+- [Expo](#expo) — the managed React Native toolchain; same rendering as RN.
+- [.NET MAUI](#net-maui) — C# → per-platform handlers → native widgets; the compiled, non-JS member of this group.
+- [NativeScript](#nativescript) — JS calls the platform API directly, no allow-list, no plugin needed.
+- [Lynx](#lynx) — dual-thread JS engine → native views; a custom-canvas renderer is optional.
+- [Solito (Solid + Expo / RN + Next.js)](#solito-solid--expo--rn--nextjs) — a navigation layer over Expo + Next.js; inherits Expo's rendering. Listed for completeness, not a standalone framework.
+
+### Web view shell
+
+*A web app in a native shell.* UI is HTML/CSS in `WKWebView` / Android `WebView`; native is reached through a JS-to-native bridge. Members differ in the host process, not in how pixels get drawn.
+
+- [Capacitor (+ Ionic UI)](#capacitor--ionic-ui) — Swift/Kotlin host, TypeScript plugin API; Cordova's successor.
+- [Tauri Mobile](#tauri-mobile) — Rust host process + system web view; the mobile target of Tauri 2.
+- [Quasar (Vue + Capacitor/Cordova)](#quasar-vue--capacitorcordova) — Vue meta-framework that drives Capacitor or Cordova for you.
+- Apache Cordova — the predecessor, in maintenance mode; see [Disregarded / EOL / niche](#disregarded--eol--niche).
+
+### Baseline: PWA
+
+*No shell, no store.* A regular web app installed via "Add to Home Screen". Not an archetype but the control case every row above is measured against: zero packaging, zero app-store review, capped capabilities (notably on iOS).
+
+- [PWA baseline](#pwa-baseline)
 
 ## What you actually pick when you pick a framework
 
@@ -115,6 +139,7 @@ The **language** decision tends to be the most opinionated: if your team is web-
 
 Google's first-party Android stack. Kotlin is the official Android language since 2019; Jetpack Compose is the declarative UI framework that replaced the imperative `View` system, stable since 2021 and the default for new projects since 2024. Compose 1.11 (April 2026) ships v2 testing APIs as default, host-default-providers for cross-module wiring, and Android Studio custom-preview annotations.
 
+- **Archetype:** [Native, one toolchain per OS](#native-one-toolchain-per-os)
 - **Targets:** Android (phone / tablet / TV / Wear OS / Auto). iOS *not* supported by stock Compose — Compose Multiplatform is the separate JetBrains project (see below).
 - **Code language:** Kotlin (Java still works for legacy code).
 - **Rendering model:** native Android widgets (Compose composes into the platform's `RenderNode` pipeline, GPU-accelerated via Skia under the hood).
@@ -131,6 +156,7 @@ Google's first-party Android stack. Kotlin is the official Android language sinc
 
 Apple's first-party iOS stack. Swift 6's strict concurrency is the compiler default in 2026; SwiftUI is the declarative UI baseline for any new app. iOS 26 (the current SDK at snapshot) brought `WebView` / `WebPage`, Foundation Models on-device AI, and Live Activities natively in SwiftUI. Privacy Manifests are a mandatory App Store gate.
 
+- **Archetype:** [Native, one toolchain per OS](#native-one-toolchain-per-os)
 - **Targets:** iOS, iPadOS, macOS, visionOS, watchOS, tvOS. Android *not* supported (Apple has no incentive to open this).
 - **Code language:** Swift (Objective-C still works for legacy code).
 - **Rendering model:** native UIKit-backed render, with Metal under the hood for animations and effects.
@@ -148,6 +174,7 @@ Apple's first-party iOS stack. Swift 6's strict concurrency is the compiler defa
 
 Google's Dart-based, Skia-then-Impeller-rendered cross-platform UI toolkit. Owns the *render-the-pixels-ourselves* design intent. Impeller has been the default renderer on iOS since Flutter 3.27 (and on Android API 29+) — it precompiles shaders at build time, eliminating runtime jank, and benchmarks at ~50% lower frame-rasterisation cost on heavy scenes vs the legacy Skia path.
 
+- **Archetype:** [Custom canvas](#custom-canvas)
 - **Targets:** iOS, Android, Windows, macOS, Linux, web. *Six* targets from one `.dart` file — the broadest reach in this list.
 - **Code language:** Dart (Dart 3+ has sound null-safety, records, patterns, sealed classes — the language has caught up to modern peers).
 - **Rendering model:** **custom canvas** (Impeller via Metal on iOS, Vulkan on Android API 29+, OpenGL fallback). Widgets are not real `UILabel` — they are pixels Flutter draws. Pro: identical look across OSes. Con: platform widgets feel slightly "off" to fluent users of either OS.
@@ -168,6 +195,7 @@ JetBrains' answer to *one Kotlin codebase, native everywhere*. **KMP** lets you 
 
 **Compose Multiplatform 1.8.0 (May 2025) declared iOS support stable and production-ready.** Render path on iOS uses Skia via Metal; full UIKit interop for accessibility, keyboards, and navigation bars. Stable APIs include Hot Reload on iOS Simulator, Compose Previews, and Xcode integration. As of snapshot the latest stable line is 1.10.x (March 2026).
 
+- **Archetype:** [Custom canvas](#custom-canvas) — on iOS / desktop / web; the Android side is native Jetpack Compose.
 - **Targets:** Android, iOS, desktop (JVM-based — Windows / macOS / Linux), web (Wasm / JS via Compose for Web). KMP-only (without Compose UI) also targets server and embedded.
 - **Code language:** Kotlin (100%).
 - **Rendering model:** Android — native (same as Jetpack Compose). iOS — **custom canvas via Skia + Metal**. Desktop — Skia. Web — Wasm + Canvas/DOM.
@@ -185,6 +213,7 @@ JetBrains' answer to *one Kotlin codebase, native everywhere*. **KMP** lets you 
 
 Meta's JS-bridged-to-native-widgets toolkit, in production at Facebook, Instagram, Discord, Shopify, Microsoft Office, etc. The **New Architecture (Fabric + JSI + TurboModules)** has been the default since RN 0.76, and the legacy bridge was permanently removed in 0.82 — synchronous JS↔native calls, lazy native-module loading, and the React reconciler running natively in C++. Reported real-world gains: ~43% faster cold starts, ~39% faster rendering, ~26% lower memory.
 
+- **Archetype:** [Native widgets from one codebase](#native-widgets-from-one-codebase)
 - **Targets:** iOS, Android (first-class). Out-of-tree forks: `react-native-windows` (Microsoft), `react-native-macos` (Microsoft), `react-native-web` (Necolas, web), tvOS, visionOS — all maintained by their respective owners.
 - **Code language:** TypeScript (JavaScript still works).
 - **Rendering model:** **JS describes UI; native renderer executes** — every `<Text>` becomes a real `UILabel` / Android `TextView`. UI thread separated from JS thread.
@@ -202,6 +231,7 @@ Meta's JS-bridged-to-native-widgets toolkit, in production at Facebook, Instagra
 
 The managed React Native toolchain. Built **on top of** RN — SDK 52+ uses Fabric/TurboModules by default. Adds: a curated set of native modules (Expo Modules), Expo Router (file-system routing inspired by Next.js, default since SDK 50), EAS Build & EAS Submit (cloud-builds + store-submission), EAS Update (OTA JS-bundle pushes without store review), and the Expo Go companion app (scan a QR code, the JS bundle runs on your device — no Xcode/Android Studio needed for the inner loop).
 
+- **Archetype:** [Native widgets from one codebase](#native-widgets-from-one-codebase) — same rendering as React Native.
 - **Targets:** iOS, Android, web (via `react-native-web`).
 - **Code language:** TypeScript.
 - **Rendering model:** same as RN (native widgets via JSI/Fabric).
@@ -219,6 +249,7 @@ The managed React Native toolchain. Built **on top of** RN — SDK 52+ uses Fabr
 
 Microsoft's .NET 6+ **successor to Xamarin**. Xamarin reached end-of-support **2024-05-01** — no further updates, bug fixes, or security patches. MAUI carries the same single-C#-codebase idea forward, abstracts over the platforms via a unified API surface, and renders to **native widgets** on each OS (no canvas, unlike Flutter).
 
+- **Archetype:** [Native widgets from one codebase](#native-widgets-from-one-codebase) — via a C# abstraction layer, not a JS bridge.
 - **Targets:** Android, iOS, macOS (Catalyst), Windows (WinUI 3). Linux and tvOS are community-driven only.
 - **Code language:** C# + XAML for declarative UI (or C# Markup for code-only).
 - **Rendering model:** **native widgets via abstraction** — a `<Button>` becomes a `UIButton`, an `Android.Widget.Button`, a `Microsoft.UI.Xaml.Controls.Button`. Single-handler types in your code; per-platform handlers under the hood.
@@ -236,6 +267,7 @@ Microsoft's .NET 6+ **successor to Xamarin**. Xamarin reached end-of-support **2
 
 The "JavaScript directly calls native APIs, no bridge" school. Distinguishes itself from React Native by exposing the **entire** iOS / Android API surface to JavaScript with no allow-list — you can call `UIView.alloc().init()` from TS at runtime. UI framework choice is plug-in: Angular, Vue, Svelte, React, SolidJS, or plain.
 
+- **Archetype:** [Native widgets from one codebase](#native-widgets-from-one-codebase)
 - **Targets:** iOS, Android, visionOS.
 - **Code language:** TypeScript.
 - **Rendering model:** **native widgets** (real `UIView` / Android `View` instantiated from JS via metadata-driven runtime).
@@ -253,6 +285,7 @@ The "JavaScript directly calls native APIs, no bridge" school. Distinguishes its
 
 ByteDance's cross-platform UI framework, **open-sourced March 2025** under the Lynx Family umbrella. In production at TikTok — **Search, Shop, Live, and the entire TikTok Studio app** ship on Lynx. Distinguishing technical bet: a **dual-thread** JS engine (PrimJS, ByteDance's V8 alternative) where one thread handles framework code and another handles user-script code, designed to keep the UI thread responsive during heavy work.
 
+- **Archetype:** [Native widgets from one codebase](#native-widgets-from-one-codebase) — native views by default; a custom-canvas renderer is optional.
 - **Targets:** Android (API 21+), iOS (10+), web. Harmony / Windows / macOS exist in the codebase but mobile + web are the marketed surface.
 - **Code language:** TypeScript via **ReactLynx** (React-flavour) or **Lynx for Web** (web-component-flavour). Build tooling is **Rspeedy** — Rspack-based, Rust-backed.
 - **Rendering model:** dual choice — **native rendering** on Android/iOS/Web (each platform's native view system), or **custom renderer** for pixel-perfect cross-platform consistency.
@@ -274,6 +307,7 @@ ByteDance's cross-platform UI framework, **open-sourced March 2025** under the L
 
 Solito gives you one navigation API (under the hood: React Navigation on mobile, Next.js App Router on web) and one set of screens that work in both an Expo iOS/Android app and a Next.js website. As of v5 (Oct 2025) it's positioned as **web-first** — primary product is the web; mobile is a parallel target sharing the same screens.
 
+- **Archetype:** [Native widgets from one codebase](#native-widgets-from-one-codebase) — inherited from Expo / React Native.
 - **Targets:** iOS / Android (via Expo / RN) + web (via Next.js).
 - **Code language:** TypeScript.
 - **Rendering model:** native widgets on mobile (via RN); HTML/CSS on web.
@@ -290,6 +324,7 @@ Solito gives you one navigation API (under the hood: React Navigation on mobile,
 
 Ionic's pair: **Capacitor** is the native runtime (the WebView wrapper + plugin bridge); **Ionic Framework** is the optional UI-component library (Web Components: `ion-button`, `ion-tabs`, etc.) that gives you OS-styled mobile UI. They're decoupled — you can ship a Capacitor app with React + your own UI, or with vanilla web + Ionic.
 
+- **Archetype:** [Web view shell](#web-view-shell)
 - **Capacitor's positioning:** *successor to Cordova*. Same idea (web app inside `WKWebView`/`Android WebView`), much fresher implementation: TypeScript-first plugin API, Swift/Kotlin native shells, modern build tooling. The relationship is acknowledged but Capacitor is the recommended path for new projects.
 - **Targets:** iOS, Android, web (the same web bundle just runs in a browser). Electron support exists but is community-maintained.
 - **Code language:** TypeScript / JavaScript with any web framework — React, Vue, Angular, Svelte, SolidJS, plain. Capacitor doesn't care.
@@ -308,6 +343,7 @@ Ionic's pair: **Capacitor** is the native runtime (the WebView wrapper + plugin 
 
 Tauri 2 stabilised mobile (Android 7+, iOS 9+) as part of the 2.0 release. The architecture is **Rust core + system WebView** (WKWebView on iOS, Android System WebView on Android) — same idea as Capacitor's web view, but the host process is Rust, not Swift/Kotlin/Java.
 
+- **Archetype:** [Web view shell](#web-view-shell) — Rust host process instead of Swift/Kotlin; the rendering is the same system web view as Capacitor.
 - **Targets:** Windows, macOS, Linux (mature) + Android, iOS (stable but younger). The marquee story is *one Rust core + one web frontend → all five platforms*, but mobile feature-parity with desktop is **not yet complete** (the Tauri team has explicitly said mobile is improving in minor releases, not "first-class on day 1 of 2.0").
 - **Code language:** Rust (core) + any web framework on the front-end (React, Vue, Svelte, SolidJS, Leptos, Yew if you go full-Rust).
 - **Rendering model:** **web view** for UI; native window chrome via `tao` window manager on each platform.
@@ -325,6 +361,7 @@ Tauri 2 stabilised mobile (Android 7+, iOS 9+) as part of the 2.0 release. The a
 
 Vue.js-centric meta-framework that builds **SPA, SSR, PWA, browser extension, Electron, and hybrid mobile** from one Vue codebase. The mobile path is *Quasar's CLI invokes Capacitor or Cordova for you*, then your Vue app runs inside the WebView. Extensive built-in component library tuned for both web and mobile.
 
+- **Archetype:** [Web view shell](#web-view-shell) — via Capacitor or Cordova.
 - **Targets:** Web (SPA / SSR / PWA / browser extension), desktop (Electron), iOS / Android (via Capacitor or Cordova).
 - **Code language:** Vue 3 + TypeScript / JavaScript.
 - **Rendering model:** WebView on mobile (Capacitor/Cordova-mediated).
@@ -350,6 +387,7 @@ Android reality in 2026:
 - Trusted Web Activities (TWAs) let you ship a PWA *into the Play Store* as a near-native experience.
 - Most Web APIs that iOS blocks (Bluetooth, NFC, USB) work on Android Chrome.
 
+- **Archetype:** [Baseline: PWA](#baseline-pwa) — the control case, not an archetype.
 - **Targets:** any modern browser (web). "Mobile" is a question of how it feels on a small screen + whether install prompts work.
 - **Code language:** any web stack.
 - **Rendering model:** browser engine.
@@ -363,6 +401,7 @@ Android reality in 2026:
 
 | Dimension | [Native Android (Kotlin)](#native-kotlin--jetpack-compose-android) | [Native iOS (Swift)](#native-swift--swiftui-ios) | [Flutter](#flutter) | [Compose MP / KMP](#kotlin-multiplatform--compose-multiplatform) | [React Native (CLI)](#react-native-bare-cli) | [Expo](#expo) | [.NET MAUI](#net-maui) | [NativeScript](#nativescript) | [Lynx](#lynx) | [Solito](#solito-solid--expo--rn--nextjs) | [Capacitor](#capacitor--ionic-ui) | [Tauri 2 Mobile](#tauri-mobile) | [Quasar](#quasar-vue--capacitorcordova) | [PWA](#pwa-baseline) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Archetype** | [Native](#native-one-toolchain-per-os) | [Native](#native-one-toolchain-per-os) | [Canvas](#custom-canvas) | [Canvas](#custom-canvas) | [Widgets](#native-widgets-from-one-codebase) | [Widgets](#native-widgets-from-one-codebase) | [Widgets](#native-widgets-from-one-codebase) | [Widgets](#native-widgets-from-one-codebase) | [Widgets](#native-widgets-from-one-codebase) | [Widgets](#native-widgets-from-one-codebase) | [Web view](#web-view-shell) | [Web view](#web-view-shell) | [Web view](#web-view-shell) | [PWA](#baseline-pwa) |
 | **Stars** | 52.7k (Kotlin) · 🟩🟩 | 69.9k (Swift) · 🟩🟩 | 176k · 🟩🟩 | 19k (CMP) · 🟩🟩 | 126k · 🟩🟩 | 49.1k · 🟩🟩 | 23.2k · 🟩🟩 | 25.5k · 🟩🟩 | 14.8k · 🟩🟩 | 4.1k · 🟩 | 15.5k · 🟩🟩 | 106k · 🟩🟩 | 27.1k · 🟩🟩 | n/a (web standard) |
 | **License** | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | BSD-3 · 🟩 | Apache-2.0 · 🟩 | MIT · 🟩 | MIT · 🟩 | MIT · 🟩 | MIT · 🟩 | Apache-2.0 · 🟩 | MIT · 🟩 | MIT · 🟩 | Apache-2.0 + MIT · 🟩 | MIT · 🟩 | n/a |
 | **Latest commit** | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | ⬜ † | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | n/a |
