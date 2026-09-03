@@ -159,6 +159,26 @@ Google's Dart-based, Skia-then-Impeller-rendered cross-platform UI toolkit. Owns
 **Pick when:** you want one codebase to ship to both stores *and* desktop *and* web; pixel-perfect brand consistency matters; you're greenfield (no existing native code to integrate); you can absorb Dart on the team.
 **Pass when:** native look-and-feel is non-negotiable; you need bleeding-edge platform APIs the day they ship; your team is React-heavy.
 
+### Kotlin Multiplatform + Compose Multiplatform
+
+**[github.com/JetBrains/compose-multiplatform](https://github.com/JetBrains/compose-multiplatform)** — 19k★ · Apache-2.0 · latest commit 2026-04-29 · 🟩🟩 · 0 open issues *(positive signal)* · latest release **1.10.3** (2026-03-19)
+Kotlin Multiplatform (KMP) is the underlying capability in the Kotlin compiler ([github.com/JetBrains/kotlin](https://github.com/JetBrains/kotlin) — 52.7k★, see *Native: Kotlin* above). Compose Multiplatform is the UI framework on top.
+
+JetBrains' answer to *one Kotlin codebase, native everywhere*. **KMP** lets you share business logic, networking, persistence, and view-models across iOS, Android, desktop, web, and server (compiles Kotlin to JVM bytecode, native binaries via LLVM, JS, and Wasm). **Compose Multiplatform** then lets you share the UI itself.
+
+**Compose Multiplatform 1.8.0 (May 2025) declared iOS support stable and production-ready.** Render path on iOS uses Skia via Metal; full UIKit interop for accessibility, keyboards, and navigation bars. Stable APIs include Hot Reload on iOS Simulator, Compose Previews, and Xcode integration. As of snapshot the latest stable line is 1.10.x (March 2026).
+
+- **Targets:** Android, iOS, desktop (JVM-based — Windows / macOS / Linux), web (Wasm / JS via Compose for Web). KMP-only (without Compose UI) also targets server and embedded.
+- **Code language:** Kotlin (100%).
+- **Rendering model:** Android — native (same as Jetpack Compose). iOS — **custom canvas via Skia + Metal**. Desktop — Skia. Web — Wasm + Canvas/DOM.
+- **Dev loop:** Hot Reload on Android Studio; Compose Hot Reload on iOS Simulator (1.8+); Live Edit for desktop.
+- **Native API access:** **first-class on Android**; **expect/actual** mechanism for platform-specific code on iOS lets you call Swift/Objective-C APIs through bridge; **plugin-mediated** for cross-platform third-party libraries (the KMP ecosystem on Maven Central is large and growing).
+
+**Idiomaticity:** 🟩🟩 for Kotlin teams already on Android. iOS developers find the rendering convincing but note it's not UIKit semantically.
+
+**Pick when:** you have an Android team and want to add iOS without doubling headcount; you value JetBrains tooling (IntelliJ / Android Studio); you want to share *some* code (KMP-only) without committing the UI (use SwiftUI on iOS, Compose on Android).
+**Pass when:** your team has no Kotlin; you need pixel-perfect platform-native iOS feel (SwiftUI is the only way).
+
 ### React Native (bare CLI)
 
 **[github.com/facebook/react-native](https://github.com/facebook/react-native)** — 126k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 755 open issues · latest release **0.85.2** (2026-04-20)
@@ -192,62 +212,6 @@ The managed React Native toolchain. Built **on top of** RN — SDK 52+ uses Fabr
 
 **Pick when:** you're starting a new React Native app in 2026 (default recommendation); solo / small team; you value time-to-first-build over fine-grained native-tooling control.
 **Pass when:** you're embedding RN into an existing native app (use the bare CLI); you have heavy custom-native-toolchain needs that fight CNG.
-
-### Capacitor (+ Ionic UI)
-
-**[github.com/ionic-team/capacitor](https://github.com/ionic-team/capacitor)** — 15.5k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 73 open issues · latest release **8.3.1** (2026-04-16)
-**[github.com/ionic-team/ionic-framework](https://github.com/ionic-team/ionic-framework)** — 52.5k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 596 open issues · latest release **v8.8.5** (2026-04-29)
-
-Ionic's pair: **Capacitor** is the native runtime (the WebView wrapper + plugin bridge); **Ionic Framework** is the optional UI-component library (Web Components: `ion-button`, `ion-tabs`, etc.) that gives you OS-styled mobile UI. They're decoupled — you can ship a Capacitor app with React + your own UI, or with vanilla web + Ionic.
-
-- **Capacitor's positioning:** *successor to Cordova*. Same idea (web app inside `WKWebView`/`Android WebView`), much fresher implementation: TypeScript-first plugin API, Swift/Kotlin native shells, modern build tooling. The relationship is acknowledged but Capacitor is the recommended path for new projects.
-- **Targets:** iOS, Android, web (the same web bundle just runs in a browser). Electron support exists but is community-maintained.
-- **Code language:** TypeScript / JavaScript with any web framework — React, Vue, Angular, Svelte, SolidJS, plain. Capacitor doesn't care.
-- **Rendering model:** **web view** — `WKWebView` on iOS, system WebView on Android. UI is HTML/CSS rendered by the OS browser engine.
-- **Dev loop:** **sub-second** — your dev server's HMR works inside the WebView. Live-reload over LAN to a real device is built in.
-- **Native API access:** **plugin-mediated** — official plugins (Camera, Filesystem, Geolocation, Push Notifications, Haptics, Preferences, Network, etc.) plus a healthy community ecosystem. Custom plugins are Swift/Kotlin classes with TS bindings; well-documented. For raw Swift/Kotlin you can drop into the platform projects.
-
-**Idiomaticity:** 🟩🟩 if you're a web team — your tooling, your routing, your component model all carry over. 🟥 in the sense that the UX is "browser-feeling" unless you specifically style for native (Ionic's components do this for you).
-
-**Pick when:** you have an existing web app or web team; you want one codebase across web + iOS + Android; performance budget allows a WebView (most line-of-business apps); you want to ship a PWA + an app-store binary from the same source.
-**Pass when:** you need 60+fps custom animation; you need raw OpenGL/Metal access; users care about "feels native" at the haptic level.
-
-### Tauri Mobile
-
-**[github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri)** — 106k★ · Apache-2.0 + MIT (dual) · latest commit 2026-04-29 · 🟩🟩 · ~1.3k open issues · latest CLI 2.10.1 (2026-03-04)
-
-Tauri 2 stabilised mobile (Android 7+, iOS 9+) as part of the 2.0 release. The architecture is **Rust core + system WebView** (WKWebView on iOS, Android System WebView on Android) — same idea as Capacitor's web view, but the host process is Rust, not Swift/Kotlin/Java.
-
-- **Targets:** Windows, macOS, Linux (mature) + Android, iOS (stable but younger). The marquee story is *one Rust core + one web frontend → all five platforms*, but mobile feature-parity with desktop is **not yet complete** (the Tauri team has explicitly said mobile is improving in minor releases, not "first-class on day 1 of 2.0").
-- **Code language:** Rust (core) + any web framework on the front-end (React, Vue, Svelte, SolidJS, Leptos, Yew if you go full-Rust).
-- **Rendering model:** **web view** for UI; native window chrome via `tao` window manager on each platform.
-- **Dev loop:** **HMR extended to mobile** in Tauri 2 — your web framework's hot reload works on emulators and devices.
-- **Native API access:** **plugin-mediated** via Tauri's plugin system; mobile-plugin development is documented but the catalogue is younger than Capacitor's. You can drop into Swift / Kotlin for custom mobile plugins.
-
-**Idiomaticity:** 🟩 (mobile) / 🟩🟩 (desktop). Mobile is the newer surface; the team flags it as still maturing.
-
-**Pick when:** you're already a Rust shop or want to be; you value tiny binary size and security-by-default; your desktop app needs a mobile companion and you'd rather one stack than two.
-**Pass when:** you need polished, first-class mobile from day 0 — Capacitor / Expo / Flutter are more mature on mobile specifically. Wait one more minor cycle if you can.
-
-### Kotlin Multiplatform + Compose Multiplatform
-
-**[github.com/JetBrains/compose-multiplatform](https://github.com/JetBrains/compose-multiplatform)** — 19k★ · Apache-2.0 · latest commit 2026-04-29 · 🟩🟩 · 0 open issues *(positive signal)* · latest release **1.10.3** (2026-03-19)
-Kotlin Multiplatform (KMP) is the underlying capability in the Kotlin compiler ([github.com/JetBrains/kotlin](https://github.com/JetBrains/kotlin) — 52.7k★, see *Native: Kotlin* above). Compose Multiplatform is the UI framework on top.
-
-JetBrains' answer to *one Kotlin codebase, native everywhere*. **KMP** lets you share business logic, networking, persistence, and view-models across iOS, Android, desktop, web, and server (compiles Kotlin to JVM bytecode, native binaries via LLVM, JS, and Wasm). **Compose Multiplatform** then lets you share the UI itself.
-
-**Compose Multiplatform 1.8.0 (May 2025) declared iOS support stable and production-ready.** Render path on iOS uses Skia via Metal; full UIKit interop for accessibility, keyboards, and navigation bars. Stable APIs include Hot Reload on iOS Simulator, Compose Previews, and Xcode integration. As of snapshot the latest stable line is 1.10.x (March 2026).
-
-- **Targets:** Android, iOS, desktop (JVM-based — Windows / macOS / Linux), web (Wasm / JS via Compose for Web). KMP-only (without Compose UI) also targets server and embedded.
-- **Code language:** Kotlin (100%).
-- **Rendering model:** Android — native (same as Jetpack Compose). iOS — **custom canvas via Skia + Metal**. Desktop — Skia. Web — Wasm + Canvas/DOM.
-- **Dev loop:** Hot Reload on Android Studio; Compose Hot Reload on iOS Simulator (1.8+); Live Edit for desktop.
-- **Native API access:** **first-class on Android**; **expect/actual** mechanism for platform-specific code on iOS lets you call Swift/Objective-C APIs through bridge; **plugin-mediated** for cross-platform third-party libraries (the KMP ecosystem on Maven Central is large and growing).
-
-**Idiomaticity:** 🟩🟩 for Kotlin teams already on Android. iOS developers find the rendering convincing but note it's not UIKit semantically.
-
-**Pick when:** you have an Android team and want to add iOS without doubling headcount; you value JetBrains tooling (IntelliJ / Android Studio); you want to share *some* code (KMP-only) without committing the UI (use SwiftUI on iOS, Compose on Android).
-**Pass when:** your team has no Kotlin; you need pixel-perfect platform-native iOS feel (SwiftUI is the only way).
 
 ### .NET MAUI
 
@@ -302,23 +266,6 @@ ByteDance's cross-platform UI framework, **open-sourced March 2025** under the L
 **Pick when:** you want a fresh, performance-engineered alternative to RN; you're building a content/feed-heavy app where the dual-thread story matters; you can absorb being early-adopter on a tooling stack.
 **Pass when:** you need a battle-tested ecosystem of third-party UI libraries today; ByteDance organisational risk is a concern for your industry.
 
-### Quasar (Vue + Capacitor/Cordova)
-
-**[github.com/quasarframework/quasar](https://github.com/quasarframework/quasar)** — 27.1k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 563 open issues · latest **quasar-v2.19.3** (2026-04-06)
-
-Vue.js-centric meta-framework that builds **SPA, SSR, PWA, browser extension, Electron, and hybrid mobile** from one Vue codebase. The mobile path is *Quasar's CLI invokes Capacitor or Cordova for you*, then your Vue app runs inside the WebView. Extensive built-in component library tuned for both web and mobile.
-
-- **Targets:** Web (SPA / SSR / PWA / browser extension), desktop (Electron), iOS / Android (via Capacitor or Cordova).
-- **Code language:** Vue 3 + TypeScript / JavaScript.
-- **Rendering model:** WebView on mobile (Capacitor/Cordova-mediated).
-- **Dev loop:** Vite-based HMR.
-- **Native API access:** plugin-mediated via Capacitor's plugin ecosystem.
-
-**Idiomaticity:** 🟩🟩 for Vue teams; one of the deepest "build-target abstraction" layers in the JS world.
-
-**Pick when:** you're a Vue shop; you want PWA + native + desktop + web from one codebase; you value batteries-included (component library + build pipelines for every target).
-**Pass when:** you don't use Vue; performance budget rules out a WebView.
-
 ### Solito (Solid + Expo / RN + Next.js)
 
 **[github.com/nandorojo/solito](https://github.com/nandorojo/solito)** — 4.1k★ · MIT · latest release **v5: Next.js 16 + Expo 54** (2025-10-21) · 18 open issues
@@ -335,6 +282,59 @@ Solito gives you one navigation API (under the hood: React Navigation on mobile,
 
 **Pick when:** you specifically need to share React screens between a Next.js website and an Expo app in a monorepo; team is already React-fluent.
 **Pass when:** you don't have the web-and-mobile-shared-screens problem; you're on Vue/Solid/Svelte (Solito is React-only).
+
+### Capacitor (+ Ionic UI)
+
+**[github.com/ionic-team/capacitor](https://github.com/ionic-team/capacitor)** — 15.5k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 73 open issues · latest release **8.3.1** (2026-04-16)
+**[github.com/ionic-team/ionic-framework](https://github.com/ionic-team/ionic-framework)** — 52.5k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 596 open issues · latest release **v8.8.5** (2026-04-29)
+
+Ionic's pair: **Capacitor** is the native runtime (the WebView wrapper + plugin bridge); **Ionic Framework** is the optional UI-component library (Web Components: `ion-button`, `ion-tabs`, etc.) that gives you OS-styled mobile UI. They're decoupled — you can ship a Capacitor app with React + your own UI, or with vanilla web + Ionic.
+
+- **Capacitor's positioning:** *successor to Cordova*. Same idea (web app inside `WKWebView`/`Android WebView`), much fresher implementation: TypeScript-first plugin API, Swift/Kotlin native shells, modern build tooling. The relationship is acknowledged but Capacitor is the recommended path for new projects.
+- **Targets:** iOS, Android, web (the same web bundle just runs in a browser). Electron support exists but is community-maintained.
+- **Code language:** TypeScript / JavaScript with any web framework — React, Vue, Angular, Svelte, SolidJS, plain. Capacitor doesn't care.
+- **Rendering model:** **web view** — `WKWebView` on iOS, system WebView on Android. UI is HTML/CSS rendered by the OS browser engine.
+- **Dev loop:** **sub-second** — your dev server's HMR works inside the WebView. Live-reload over LAN to a real device is built in.
+- **Native API access:** **plugin-mediated** — official plugins (Camera, Filesystem, Geolocation, Push Notifications, Haptics, Preferences, Network, etc.) plus a healthy community ecosystem. Custom plugins are Swift/Kotlin classes with TS bindings; well-documented. For raw Swift/Kotlin you can drop into the platform projects.
+
+**Idiomaticity:** 🟩🟩 if you're a web team — your tooling, your routing, your component model all carry over. 🟥 in the sense that the UX is "browser-feeling" unless you specifically style for native (Ionic's components do this for you).
+
+**Pick when:** you have an existing web app or web team; you want one codebase across web + iOS + Android; performance budget allows a WebView (most line-of-business apps); you want to ship a PWA + an app-store binary from the same source.
+**Pass when:** you need 60+fps custom animation; you need raw OpenGL/Metal access; users care about "feels native" at the haptic level.
+
+### Tauri Mobile
+
+**[github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri)** — 106k★ · Apache-2.0 + MIT (dual) · latest commit 2026-04-29 · 🟩🟩 · ~1.3k open issues · latest CLI 2.10.1 (2026-03-04)
+
+Tauri 2 stabilised mobile (Android 7+, iOS 9+) as part of the 2.0 release. The architecture is **Rust core + system WebView** (WKWebView on iOS, Android System WebView on Android) — same idea as Capacitor's web view, but the host process is Rust, not Swift/Kotlin/Java.
+
+- **Targets:** Windows, macOS, Linux (mature) + Android, iOS (stable but younger). The marquee story is *one Rust core + one web frontend → all five platforms*, but mobile feature-parity with desktop is **not yet complete** (the Tauri team has explicitly said mobile is improving in minor releases, not "first-class on day 1 of 2.0").
+- **Code language:** Rust (core) + any web framework on the front-end (React, Vue, Svelte, SolidJS, Leptos, Yew if you go full-Rust).
+- **Rendering model:** **web view** for UI; native window chrome via `tao` window manager on each platform.
+- **Dev loop:** **HMR extended to mobile** in Tauri 2 — your web framework's hot reload works on emulators and devices.
+- **Native API access:** **plugin-mediated** via Tauri's plugin system; mobile-plugin development is documented but the catalogue is younger than Capacitor's. You can drop into Swift / Kotlin for custom mobile plugins.
+
+**Idiomaticity:** 🟩 (mobile) / 🟩🟩 (desktop). Mobile is the newer surface; the team flags it as still maturing.
+
+**Pick when:** you're already a Rust shop or want to be; you value tiny binary size and security-by-default; your desktop app needs a mobile companion and you'd rather one stack than two.
+**Pass when:** you need polished, first-class mobile from day 0 — Capacitor / Expo / Flutter are more mature on mobile specifically. Wait one more minor cycle if you can.
+
+### Quasar (Vue + Capacitor/Cordova)
+
+**[github.com/quasarframework/quasar](https://github.com/quasarframework/quasar)** — 27.1k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 563 open issues · latest **quasar-v2.19.3** (2026-04-06)
+
+Vue.js-centric meta-framework that builds **SPA, SSR, PWA, browser extension, Electron, and hybrid mobile** from one Vue codebase. The mobile path is *Quasar's CLI invokes Capacitor or Cordova for you*, then your Vue app runs inside the WebView. Extensive built-in component library tuned for both web and mobile.
+
+- **Targets:** Web (SPA / SSR / PWA / browser extension), desktop (Electron), iOS / Android (via Capacitor or Cordova).
+- **Code language:** Vue 3 + TypeScript / JavaScript.
+- **Rendering model:** WebView on mobile (Capacitor/Cordova-mediated).
+- **Dev loop:** Vite-based HMR.
+- **Native API access:** plugin-mediated via Capacitor's plugin ecosystem.
+
+**Idiomaticity:** 🟩🟩 for Vue teams; one of the deepest "build-target abstraction" layers in the JS world.
+
+**Pick when:** you're a Vue shop; you want PWA + native + desktop + web from one codebase; you value batteries-included (component library + build pipelines for every target).
+**Pass when:** you don't use Vue; performance budget rules out a WebView.
 
 ### PWA baseline
 
@@ -361,22 +361,22 @@ Android reality in 2026:
 
 ## Big comparison table
 
-| Dimension | [Native iOS (Swift)](#native-swift--swiftui-ios) | [Native Android (Kotlin)](#native-kotlin--jetpack-compose-android) | [Flutter](#flutter) | [React Native (CLI)](#react-native-bare-cli) | [Expo](#expo) | [Capacitor](#capacitor--ionic-ui) | [Tauri 2 Mobile](#tauri-mobile) | [Compose MP / KMP](#kotlin-multiplatform--compose-multiplatform) | [.NET MAUI](#net-maui) | [NativeScript](#nativescript) | [Lynx](#lynx) | [Quasar](#quasar-vue--capacitorcordova) | [Solito](#solito-solid--expo--rn--nextjs) | [PWA](#pwa-baseline) |
+| Dimension | [Native Android (Kotlin)](#native-kotlin--jetpack-compose-android) | [Native iOS (Swift)](#native-swift--swiftui-ios) | [Flutter](#flutter) | [Compose MP / KMP](#kotlin-multiplatform--compose-multiplatform) | [React Native (CLI)](#react-native-bare-cli) | [Expo](#expo) | [.NET MAUI](#net-maui) | [NativeScript](#nativescript) | [Lynx](#lynx) | [Solito](#solito-solid--expo--rn--nextjs) | [Capacitor](#capacitor--ionic-ui) | [Tauri 2 Mobile](#tauri-mobile) | [Quasar](#quasar-vue--capacitorcordova) | [PWA](#pwa-baseline) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Stars** | 69.9k (Swift) · 🟩🟩 | 52.7k (Kotlin) · 🟩🟩 | 176k · 🟩🟩 | 126k · 🟩🟩 | 49.1k · 🟩🟩 | 15.5k · 🟩🟩 | 106k · 🟩🟩 | 19k (CMP) · 🟩🟩 | 23.2k · 🟩🟩 | 25.5k · 🟩🟩 | 14.8k · 🟩🟩 | 27.1k · 🟩🟩 | 4.1k · 🟩 | n/a (web standard) |
-| **License** | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | BSD-3 · 🟩 | MIT · 🟩 | MIT · 🟩 | MIT · 🟩 | Apache-2.0 + MIT · 🟩 | Apache-2.0 · 🟩 | MIT · 🟩 | MIT · 🟩 | Apache-2.0 · 🟩 | MIT · 🟩 | MIT · 🟩 | n/a |
-| **Latest commit** | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | ⬜ † | n/a |
-| **Latest release** | Swift 6.3.1 (2026-04-17) | Compose 1.11 (Apr 2026) | (rolling) | 0.85.2 (2026-04-20) | (SDK 53+) | 8.3.1 (2026-04-16) | CLI 2.10.1 (2026-03-04) | CMP 1.10.3 (2026-03-19) | .NET 10 SR6 (2026-04-29) | core 9.0.18 (2026-03-30) | 3.7.0 (2026-03-31) | 2.19.3 (2026-04-06) | v5 (2025-10-21) | n/a |
-| **Open issues** | 5k+ ‡ | n/a § | 5k+ | 755 | 326 | 73 | 1.3k | 0 (CMP) ¶ | 3.7k | 773 | 175 | 563 | 18 | n/a |
-| **README maturity** | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩🟩 | 🟩 | n/a |
-| **Idiomaticity** | 🟩🟩 (for iOS) | 🟩🟩 (for Android) | 🟩 (Dart-shaped) | 🟩🟩 (for React) | 🟩🟩 (for React) | 🟩🟩 (for web) | 🟩 (mobile young) | 🟩🟩 (for Kotlin) | 🟩🟩 (for .NET) | 🟩 (own corner) | 🟩🟩 (for React) | 🟩🟩 (for Vue) | 🟩 (RN+Next niche) | 🟩🟩 (for web) |
-| **Targets** | iOS / iPadOS / macOS / visionOS / watchOS / tvOS | Android (phone / tablet / TV / Wear / Auto) | iOS / Android / Windows / macOS / Linux / web | iOS / Android (+forks: Win/Mac/web/visionOS/tvOS) | iOS / Android / web | iOS / Android / web (+ Electron community) | Win / Mac / Linux / iOS / Android | iOS / Android / desktop / web | Android / iOS / macOS / Windows | iOS / Android / visionOS | Android / iOS / web (+ Harmony/Win/Mac in tree) | Web / SPA / SSR / PWA / Electron / iOS / Android | iOS / Android (RN) + web (Next.js) | any browser |
-| **Code language** | Swift | Kotlin | Dart | TS | TS | TS / JS (any web framework) | Rust + web frontend | Kotlin | C# + XAML | TS | TS (ReactLynx) | Vue 3 + TS | TS | any web stack |
-| **Rendering** | native (UIKit + Metal) | native (Compose + Skia) | custom canvas (Impeller) | native via JS bridge | native via JS bridge | web view | web view | Android: native; iOS: Skia/Metal; Web: Wasm | native (per-platform handlers) | native (reflective bridge) | dual: native or custom canvas | web view | native (mobile) + HTML (web) | browser engine |
-| **Dev loop** | Xcode `#Preview` (sub-s); rebuild 5–30s | Live Edit (sub-s); rebuild 10–60s | hot reload (sub-s, stateful) | fast refresh (sub-s) | Expo Go (<1s on device) | HMR + LAN live-reload | HMR on emulator/device | Compose Hot Reload | XAML/C# Hot Reload | HMR + live-sync | Rspack HMR | Vite HMR | Expo + Next.js HMR | bundler HMR |
-| **Native API access** | first-class | first-class | plugin-mediated | plugin-mediated + drop to native | plugin-mediated (dev build for custom) | plugin-mediated | plugin-mediated | first-class (Android) + expect/actual (iOS) | first-class (P/Invoke + `#if`) | first-class (reflective) | plugin-mediated | plugin-mediated (Capacitor) | inherits Expo | limited (Web APIs only) |
-| **OTA updates** | App Store only | Play Store + Play in-app updates | OTA via [Shorebird](https://shorebird.dev/) | OTA via CodePush / EAS Update | **EAS Update** built-in | **AppFlow** (Ionic SaaS) | not native (custom) | Android: Play Store; iOS: App Store | App Store only | OTA possible via plugins | OTA via Lynx infra | Capacitor → AppFlow | inherits Expo | n/a (live web) |
-| **First release** | 2014 (Swift) · 2019 (SwiftUI) | 2011 (Kotlin) · 2021 (Compose stable) | 2017 | 2015 | 2017 | 2019 (Cordova succ.) | 2020 (1.0); 2024 (2.0 mobile) | 2023 (CMP iOS alpha) · 2025 (CMP iOS stable) | 2022 (.NET 6) | 2014 | 2025 (open source) | 2016 | 2020 | 2015 (PWA term) |
+| **Stars** | 52.7k (Kotlin) · 🟩🟩 | 69.9k (Swift) · 🟩🟩 | 176k · 🟩🟩 | 19k (CMP) · 🟩🟩 | 126k · 🟩🟩 | 49.1k · 🟩🟩 | 23.2k · 🟩🟩 | 25.5k · 🟩🟩 | 14.8k · 🟩🟩 | 4.1k · 🟩 | 15.5k · 🟩🟩 | 106k · 🟩🟩 | 27.1k · 🟩🟩 | n/a (web standard) |
+| **License** | Apache-2.0 · 🟩 | Apache-2.0 · 🟩 | BSD-3 · 🟩 | Apache-2.0 · 🟩 | MIT · 🟩 | MIT · 🟩 | MIT · 🟩 | MIT · 🟩 | Apache-2.0 · 🟩 | MIT · 🟩 | MIT · 🟩 | Apache-2.0 + MIT · 🟩 | MIT · 🟩 | n/a |
+| **Latest commit** | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | ⬜ † | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | 2026-04-29 · 🟩🟩 | n/a |
+| **Latest release** | Compose 1.11 (Apr 2026) | Swift 6.3.1 (2026-04-17) | (rolling) | CMP 1.10.3 (2026-03-19) | 0.85.2 (2026-04-20) | (SDK 53+) | .NET 10 SR6 (2026-04-29) | core 9.0.18 (2026-03-30) | 3.7.0 (2026-03-31) | v5 (2025-10-21) | 8.3.1 (2026-04-16) | CLI 2.10.1 (2026-03-04) | 2.19.3 (2026-04-06) | n/a |
+| **Open issues** | n/a § | 5k+ ‡ | 5k+ | 0 (CMP) ¶ | 755 | 326 | 3.7k | 773 | 175 | 18 | 73 | 1.3k | 563 | n/a |
+| **README maturity** | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | 🟩 | 🟩 | 🟩🟩 | 🟩🟩 | 🟩🟩 | n/a |
+| **Idiomaticity** | 🟩🟩 (for Android) | 🟩🟩 (for iOS) | 🟩 (Dart-shaped) | 🟩🟩 (for Kotlin) | 🟩🟩 (for React) | 🟩🟩 (for React) | 🟩🟩 (for .NET) | 🟩 (own corner) | 🟩🟩 (for React) | 🟩 (RN+Next niche) | 🟩🟩 (for web) | 🟩 (mobile young) | 🟩🟩 (for Vue) | 🟩🟩 (for web) |
+| **Targets** | Android (phone / tablet / TV / Wear / Auto) | iOS / iPadOS / macOS / visionOS / watchOS / tvOS | iOS / Android / Windows / macOS / Linux / web | iOS / Android / desktop / web | iOS / Android (+forks: Win/Mac/web/visionOS/tvOS) | iOS / Android / web | Android / iOS / macOS / Windows | iOS / Android / visionOS | Android / iOS / web (+ Harmony/Win/Mac in tree) | iOS / Android (RN) + web (Next.js) | iOS / Android / web (+ Electron community) | Win / Mac / Linux / iOS / Android | Web / SPA / SSR / PWA / Electron / iOS / Android | any browser |
+| **Code language** | Kotlin | Swift | Dart | Kotlin | TS | TS | C# + XAML | TS | TS (ReactLynx) | TS | TS / JS (any web framework) | Rust + web frontend | Vue 3 + TS | any web stack |
+| **Rendering** | native (Compose + Skia) | native (UIKit + Metal) | custom canvas (Impeller) | Android: native; iOS: Skia/Metal; Web: Wasm | native via JS bridge | native via JS bridge | native (per-platform handlers) | native (reflective bridge) | dual: native or custom canvas | native (mobile) + HTML (web) | web view | web view | web view | browser engine |
+| **Dev loop** | Live Edit (sub-s); rebuild 10–60s | Xcode `#Preview` (sub-s); rebuild 5–30s | hot reload (sub-s, stateful) | Compose Hot Reload | fast refresh (sub-s) | Expo Go (<1s on device) | XAML/C# Hot Reload | HMR + live-sync | Rspack HMR | Expo + Next.js HMR | HMR + LAN live-reload | HMR on emulator/device | Vite HMR | bundler HMR |
+| **Native API access** | first-class | first-class | plugin-mediated | first-class (Android) + expect/actual (iOS) | plugin-mediated + drop to native | plugin-mediated (dev build for custom) | first-class (P/Invoke + `#if`) | first-class (reflective) | plugin-mediated | inherits Expo | plugin-mediated | plugin-mediated | plugin-mediated (Capacitor) | limited (Web APIs only) |
+| **OTA updates** | Play Store + Play in-app updates | App Store only | OTA via [Shorebird](https://shorebird.dev/) | Android: Play Store; iOS: App Store | OTA via CodePush / EAS Update | **EAS Update** built-in | App Store only | OTA possible via plugins | OTA via Lynx infra | inherits Expo | **AppFlow** (Ionic SaaS) | not native (custom) | Capacitor → AppFlow | n/a (live web) |
+| **First release** | 2011 (Kotlin) · 2021 (Compose stable) | 2014 (Swift) · 2019 (SwiftUI) | 2017 | 2023 (CMP iOS alpha) · 2025 (CMP iOS stable) | 2015 | 2017 | 2022 (.NET 6) | 2014 | 2025 (open source) | 2020 | 2019 (Cordova succ.) | 2020 (1.0); 2024 (2.0 mobile) | 2016 | 2015 (PWA term) |
 
 > † Solito's commit cadence is slower than mobile-framework norms; the v5 release in Oct 2025 is the most-recent visible activity peg. Repo is maintained but not daily-updated.
 >
