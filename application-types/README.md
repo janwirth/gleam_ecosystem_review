@@ -270,22 +270,22 @@ An app installed via the iOS App Store or Google Play Store (and on Android, sid
 - You don't have the resources for app-store review cycles, account management, and per-platform compliance. (PWA, web app.)
 - You can deliver the experience as a [PWA](#progressive-web-app-pwa) and the audience will find / install it that way.
 
-### Frameworks (illustrative — see [building-mobile-apps.md](mobile.md) for scored reviews)
+### Frameworks (illustrative — see [mobile.md](mobile.md) for scored reviews; the archetype column links to its category sections)
 
 | Framework | Language | Archetype | Notable for |
 | --- | --- | --- | --- |
-| Swift + SwiftUI / UIKit | Swift | Native (iOS) | Day-one Apple feature access. |
-| Kotlin + Jetpack Compose | Kotlin | Native (Android) | Day-one Android feature access. |
-| Flutter | Dart | Cross-platform native renderer | One codebase, custom Skia/Impeller pipeline. |
-| React Native (bare CLI) | TS / JS | JS bridge to native widgets | Real `UIView` / `View` driven by JS. |
-| Expo | TS / JS | RN + managed tooling | The default RN starting point in 2026. |
-| Capacitor (+ Ionic) | TS / JS + WebView | Web-view wrapper | Web app in a native shell. |
-| Tauri Mobile | Rust + system webview | Rust shell + web UI | Tauri 2 mobile target. |
-| Kotlin Multiplatform + Compose Multiplatform | Kotlin | Cross-platform native renderer | Share Kotlin across iOS/Android/desktop/web. |
-| .NET MAUI | C# / XAML | Cross-platform native widgets | The .NET answer to Flutter. |
-| NativeScript | TS / JS | Direct JS-to-native binding | No bridge, fewer plugins. |
-| Lynx | TS / JS | Dual-thread JS engine | ByteDance's RN-shaped offering. |
-| PWA | HTML / CSS / JS | Browser-installed | The control case; no app store. |
+| Swift + SwiftUI / UIKit | Swift | [Native, one toolchain per OS](mobile.md#native-one-toolchain-per-os) | iOS. Day-one Apple feature access. |
+| Kotlin + Jetpack Compose | Kotlin | [Native, one toolchain per OS](mobile.md#native-one-toolchain-per-os) | Android. Day-one Android feature access. |
+| Flutter | Dart | [Custom canvas](mobile.md#custom-canvas) | One codebase, custom Skia/Impeller pipeline. |
+| React Native (bare CLI) | TS / JS | [Native widgets from one codebase](mobile.md#native-widgets-from-one-codebase) | JS bridge; real `UIView` / `View` driven by JS. |
+| Expo | TS / JS | [Native widgets from one codebase](mobile.md#native-widgets-from-one-codebase) | RN + managed tooling; the default RN starting point in 2026. |
+| Capacitor (+ Ionic) | TS / JS + WebView | [Web view shell](mobile.md#web-view-shell) | Web app in a native shell. |
+| Tauri Mobile | Rust + system webview | [Web view shell](mobile.md#web-view-shell) | Rust host process + web UI; Tauri 2 mobile target. |
+| Kotlin Multiplatform + Compose Multiplatform | Kotlin | [Custom canvas](mobile.md#custom-canvas) | Share Kotlin across iOS/Android/desktop/web; the Android side stays native Compose. |
+| .NET MAUI | C# / XAML | [Native widgets from one codebase](mobile.md#native-widgets-from-one-codebase) | Native widgets via a C# abstraction layer; the .NET answer to Flutter. |
+| NativeScript | TS / JS | [Native widgets from one codebase](mobile.md#native-widgets-from-one-codebase) | Direct JS-to-native binding; no bridge, fewer plugins. |
+| Lynx | TS / JS | [Native widgets from one codebase](mobile.md#native-widgets-from-one-codebase) | Dual-thread JS engine; ByteDance's RN-shaped offering. |
+| PWA | HTML / CSS / JS | [PWA baseline](mobile.md#baseline-pwa) | Browser-installed; the control case, no app store. |
 
 ### Distribution & install model
 
