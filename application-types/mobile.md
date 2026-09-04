@@ -7,13 +7,27 @@
 
 **Snapshot 2026-04-29** — metrics from live GitHub web UI only (no API, no clones). Star counts, last-commit dates, and open-issue counts reflect what a logged-out visitor sees today.
 
+## TL;DR — best pick by target combo
+
+| You're targeting | Best pick | Runner-up | Why |
+| --- | --- | --- | --- |
+| **iOS only** | [Native: Swift/SwiftUI](#native-swift--swiftui-ios) | — | Day-0 platform APIs (ARKit/HealthKit/Metal/Foundation Models), no bridge tax. |
+| **Android only** | [Native: Kotlin/Compose](#native-kotlin--jetpack-compose-android) | — | Same logic, Google's own stack, entire SDK is one `import` away. |
+| **iOS + Android (mobile only)** | [Expo](#expo) | [Flutter](#flutter) | Fastest time-to-TestFlight, biggest RN ecosystem, EAS Build/Update built in. Pick Flutter instead if pixel-identical brand consistency across OSes matters more than real native widgets. |
+| **Mobile + web** | [Capacitor (+ Ionic UI)](#capacitor--ionic-ui) | [Quasar](#quasar-vue--capacitorcordova) | One web codebase ships to iOS/Android store binaries *and* runs as a website/PWA. Quasar instead if you're already a Vue shop. |
+| **Desktop + web** | [Flutter](#flutter) | [Compose Multiplatform](#kotlin-multiplatform--compose-multiplatform) | Both ship desktop-native canvas rendering + web from one codebase. Compose MP instead if the team is already Kotlin. |
+| **All platforms (iOS + Android + desktop + web)** | [Flutter](#flutter) | [Compose Multiplatform](#kotlin-multiplatform--compose-multiplatform) | Only stack hitting all six OS/browser targets from one codebase — see [Maximum platform reach](#maximum-platform-reach-from-one-codebase-ios--android--desktop--web-all-in-scope). |
+
+> Full reasoning + scores per use-case: [Leaderboards (per use-case)](#leaderboards-per-use-case) below.
+
 ## Table of Contents
 
-1. [Goal](#goal)
-2. [Legend](#legend)
-3. [Categories — the five archetypes](#categories--the-five-archetypes)
-4. [What you actually pick when you pick a framework](#what-you-actually-pick-when-you-pick-a-framework)
-5. [Per-framework reviews](#per-framework-reviews)
+1. [TL;DR — best pick by target combo](#tldr--best-pick-by-target-combo)
+2. [Goal](#goal)
+3. [Legend](#legend)
+4. [Categories — the five archetypes](#categories--the-five-archetypes)
+5. [What you actually pick when you pick a framework](#what-you-actually-pick-when-you-pick-a-framework)
+6. [Per-framework reviews](#per-framework-reviews)
    - [Native: Kotlin / Jetpack Compose (Android)](#native-kotlin--jetpack-compose-android)
    - [Native: Swift / SwiftUI (iOS)](#native-swift--swiftui-ios)
    - [Flutter](#flutter)
@@ -28,11 +42,11 @@
    - [Quasar (Vue + Capacitor/Cordova)](#quasar-vue--capacitorcordova)
    - [Solito (Solid + Expo / RN + Next.js)](#solito-solid--expo--rn--nextjs)
    - [PWA baseline](#pwa-baseline)
-6. [Big comparison table](#big-comparison-table)
-7. [Disregarded / EOL / niche](#disregarded--eol--niche)
-8. [Leaderboards (per use-case)](#leaderboards-per-use-case)
-9. [Cross-link](#cross-link)
-10. [Discovery — search queries](#discovery--search-queries)
+7. [Big comparison table](#big-comparison-table)
+8. [Disregarded / EOL / niche](#disregarded--eol--niche)
+9. [Leaderboards (per use-case)](#leaderboards-per-use-case)
+10. [Cross-link](#cross-link)
+11. [Discovery — search queries](#discovery--search-queries)
 
 ## Goal
 
@@ -108,6 +122,10 @@ The **language** decision tends to be the most opinionated: if your team is web-
 
 ## Per-framework reviews
 
+
+<details>
+<summary><strong>Native: Kotlin / Jetpack Compose (Android)</strong></summary>
+
 ### Native: Kotlin / Jetpack Compose (Android)
 
 **[github.com/JetBrains/kotlin](https://github.com/JetBrains/kotlin)** — language · 52.7k★ · Apache-2.0 · latest commit 2026-04-29 · 🟩🟩
@@ -123,6 +141,11 @@ Google's first-party Android stack. Kotlin is the official Android language sinc
 
 **Pick when:** you're Android-only or willing to staff two teams; you want every new platform API on day 0; your performance budget is tightest possible.
 **Pass when:** you also need iOS and can't afford two codebases — pick Compose Multiplatform, KMP, or Flutter.
+
+</details>
+
+<details>
+<summary><strong>Native: Swift / SwiftUI (iOS)</strong></summary>
 
 ### Native: Swift / SwiftUI (iOS)
 
@@ -142,6 +165,11 @@ Apple's first-party iOS stack. Swift 6's strict concurrency is the compiler defa
 
 > **Note:** SwiftUI itself is closed source (no GitHub). Score reflects the open-source Swift compiler + the practical reality that Apple's own framework drives the ecosystem.
 
+</details>
+
+<details>
+<summary><strong>Flutter</strong></summary>
+
 ### Flutter
 
 **[github.com/flutter/flutter](https://github.com/flutter/flutter)** — 176k★ · BSD-3-Clause · latest commit 2026-04-29 · 🟩🟩 · ~5k+ open issues
@@ -158,6 +186,11 @@ Google's Dart-based, Skia-then-Impeller-rendered cross-platform UI toolkit. Owns
 
 **Pick when:** you want one codebase to ship to both stores *and* desktop *and* web; pixel-perfect brand consistency matters; you're greenfield (no existing native code to integrate); you can absorb Dart on the team.
 **Pass when:** native look-and-feel is non-negotiable; you need bleeding-edge platform APIs the day they ship; your team is React-heavy.
+
+</details>
+
+<details>
+<summary><strong>React Native (bare CLI)</strong></summary>
 
 ### React Native (bare CLI)
 
@@ -176,6 +209,11 @@ Meta's JS-bridged-to-native-widgets toolkit, in production at Facebook, Instagra
 **Pick when:** you have an existing React/web codebase and team; you want real native widgets (not a canvas); you need to integrate into an existing native app.
 **Pass when:** you don't have a strong reason to skip Expo (Expo handles bare-workflow tradeoffs out of the box now).
 
+</details>
+
+<details>
+<summary><strong>Expo</strong></summary>
+
 ### Expo
 
 **[github.com/expo/expo](https://github.com/expo/expo)** — 49.1k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 326 open issues
@@ -192,6 +230,11 @@ The managed React Native toolchain. Built **on top of** RN — SDK 52+ uses Fabr
 
 **Pick when:** you're starting a new React Native app in 2026 (default recommendation); solo / small team; you value time-to-first-build over fine-grained native-tooling control.
 **Pass when:** you're embedding RN into an existing native app (use the bare CLI); you have heavy custom-native-toolchain needs that fight CNG.
+
+</details>
+
+<details>
+<summary><strong>Capacitor (+ Ionic UI)</strong></summary>
 
 ### Capacitor (+ Ionic UI)
 
@@ -212,6 +255,11 @@ Ionic's pair: **Capacitor** is the native runtime (the WebView wrapper + plugin 
 **Pick when:** you have an existing web app or web team; you want one codebase across web + iOS + Android; performance budget allows a WebView (most line-of-business apps); you want to ship a PWA + an app-store binary from the same source.
 **Pass when:** you need 60+fps custom animation; you need raw OpenGL/Metal access; users care about "feels native" at the haptic level.
 
+</details>
+
+<details>
+<summary><strong>Tauri Mobile</strong></summary>
+
 ### Tauri Mobile
 
 **[github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri)** — 106k★ · Apache-2.0 + MIT (dual) · latest commit 2026-04-29 · 🟩🟩 · ~1.3k open issues · latest CLI 2.10.1 (2026-03-04)
@@ -228,6 +276,11 @@ Tauri 2 stabilised mobile (Android 7+, iOS 9+) as part of the 2.0 release. The a
 
 **Pick when:** you're already a Rust shop or want to be; you value tiny binary size and security-by-default; your desktop app needs a mobile companion and you'd rather one stack than two.
 **Pass when:** you need polished, first-class mobile from day 0 — Capacitor / Expo / Flutter are more mature on mobile specifically. Wait one more minor cycle if you can.
+
+</details>
+
+<details>
+<summary><strong>Kotlin Multiplatform + Compose Multiplatform</strong></summary>
 
 ### Kotlin Multiplatform + Compose Multiplatform
 
@@ -249,6 +302,11 @@ JetBrains' answer to *one Kotlin codebase, native everywhere*. **KMP** lets you 
 **Pick when:** you have an Android team and want to add iOS without doubling headcount; you value JetBrains tooling (IntelliJ / Android Studio); you want to share *some* code (KMP-only) without committing the UI (use SwiftUI on iOS, Compose on Android).
 **Pass when:** your team has no Kotlin; you need pixel-perfect platform-native iOS feel (SwiftUI is the only way).
 
+</details>
+
+<details>
+<summary><strong>.NET MAUI</strong></summary>
+
 ### .NET MAUI
 
 **[github.com/dotnet/maui](https://github.com/dotnet/maui)** — 23.2k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · ~3.7k open issues · latest release **.NET 10 SR6 (10.0.60)** (2026-04-29)
@@ -266,6 +324,11 @@ Microsoft's .NET 6+ **successor to Xamarin**. Xamarin reached end-of-support **2
 **Pick when:** you're a .NET shop with existing C# expertise; you want native widgets (not a canvas); you also need a Windows desktop app from the same code.
 **Pass when:** your team isn't on .NET (the ramp-up cost dominates); the high open-issue count concerns you (3.7k is the second-highest in this article — though commensurate with project age and surface area).
 
+</details>
+
+<details>
+<summary><strong>NativeScript</strong></summary>
+
 ### NativeScript
 
 **[github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript)** — 25.5k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 773 open issues · latest core **9.0.18** (2026-03-30)
@@ -282,6 +345,11 @@ The "JavaScript directly calls native APIs, no bridge" school. Distinguishes its
 
 **Pick when:** you need raw native API surface from JS without writing a plugin for every API; you're comfortable with the smaller ecosystem; you're building an Angular/Vue mobile app and want native widgets.
 **Pass when:** you want the largest mobile community and plugin ecosystem (RN/Expo win); you don't need direct API access (Capacitor is simpler).
+
+</details>
+
+<details>
+<summary><strong>Lynx</strong></summary>
 
 ### Lynx
 
@@ -302,6 +370,11 @@ ByteDance's cross-platform UI framework, **open-sourced March 2025** under the L
 **Pick when:** you want a fresh, performance-engineered alternative to RN; you're building a content/feed-heavy app where the dual-thread story matters; you can absorb being early-adopter on a tooling stack.
 **Pass when:** you need a battle-tested ecosystem of third-party UI libraries today; ByteDance organisational risk is a concern for your industry.
 
+</details>
+
+<details>
+<summary><strong>Quasar (Vue + Capacitor/Cordova)</strong></summary>
+
 ### Quasar (Vue + Capacitor/Cordova)
 
 **[github.com/quasarframework/quasar](https://github.com/quasarframework/quasar)** — 27.1k★ · MIT · latest commit 2026-04-29 · 🟩🟩 · 563 open issues · latest **quasar-v2.19.3** (2026-04-06)
@@ -319,6 +392,11 @@ Vue.js-centric meta-framework that builds **SPA, SSR, PWA, browser extension, El
 **Pick when:** you're a Vue shop; you want PWA + native + desktop + web from one codebase; you value batteries-included (component library + build pipelines for every target).
 **Pass when:** you don't use Vue; performance budget rules out a WebView.
 
+</details>
+
+<details>
+<summary><strong>Solito (Solid + Expo / RN + Next.js)</strong></summary>
+
 ### Solito (Solid + Expo / RN + Next.js)
 
 **[github.com/nandorojo/solito](https://github.com/nandorojo/solito)** — 4.1k★ · MIT · latest release **v5: Next.js 16 + Expo 54** (2025-10-21) · 18 open issues
@@ -335,6 +413,11 @@ Solito gives you one navigation API (under the hood: React Navigation on mobile,
 
 **Pick when:** you specifically need to share React screens between a Next.js website and an Expo app in a monorepo; team is already React-fluent.
 **Pass when:** you don't have the web-and-mobile-shared-screens problem; you're on Vue/Solid/Svelte (Solito is React-only).
+
+</details>
+
+<details>
+<summary><strong>PWA baseline</strong></summary>
 
 ### PWA baseline
 
@@ -358,6 +441,8 @@ Android reality in 2026:
 
 **Pick when:** the app is information-display + forms + light interactivity; iOS hardware-API gaps are tolerable; you want zero app-store friction; you want one URL to rule them all.
 **Pass when:** the app needs Bluetooth peripherals, NFC, USB, or any blocked-on-iOS API; push reach in the EU matters; you need App Store presence for credibility.
+
+</details>
 
 ## Big comparison table
 
