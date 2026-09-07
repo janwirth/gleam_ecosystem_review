@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Status:** DRAFT · **Authoring:** AI-assisted, human-reviewed.
 
-> **Explicitly not design but UX.** This article is about *user experience* — research, behavioural patterns, usability heuristics, flow specifications, and the instrumentation that tells you whether a flow actually works. It is **not** about visual design — typography, colour systems, brand identity, illustration, motion. The two disciplines overlap (an aesthetically polished UI can mask a broken flow; the [Aesthetic-Usability Effect](#laws-of-ux) is itself a UX law about that overlap), but the resources reviewed here exist because those overlaps are exactly what gets confused most often.
+> **Explicitly not design but UX.** This article is about *user experience* — research, behavioural patterns, usability heuristics, flow specifications, and the instrumentation that tells you whether a flow actually works. It is **not** about visual design — typography, colour systems, brand identity, illustration, motion. (The typesetting half of that list — line boxes, vertical rhythm, type scales, fluid type, leading trim — is now covered in [`typography.md`](typography.md).) The two disciplines overlap (an aesthetically polished UI can mask a broken flow; the [Aesthetic-Usability Effect](#laws-of-ux) is itself a UX law about that overlap), but the resources reviewed here exist because those overlaps are exactly what gets confused most often.
 
 **Snapshot 2026-04-29** — metadata captured from live sites only (no API). Star counts, edition info, course catalogues, and pricing reflect what a logged-out visitor sees today.
 
